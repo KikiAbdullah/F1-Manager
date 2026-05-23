@@ -444,7 +444,7 @@ body {
   border: 1px solid var(--panel-border);
   border-radius: 10px;
   width: 100%;
-  max-height: 80vh;
+  max-height: 100vh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -574,35 +574,242 @@ body {
    WIZARD STEP 1: TEAM IDENTITY
    ============================================================ */
 
+/* Shared panel wrapper for wizard steps */
+.f1-step-panel {
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 26px;
+}
+
+.f1-step-panel .f1-create-header {
+  margin-bottom: 22px;
+}
+
+/* Step 3 header: title left, indicators right */
+.f1-step3-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.f1-step3-header .f1-create-header {
+  flex: 1 1 auto;
+}
+
+.f1-car-indicators {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 10px;
+  padding-top: 6px;
+}
+
+.f1-car-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.65);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 11px;
+  font-weight: 800;
+  min-width: 98px;
+  justify-content: center;
+}
+
+.f1-car-indicator i {
+  font-size: 18px;
+  opacity: 0.75;
+}
+
+.f1-car-indicator.active {
+  border-color: rgba(0, 229, 255, 0.55);
+  background: rgba(0, 229, 255, 0.1);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.f1-car-indicator.active i {
+  opacity: 1;
+}
+/* Container Utama */
+.f1-wizard-layout {
+  display: flex;
+  width: 100%;
+  height: 600px; /* Sesuaikan tinggi sesuai kebutuhan */
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Sisi Kiri (Form) */
+.f1-wizard-form {
+  flex: 1; /* Mengambil ruang fleksibel */
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #0a0a0a;
+}
+
+/* Sisi Kanan (Gambar dengan Gradasi) */
+.f1-wizard-visual {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.f1-wizard-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Efek Gradasi (Masking) */
+.f1-visual-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Gradasi dari hitam transparan ke hitam solid agar menyatu dengan background */
+  background: linear-gradient(
+    to right,
+    #0a0a0a 0%,
+    rgba(10, 10, 10, 0.2) 50%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  z-index: 1;
+}
+
+/* Responsif: Jika layar kecil, gambar disembunyikan atau ditaruh di atas */
+@media (max-width: 900px) {
+  .f1-wizard-layout {
+    flex-direction: column;
+    height: auto;
+  }
+  .f1-wizard-visual {
+    display: none; /* Sembunyikan gambar di HP agar fokus ke form */
+  }
+}
+
+/* HEADER STYLES */
 .f1-create-header {
-  margin-bottom: 28px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 24px;
 }
 
 .f1-create-subtitle {
+  display: flex;
+  align-items: center;
   font-size: 12px;
+  font-weight: 700;
   letter-spacing: 0.16em;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.6);
   text-transform: uppercase;
 }
 
-.f1-create-title {
-  margin-top: 4px;
-  font-size: 32px;
-  font-weight: 900;
-  letter-spacing: -0.03em;
-  color: white;
+/* Garis aksen merah khas balapan/F1 */
+.f1-accent-line {
+  display: inline-block;
+  width: 16px;
+  height: 3px;
+  background-color: #e10600; /* F1 Red */
+  margin-right: 8px;
+  border-radius: 2px;
 }
 
+.f1-create-title {
+  margin-top: 6px;
+  margin-bottom: 8px;
+  font-size: 36px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+.f1-header-desc {
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.5);
+  max-width: 600px;
+  margin: 0;
+}
+
+/* FORM GRID */
 .f1-create-form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  column-gap: 24px;
+  row-gap: 28px;
   margin-bottom: 32px;
 }
 
 .f1-input-group {
   display: flex;
   flex-direction: column;
+}
+
+/* LABEL */
+.f1-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin-bottom: 8px;
+  letter-spacing: 0.05em;
+}
+
+/* INPUT FIELDS */
+.f1-input {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  padding: 14px 16px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-family: inherit;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Placeholder styling */
+.f1-input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* Focus state - glowing border merah ketika diklik */
+.f1-input:focus {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: #e10600;
+  box-shadow: 0 0 0 3px rgba(225, 6, 0, 0.2);
+}
+
+/* Memaksa input singkatan selalu huruf kapital */
+.f1-input-uppercase {
+  text-transform: uppercase;
+}
+
+/* HELPER TEXT - Info tambahan yang kamu minta */
+.f1-helper-text {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+/* Responsive adjustment jika layar kecil */
+@media (max-width: 768px) {
+  .f1-create-form-grid {
+    grid-template-columns: 1fr; /* Jadi 1 kolom di HP */
+  }
 }
 
 /* ============================================================
@@ -1238,7 +1445,7 @@ body {
   left: 15px;
   text-align: left;
   z-index: 4;
-} 
+}
 
 .f1-driver-overall-wrap {
   display: flex;

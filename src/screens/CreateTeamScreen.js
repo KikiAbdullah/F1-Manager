@@ -729,71 +729,49 @@ function renderIdentityStep(body) {
   const identity = wizardState.team.identity;
 
   body.innerHTML = `
-    <div class="f1-create-header">
-
-      <div>
-        <div class="f1-create-subtitle">
-          CREATE TEAM
+    <div class="f1-wizard-layout">
+      <!-- Sisi Kiri: Form -->
+      <div class="f1-wizard-form">
+        <div class="f1-create-header">
+          <div class="f1-create-subtitle"><span class="f1-accent-line"></span> STEP 1</div>
+          <h2 class="f1-create-title">TEAM IDENTITY</h2>
+          <p class="f1-header-desc">Daftarkan tim balapmu ke dalam kompetisi. Pastikan semua detail sesuai dengan dokumen teknis FIA.</p>
         </div>
 
-        <h2 class="f1-create-title">
-          TEAM IDENTITY
-        </h2>
+        <div class="f1-create-form-grid">
+           <!-- (Isi input tetap sama seperti sebelumnya...) -->
+           <div class="f1-input-group">
+             <label class="f1-label">Team Name</label>
+             <input class="f1-input" id="inp-name" value="${
+               identity.name || ""
+             }" placeholder="e.g. Apex Racing Team" />
+           </div>
+           <div class="f1-input-group">
+             <label class="f1-label">Short Name</label>
+             <input class="f1-input f1-input-uppercase" id="inp-short" maxlength="3" value="${
+               identity.shortName || ""
+             }" placeholder="APX" />
+           </div>
+           <div class="f1-input-group">
+             <label class="f1-label">Country</label>
+             <input class="f1-input" id="inp-country" value="${
+               identity.base.country || ""
+             }" />
+           </div>
+           <div class="f1-input-group">
+             <label class="f1-label">City</label>
+             <input class="f1-input" id="inp-city" value="${
+               identity.base.city || ""
+             }" />
+           </div>
+        </div>
       </div>
 
-    </div>
-
-    <div class="f1-create-form-grid">
-
-      <div class="f1-input-group">
-        <label class="f1-label">
-          Team Name
-        </label>
-
-        <input
-          class="f1-input"
-          id="inp-name"
-          value="${identity.name}"
-        />
+      <!-- Sisi Kanan: Gambar dengan Gradasi -->
+      <div class="f1-wizard-visual">
+        <div class="f1-visual-overlay"></div>
+        <img src="https://image-service.zaonce.net/eyJidWNrZXQiOiJmcm9udGllci1jbXMiLCJrZXkiOiIyMDI0LTA1L2YxbTI0LWNhdC1iZWF1dHlzaG90Mi1jYXIyLXY3LnBuZyIsImVkaXRzIjp7InJlc2l6ZSI6eyJ3aWR0aCI6MTkyMH19fQ==" alt="F1 Car" />
       </div>
-
-      <div class="f1-input-group">
-        <label class="f1-label">
-          Short Name
-        </label>
-
-        <input
-          class="f1-input"
-          id="inp-short"
-          maxlength="3"
-          value="${identity.shortName}"
-        />
-      </div>
-
-      <div class="f1-input-group">
-        <label class="f1-label">
-          Country
-        </label>
-
-        <input
-          class="f1-input"
-          id="inp-country"
-          value="${identity.base.country}"
-        />
-      </div>
-
-      <div class="f1-input-group">
-        <label class="f1-label">
-          City
-        </label>
-
-        <input
-          class="f1-input"
-          id="inp-city"
-          value="${identity.base.city}"
-        />
-      </div>
-
     </div>
   `;
 }
@@ -810,33 +788,34 @@ function renderAmbitionStep(body) {
     Object.values(ambitionLevels)[0];
 
   body.innerHTML = `
-    <div class="f1-ambition-layout">
+    <div class="f1-step-panel">
 
-      <!-- LEFT -->
-      <div class="f1-ambition-sidebar">
+      <div class="f1-create-header">
+        <div class="f1-create-subtitle"><span class="f1-accent-line"></span> STEP 2</div>
+        <h2 class="f1-create-title">SPONSOR AWAL</h2>
+        <p class="f1-header-desc">Pilih profil sponsor awal yang menentukan kekuatan finansial dan ekspektasi publik.</p>
+      </div>
 
-        <div class="f1-ambition-sidebar-head">
-          <div class="f1-tier-section-title">Sponsor Awal</div>
-          <div class="f1-ambition-hint">
-            Pilih profil sponsor awal yang menentukan kekuatan finansial dan ekspektasi publik.
+      <div class="f1-ambition-layout">
+
+        <!-- LEFT -->
+        <div class="f1-ambition-sidebar">
+          <div class="f1-ambition-list" role="list">
+            ${Object.values(ambitionLevels)
+              .map((tier) => renderTierSelector(tier))
+              .join("")}
           </div>
+
         </div>
 
-        <div class="f1-ambition-list" role="list">
-          ${Object.values(ambitionLevels)
-            .map((tier) => renderTierSelector(tier))
-            .join("")}
+        <!-- RIGHT -->
+        <div class="f1-ambition-detail">
+
+          ${renderTierDetail(selectedTier)}
+
         </div>
 
       </div>
-
-      <!-- RIGHT -->
-      <div class="f1-ambition-detail">
-
-        ${renderTierDetail(selectedTier)}
-
-      </div>
-
     </div>
   `;
 }
@@ -980,15 +959,34 @@ function renderTierDetail(tier) {
 // ============================================================
 
 function renderDriverSelectionStep(body) {
+  const d = wizardState.team.lineup.driverIds;
+  const hasCar1 = Boolean(d[0]);
+  const hasCar2 = Boolean(d[1]);
+
   body.innerHTML = `
-    <div class="f1-ambition-sidebar-head">
-      <div class="f1-tier-section-title">Pilih Pembalap</div>
-      <div class="f1-ambition-hint">
-        Pilih dua pembalap untuk timmu. Perhatikan statistik mereka untuk performa terbaik.
+    <div class="f1-step-panel">
+      <div class="f1-step3-header">
+        <div class="f1-create-header">
+          <div class="f1-create-subtitle"><span class="f1-accent-line"></span> STEP 3</div>
+          <h2 class="f1-create-title">DRIVER LINEUP</h2>
+          <p class="f1-header-desc">Pilih dua pembalap untuk memulai karier. Klik kartu untuk memilih atau membatalkan.</p>
+        </div>
+
+        <div class="f1-car-indicators" aria-label="Selected cars">
+          <div class="f1-car-indicator ${hasCar1 ? "active" : ""}" title="Car 1">
+            <i class="ti ti-car"></i>
+            <span>CAR 1</span>
+          </div>
+          <div class="f1-car-indicator ${hasCar2 ? "active" : ""}" title="Car 2">
+            <i class="ti ti-car"></i>
+            <span>CAR 2</span>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="driver-select-grid">
-      ${wizardState.masterData.drivers.map(renderDriverCard).join("")}
+
+      <div class="driver-select-grid">
+        ${wizardState.masterData.drivers.map(renderDriverCard).join("")}
+      </div>
     </div>
   `;
 }
@@ -1049,6 +1047,8 @@ function renderDriverCard(driver) {
 function toggleDriver(id) {
   const body = document.getElementById("wizardBody");
   const prevScrollTop = body?.scrollTop ?? 0;
+  const prevGridScrollLeft = body?.querySelector(".driver-select-grid")
+    ?.scrollLeft;
 
   const drivers = wizardState.team.lineup.driverIds;
 
@@ -1067,6 +1067,12 @@ function toggleDriver(id) {
 
   // Preserve scroll position (renderCurrentStep replaces innerHTML)
   if (body) body.scrollTop = prevScrollTop;
+
+  // Also preserve horizontal scroll of the driver carousel
+  const grid = body?.querySelector(".driver-select-grid");
+  if (grid && typeof prevGridScrollLeft === "number") {
+    grid.scrollLeft = prevGridScrollLeft;
+  }
 }
 
 function calculateAge(dateOfBirth) {
