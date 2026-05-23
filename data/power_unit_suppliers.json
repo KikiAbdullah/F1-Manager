@@ -1,0 +1,95 @@
+{
+  "table": "power_unit_suppliers",
+  "description": "Junction table menghubungkan power_units dengan teams. FK: power_unit_id → power_units.id, team_id → teams.id. Relasi many-to-many karena satu PU bisa supply ke banyak tim.",
+  "season_year": 2026,
+  "data": [
+    {
+      "id": "pu_merc_mercedes",
+      "power_unit_id": "mercedes_2026",
+      "team_id": "mercedes",
+      "role": "works",
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "pu_merc_mclaren",
+      "power_unit_id": "mercedes_2026",
+      "team_id": "mclaren",
+      "role": "customer",
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "pu_merc_williams",
+      "power_unit_id": "mercedes_2026",
+      "team_id": "williams",
+      "role": "customer",
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "pu_merc_alpine",
+      "power_unit_id": "mercedes_2026",
+      "team_id": "alpine",
+      "role": "customer",
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "pu_ferrari_ferrari",
+      "power_unit_id": "ferrari_066_26",
+      "team_id": "ferrari",
+      "role": "works",
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "pu_ferrari_haas",
+      "power_unit_id": "ferrari_066_26",
+      "team_id": "haas",
+      "role": "customer",
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "pu_ferrari_cadillac",
+      "power_unit_id": "ferrari_066_26",
+      "team_id": "cadillac",
+      "role": "customer",
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "pu_rbpt_redbull",
+      "power_unit_id": "redbull_ford_rbpt26",
+      "team_id": "red_bull_racing",
+      "role": "works",
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "pu_rbpt_racing_bulls",
+      "power_unit_id": "redbull_ford_rbpt26",
+      "team_id": "racing_bulls",
+      "role": "customer",
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "pu_honda_aston",
+      "power_unit_id": "honda_ra626h",
+      "team_id": "aston_martin",
+      "role": "works",
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "pu_audi_audi",
+      "power_unit_id": "audi_e_power_1",
+      "team_id": "audi",
+      "role": "works",
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  ]
+}

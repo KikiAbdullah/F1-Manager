@@ -1,0 +1,1298 @@
+/* ============================================================
+   F1 MANAGER 2026 — Global Stylesheet
+   Grouped by screen for maintainability.
+   ============================================================ */
+
+/* ============================================================
+   TOKENS
+   ============================================================ */
+
+:root {
+  --bg-main: #d3d4d8;
+  --panel-bg: #1a1a20;
+  --panel-border: #383a45;
+  --text-main: #ffffff;
+  --text-dim: #8b8d98;
+  --accent-cyan: #00e5ff;
+  --accent-orange: #ff8700;
+  --accent-red: #e10600;
+  --accent-gold: #ffd700;
+  --font-main: "Titillium Web", Arial, sans-serif;
+  --font-digits: "Orbitron", "Titillium Web", Arial, sans-serif;
+  --font-secondary: "Exo 2", "Titillium Web", Arial, sans-serif;
+  --transition-fast: 0.18s ease;
+  --transition-med: 0.3s ease;
+}
+
+/* ============================================================
+   RESET
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-main);
+  background: var(--bg-main);
+  color: var(--text-main);
+  overflow: hidden;
+}
+
+/* ============================================================
+   GLOBAL UI
+   ============================================================ */
+
+/* Screen system */
+.screen {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.screen.hidden {
+  display: none !important;
+}
+
+.screen.active {
+  display: flex;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--panel-border);
+  border-radius: 4px;
+}
+
+/* Loader */
+.f1-loader {
+  width: 60px;
+  height: 60px;
+  border: 3px solid var(--panel-border);
+  border-top-color: var(--accent-red);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Panel */
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+.panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), transparent);
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
+/* Toast (used by multiple screens) */
+.f1-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 99999;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.f1-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.f1-toast-content {
+  background: #111827;
+  color: white;
+  border: 1px solid #2a2a35;
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* ============================================================
+   GLOBAL UTILITIES (used by Main Menu markup)
+   Keep minimal; these are NOT a full utility framework.
+   ============================================================ */
+
+.hidden {
+  display: none !important;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.bottom-6 {
+  bottom: 1.5rem;
+}
+
+.right-8 {
+  right: 2rem;
+}
+
+.opacity-50 {
+  opacity: 0.5;
+}
+
+.tracking-wider {
+  letter-spacing: 0.08em;
+}
+
+.tracking-widest {
+  letter-spacing: 0.16em;
+}
+
+.text-xs {
+  font-size: 12px;
+}
+
+.text-f1-dim {
+  color: var(--text-dim);
+}
+
+.font-orbitron {
+  font-family: var(--font-digits);
+}
+
+.flex {
+  display: flex;
+}
+
+.items-start {
+  align-items: flex-start;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* ============================================================
+   SCREEN: MAIN MENU (MainMenuScreen.js)
+   ============================================================ */
+
+.main-menu-bg {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.85) 0%,
+      rgba(0, 0, 0, 0.5) 55%,
+      transparent 100%
+    ),
+    url("https://image-service.zaonce.net/eyJidWNrZXQiOiJmcm9udGllci1jbXMiLCJrZXkiOiIyMDI0LTA1L2YxbTI0LWNhdC1iZWF1dHlzaG90Mi1jYXIyLXY3LnBuZyIsImVkaXRzIjp7InJlc2l6ZSI6eyJ3aWR0aCI6MTkyMH19fQ==")
+      center/cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding-left: 8%;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Subtle animated sparks overlay */
+.menu-sparks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image: radial-gradient(
+      circle at 20% 30%,
+      rgba(0, 229, 255, 0.35) 0 2px,
+      transparent 3px
+    ),
+    radial-gradient(
+      circle at 70% 55%,
+      rgba(255, 135, 0, 0.32) 0 1px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 45% 80%,
+      rgba(225, 6, 0, 0.28) 0 2px,
+      transparent 3px
+    );
+  background-size: 260px 260px;
+  animation: menuSparksDrift 6s linear infinite;
+}
+
+@keyframes menuSparksDrift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-120px, 60px, 0);
+  }
+}
+
+.game-logo h1 {
+  font-family: var(--font-main);
+  font-size: clamp(3rem, 6vw, 5.5rem);
+  font-weight: 900;
+  font-style: italic;
+  color: #fff;
+  line-height: 0.9;
+  text-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+}
+
+.game-logo h1 .accent {
+  color: var(--accent-red);
+}
+
+.game-logo .sub-title {
+  font-family: var(--font-digits);
+  font-size: 1rem;
+  letter-spacing: 8px;
+  color: var(--text-dim);
+  margin-top: 12px;
+  text-transform: uppercase;
+}
+
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 40px;
+}
+
+.menu-item {
+  background: rgba(26, 30, 40, 0.85);
+  border: none;
+  border-left: 4px solid transparent;
+  color: var(--text-main);
+  padding: 14px 36px;
+  font-family: var(--font-main);
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all var(--transition-med);
+  text-align: left;
+  width: 340px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  clip-path: polygon(0 0, 96% 0, 100% 100%, 4% 100%);
+  letter-spacing: 1px;
+  backdrop-filter: blur(4px);
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+.menu-item i {
+  font-size: 1.3rem;
+  opacity: 0.7;
+  transition: opacity var(--transition-fast);
+}
+
+.menu-item:hover {
+  background: var(--accent-red);
+  border-left: 4px solid #fff;
+  transform: translateX(18px);
+}
+
+.menu-item:hover i {
+  opacity: 1;
+}
+
+.menu-item:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Main Menu responsive tweaks */
+@media (max-width: 768px) {
+  .game-logo h1 {
+    font-size: 2.6rem;
+  }
+  .menu-item {
+    width: 280px;
+  }
+}
+
+/* Main Menu settings modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: linear-gradient(90deg, #11131a, #1e2030);
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.modal-title {
+  font-family: var(--font-digits);
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+}
+
+.modal-close-btn {
+  background: transparent;
+  border: 0;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 6px;
+}
+
+.modal-close-btn:hover {
+  color: var(--text-main);
+}
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex-grow: 1;
+  color: var(--text-main);
+}
+
+/* ============================================================
+   SCREEN: CREATE TEAM (CreateTeamScreen.js)
+   Wizard styles grouped by step.
+   ============================================================ */
+
+/* Wizard shell */
+.wizard-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 100;
+  overflow-y: auto;
+}
+
+.wizard-box {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  width: 100%;
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.wizard-header {
+  background: linear-gradient(90deg, #11131a, #1e2030);
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--panel-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wizard-title {
+  font-family: var(--font-digits);
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+}
+
+.wizard-steps {
+  display: flex;
+  gap: 6px;
+}
+
+.step-dot {
+  width: 28px;
+  height: 6px;
+  background: #333;
+  border-radius: 3px;
+  transition: background var(--transition-med);
+}
+
+.step-dot.active {
+  background: var(--accent-cyan);
+}
+
+.step-dot.done {
+  background: var(--accent-orange);
+}
+
+.wizard-body {
+  padding: 28px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+}
+
+/* Shared form elements (used in multiple steps) */
+.f1-label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.f1-input {
+  width: 100%;
+  background: #11131a;
+  border: 1px solid var(--panel-border);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-family: var(--font-main);
+  font-size: 14px;
+  transition: border-color var(--transition-fast);
+  outline: none;
+}
+
+.f1-input:focus {
+  border-color: var(--accent-cyan);
+}
+
+.f1-btn {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 4px;
+  font-family: var(--font-main);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 1px;
+}
+
+.f1-btn-primary {
+  background: var(--accent-red);
+  color: #fff;
+}
+
+.f1-btn-primary:hover {
+  background: #c10400;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(225, 6, 0, 0.4);
+}
+
+.f1-btn-secondary {
+  background: #2a2a35;
+  color: #fff;
+  border: 1px solid var(--panel-border);
+}
+
+.f1-btn-secondary:hover {
+  background: #333340;
+  border-color: #555;
+}
+
+.f1-btn-cyan {
+  background: transparent;
+  color: var(--accent-cyan);
+  border: 1px solid var(--accent-cyan);
+}
+
+.f1-btn-cyan:hover {
+  background: var(--accent-cyan);
+  color: #000;
+}
+
+/* ============================================================
+   WIZARD STEP 1: TEAM IDENTITY
+   ============================================================ */
+
+.f1-create-header {
+  margin-bottom: 28px;
+}
+
+.f1-create-subtitle {
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+}
+
+.f1-create-title {
+  margin-top: 4px;
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: white;
+}
+
+.f1-create-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 32px;
+}
+
+.f1-input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================================
+   WIZARD STEP 2: SPONSOR AWAL (Ambition)
+   ============================================================ */
+
+.f1-tier-section-title {
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+}
+
+.f1-ambition-hint {
+  margin-top: -6px;
+  margin-bottom: 14px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.f1-ambition-layout {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 22px;
+  min-height: 0;
+}
+
+.f1-ambition-sidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.f1-ambition-sidebar-head {
+  padding: 14px 14px 10px;
+  border-radius: 14px;
+  background: linear-gradient(
+    180deg,
+    rgba(17, 19, 26, 0.9),
+    rgba(17, 19, 26, 0.4)
+  );
+}
+
+.f1-ambition-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 8px;
+  overflow-y: auto;
+  max-height: 62vh;
+}
+
+.f1-ambition-option {
+  background: linear-gradient(
+    90deg,
+    rgba(24, 28, 40, 0.92),
+    rgba(16, 18, 26, 0.72)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 12px;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+  transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.f1-ambition-option:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.f1-ambition-option.selected {
+  border-color: var(--accent-cyan);
+  background: linear-gradient(
+    90deg,
+    rgba(0, 229, 255, 0.14),
+    rgba(16, 18, 26, 0.76)
+  );
+  box-shadow: 0 0 0 1px rgba(0, 229, 255, 0.12), 0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+.f1-ambition-option-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.f1-ambition-option-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: white;
+}
+
+.f1-ambition-option-region {
+  margin-top: 4px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.f1-ambition-check {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: white;
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.f1-ambition-option-budget {
+  margin-top: 8px;
+  font-size: 18px;
+  font-weight: 900;
+  font-family: var(--font-digits);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.f1-ambition-option-sub {
+  margin-top: 10px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.58);
+}
+
+/* Step 2: right-side detail */
+.f1-ambition-detail-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  background: linear-gradient(
+    180deg,
+    rgba(18, 18, 26, 0.98),
+    rgba(8, 8, 14, 0.98)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  /* Fit inside wizard-box (80vh). If content is tall, scroll this area. */
+  max-height: 62vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.f1-ambition-detail-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at top right,
+    rgba(255, 255, 255, 0.08),
+    transparent 45%
+  );
+}
+
+.f1-ambition-detail-content {
+  position: relative;
+  z-index: 2;
+  padding: 28px 28px 30px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+}
+
+.f1-ambition-badge {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.f1-ambition-title {
+  margin-top: 18px;
+  font-size: 42px;
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+  color: white;
+}
+
+.f1-ambition-description {
+  margin-top: 18px;
+  max-width: 720px;
+  font-size: 15px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.f1-ambition-lore {
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 13px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.f1-ambition-section {
+  margin-top: 22px;
+}
+
+.f1-ambition-section-title {
+  margin-bottom: 10px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.f1-ambition-detail-table {
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+.f1-detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.f1-detail-row:first-child {
+  border-top: 0;
+}
+
+.f1-detail-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.f1-detail-label i {
+  opacity: 0.75;
+}
+
+.f1-detail-value {
+  font-family: var(--font-digits);
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* Container untuk membagi 2 kolom bersampingan */
+.f1-detail-quality-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px; /* Jarak antara kolom Details dan Quality */
+  margin-top: 22px;
+}
+
+/* Hilangkan margin-top bawaan agar sejajar rata atas */
+.f1-detail-quality-wrapper .f1-ambition-section {
+  margin-top: 0;
+}
+
+/* Pastikan kotak Quality dibuat 2 kolom (2x2)
+  agar muat di ruang yang sekarang lebih sempit
+*/
+.f1-ambition-quality-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* Responsif: Jika layar kecil, kembalikan letaknya atas-bawah */
+@media (max-width: 992px) {
+  .f1-detail-quality-wrapper {
+    grid-template-columns: 1fr; /* Jadi satu kolom menurun */
+  }
+
+  .f1-detail-quality-wrapper .f1-ambition-section {
+    margin-top: 22px;
+  }
+
+  .f1-detail-quality-wrapper .f1-ambition-section:first-child {
+    margin-top: 0;
+  }
+}
+
+.f1-ambition-detail-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at top right,
+    rgba(255, 255, 255, 0.08),
+    transparent 45%
+  );
+}
+
+.f1-ambition-detail-content {
+  position: relative;
+  z-index: 2;
+  padding: 28px 28px 30px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+}
+
+/* Step 2: right-side detail split into 2 columns */
+.f1-ambition-detail-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 22px;
+  align-items: start;
+}
+
+.f1-ambition-detail-main {
+  min-width: 0;
+}
+
+.f1-ambition-detail-side {
+  min-width: 0;
+}
+
+.f1-ambition-badge {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.f1-ambition-title {
+  margin-top: 18px;
+  font-size: 42px;
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+  color: white;
+}
+
+.f1-ambition-description {
+  margin-top: 18px;
+  max-width: 720px;
+  font-size: 15px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.f1-ambition-lore {
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 13px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.f1-ambition-section {
+  margin-top: 22px;
+}
+
+.f1-ambition-section-title {
+  margin-bottom: 10px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.f1-ambition-detail-table {
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+.f1-detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.f1-detail-row:first-child {
+  border-top: 0;
+}
+
+.f1-detail-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.f1-detail-label i {
+  opacity: 0.75;
+}
+
+.f1-detail-value {
+  font-family: var(--font-digits);
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.f1-quality-box {
+  padding: 18px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  text-align: center;
+}
+
+.f1-quality-box span {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.f1-quality-box strong {
+  font-size: 32px;
+  font-weight: 900;
+  color: white;
+}
+
+/* Sponsor list: no border/card; use a subtle background */
+.f1-sponsor-list {
+  border-radius: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.f1-sponsor-chip {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.02)
+  );
+  border: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+/* Container untuk membagi 2 kolom bersampingan */
+.f1-detail-quality-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px; /* Jarak antara kolom Details dan Quality */
+  margin-top: 22px;
+}
+
+/* Hilangkan margin-top bawaan agar sejajar rata atas */
+.f1-detail-quality-wrapper .f1-ambition-section {
+  margin-top: 0;
+}
+
+/* Pastikan kotak Quality dibuat 2 kolom (2x2)
+  agar muat di ruang yang sekarang lebih sempit
+*/
+.f1-ambition-quality-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* Responsif: Jika layar kecil, kembalikan letaknya atas-bawah */
+@media (max-width: 992px) {
+  .f1-detail-quality-wrapper {
+    grid-template-columns: 1fr; /* Jadi satu kolom menurun */
+  }
+
+  .f1-detail-quality-wrapper .f1-ambition-section {
+    margin-top: 22px;
+  }
+
+  .f1-detail-quality-wrapper .f1-ambition-section:first-child {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 1100px) {
+  .f1-ambition-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .f1-ambition-title {
+    font-size: 30px;
+  }
+}
+
+/* ============================================================
+   WIZARD STEP 3: DRIVER SELECTION
+   ============================================================ */
+
+.driver-select-grid {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 16px; /* Jarak antar card disesuaikan */
+  padding-bottom: 20px;
+}
+
+.f1-driver-card {
+  position: relative;
+  width: 260px; /* Ukuran card disesuaikan dengan proporsi di gambar */
+  height: 380px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(180deg, #1c1d26 0%, #111218 100%);
+  cursor: pointer;
+  overflow: hidden;
+  color: #ffffff;
+  transition: transform 0.25s ease, border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.f1-driver-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* State ketika card terpilih */
+.f1-driver-card.selected {
+  border: 2px solid #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Gradasi hitam di bawah gambar driver agar nama terbaca jelas */
+.f1-driver-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60%;
+  background: linear-gradient(
+    to top,
+    rgba(8, 8, 15, 1) 0%,
+    rgba(8, 8, 15, 0) 100%
+  );
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Gambar Driver */
+.f1-driver-image {
+  position: absolute;
+  top: 0;
+  left: 66%;
+  transform: translateX(-50%);
+  height: 300%;
+  object-fit: cover;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Ikon Checklist Top Left */
+.f1-driver-selected-icon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 28px;
+  height: 24px;
+  background-color: #ffffff;
+  color: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  border-bottom-right-radius: 6px;
+  z-index: 4;
+}
+
+/* Info Harga dan Umur (Kanan Atas) */
+.f1-driver-top-right {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  text-align: left;
+  z-index: 4;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* Class pembantu untuk teks abu-abu */
+.dim-text {
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 500;
+}
+
+/* Stats Driver (Kanan Tengah) */
+.f1-driver-stats-right {
+  position: absolute;
+  top: 35%;
+  left: 15px;
+  text-align: left;
+  z-index: 4;
+} 
+
+.f1-driver-overall-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.f1-driver-star {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 14px;
+}
+
+.f1-driver-overall {
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.f1-driver-substats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.substat {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Nama Driver (Bawah Kiri) */
+.f1-driver-bottom {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  z-index: 4;
+  text-transform: uppercase;
+}
+
+.f1-driver-first-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 2px;
+  letter-spacing: 1px;
+}
+
+.f1-driver-last-name {
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 1px;
+}

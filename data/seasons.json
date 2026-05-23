@@ -1,0 +1,307 @@
+{
+  "table": "seasons",
+  "description": "Master data musim F1. Standalone entity. Direferensi oleh schedules.season_id. Berisi metadata musim, kalender lengkap, regulasi, ekonomi, dan parameter simulasi engine.",
+  "season_year": 2026,
+  "data": [
+    {
+      "id": "2026",
+      "year": 2026,
+      "title": "FIA Formula One World Championship 2026",
+      "status": "in_progress",
+      "regulation_era": "2026_new_regulations",
+      "engine_version": "2.0_simulation_core",
+
+      "calendar": {
+        "total_rounds": 21,
+        "total_sprint_rounds": 4,
+        "races": [
+          {
+            "round": 1,
+            "circuit_id": "albert_park",
+            "country": "Australia",
+            "city": "Melbourne",
+            "date": "2026-03-15",
+            "is_sprint_weekend": false
+          },
+          {
+            "round": 2,
+            "circuit_id": "shanghai",
+            "country": "China",
+            "city": "Shanghai",
+            "date": "2026-03-29",
+            "is_sprint_weekend": true
+          },
+          {
+            "round": 3,
+            "circuit_id": "suzuka",
+            "country": "Japan",
+            "city": "Suzuka",
+            "date": "2026-04-05",
+            "is_sprint_weekend": false
+          },
+          {
+            "round": 4,
+            "circuit_id": "bahrain",
+            "country": "Bahrain",
+            "city": "Sakhir",
+            "date": "2026-04-12",
+            "is_sprint_weekend": false
+          },
+          {
+            "round": 5,
+            "circuit_id": "jeddah",
+            "country": "Saudi Arabia",
+            "city": "Jeddah",
+            "date": "2026-04-19",
+            "is_sprint_weekend": false
+          },
+          {
+            "round": 6,
+            "circuit_id": "miami",
+            "country": "United States",
+            "city": "Miami",
+            "date": "2026-05-03",
+            "is_sprint_weekend": true
+          },
+          {
+            "round": 7,
+            "circuit_id": "monaco",
+            "country": "Monaco",
+            "city": "Monte Carlo",
+            "date": "2026-05-23",
+            "is_sprint_weekend": false
+          },
+          {
+            "round": 8,
+            "circuit_id": "madrid",
+            "country": "Spain",
+            "city": "Madrid",
+            "date": "2026-06-07",
+            "is_sprint_weekend": false
+          },
+          {
+            "round": 9,
+            "circuit_id": "baku",
+            "country": "Azerbaijan",
+            "city": "Baku",
+            "date": "2026-06-14",
+            "is_sprint_weekend": false
+          },
+          {
+            "round": 10,
+            "circuit_id": "red_bull_ring",
+            "country": "Austria",
+            "city": "Spielberg",
+            "date": "2026-06-28",
+            "is_sprint_weekend": true
+          },
+          {
+            "round": 11,
+            "circuit_id": "silverstone",
+            "country": "United Kingdom",
+            "city": "Silverstone",
+            "date": "2026-07-05",
+            "is_sprint_weekend": false
+          },
+          {
+            "round": 12,
+            "circuit_id": "spa",
+            "country": "Belgium",
+            "city": "Spa",
+            "date": "2026-07-26",
+            "is_sprint_weekend": false
+          },
+          {
+            "round": 13,
+            "circuit_id": "hungaroring",
+            "country": "Hungary",
+            "city": "Budapest",
+            "date": "2026-08-30",
+            "is_sprint_weekend": false
+          },
+          {
+            "round": 14,
+            "circuit_id": "zandvoort",
+            "country": "Netherlands",
+            "city": "Zandvoort",
+            "date": "2026-09-06",
+            "is_sprint_weekend": false
+          },
+          {
+            "round": 15,
+            "circuit_id": "monza",
+            "country": "Italy",
+            "city": "Monza",
+            "date": "2026-09-13",
+            "is_sprint_weekend": false
+          },
+          {
+            "round": 16,
+            "circuit_id": "marina_bay",
+            "country": "Singapore",
+            "city": "Singapore",
+            "date": "2026-10-04",
+            "is_sprint_weekend": false
+          },
+          {
+            "round": 17,
+            "circuit_id": "cota",
+            "country": "United States",
+            "city": "Austin",
+            "date": "2026-10-18",
+            "is_sprint_weekend": true
+          },
+          {
+            "round": 18,
+            "circuit_id": "mexico_city",
+            "country": "Mexico",
+            "city": "Mexico City",
+            "date": "2026-10-25",
+            "is_sprint_weekend": false
+          },
+          {
+            "round": 19,
+            "circuit_id": "interlagos",
+            "country": "Brazil",
+            "city": "São Paulo",
+            "date": "2026-11-01",
+            "is_sprint_weekend": true
+          },
+          {
+            "round": 20,
+            "circuit_id": "las_vegas",
+            "country": "United States",
+            "city": "Las Vegas",
+            "date": "2026-11-15",
+            "is_sprint_weekend": false
+          },
+          {
+            "round": 21,
+            "circuit_id": "lusail",
+            "country": "Qatar",
+            "city": "Lusail",
+            "date": "2026-11-29",
+            "is_sprint_weekend": false
+          }
+        ],
+        "notes": "Full calendar for 21 rounds"
+      },
+
+      "preseason_testing": {
+        "start_date": "2026-02-11",
+        "end_date": "2026-02-13",
+        "location": "Bahrain",
+        "circuit_id": "bahrain",
+        "days": 3
+      },
+
+      "season_window": {
+        "first_race_date": "2026-03-15",
+        "last_race_date": "2026-12-06",
+        "summer_break_start": "2026-07-27",
+        "summer_break_end": "2026-08-24"
+      },
+
+      "regulations": {
+        "engine": {
+          "type": "1.6L V6 Turbo Hybrid",
+          "mgu_k_power_boost": 1.15,
+          "fuel_sustainability": 0.3
+        },
+        "aerodynamics": {
+          "dirty_air_reduction": 0.12,
+          "ground_effect_sensitivity": 1.08,
+          "drs_efficiency_cap": 0.95
+        },
+        "weight": {
+          "minimum_kg": 768,
+          "driver_included": true
+        },
+        "tyres": {
+          "supplier": "Pirelli",
+          "degradation_factor": 1.0,
+          "compound_variability": 0.85
+        }
+      },
+
+      "budget_cap": {
+        "amount_usd": 135000000,
+        "currency": "USD",
+        "excludes": [
+          "driver_salaries",
+          "top_3_personnel",
+          "marketing",
+          "legacy_debt"
+        ]
+      },
+
+      "financial_model": {
+        "race_prize_pool_total": 1200000000,
+        "constructor_bonus_pool": 600000000,
+        "sponsor_income_multiplier": 1.25,
+        "broadcast_revenue_share": true
+      },
+
+      "points_system": {
+        "race": {
+          "P1": 25,
+          "P2": 18,
+          "P3": 15,
+          "P4": 12,
+          "P5": 10,
+          "P6": 8,
+          "P7": 6,
+          "P8": 4,
+          "P9": 2,
+          "P10": 1,
+          "fastest_lap_bonus": 1
+        },
+        "sprint": {
+          "P1": 8,
+          "P2": 7,
+          "P3": 6,
+          "P4": 5,
+          "P5": 4,
+          "P6": 3,
+          "P7": 2,
+          "P8": 1
+        },
+        "tie_breaker": ["most_wins", "most_second_places", "most_podiums"]
+      },
+
+      "championship_structure": {
+        "driver_championship": true,
+        "constructor_championship": true,
+        "sprint_championship": false,
+        "scoring_reset": false
+      },
+
+      "simulation_config": {
+        "ai_difficulty_multiplier": 1.0,
+        "tyre_degradation_scale": 1.0,
+        "crash_probability": 0.02,
+        "weather_variability": 0.35,
+        "safety_car_probability": 0.18
+      },
+
+      "weather_system": {
+        "wet_race_probability": 0.22,
+        "temperature_range_celsius": {
+          "min": 18,
+          "max": 38
+        },
+        "track_evolution_factor": 1.15
+      },
+
+      "engine_flags": {
+        "enable_dynamic_upgrades": true,
+        "enable_real_time_ai_strategy": true,
+        "enable_financial_simulation": true,
+        "enable_regulation_shifts": false
+      },
+
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  ]
+}

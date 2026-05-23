@@ -1,0 +1,447 @@
+{
+  "table": "team_chiefs",
+  "description": "Master data Team Principal F1 musim 2026. FK: team_id → teams.id. Stats dan personality untuk simulasi game engine.",
+  "season_year": 2026,
+  "data": [
+    {
+      "id": "toto_wolff",
+      "team_id": "mercedes",
+      "first_name": "Toto",
+      "last_name": "Wolff",
+      "full_name": "Toto Wolff",
+      "nationality": "Austria",
+      "role": "Team Principal & CEO",
+      "is_active": true,
+      "price_idr": 1440000000000,
+      "stats": {
+        "leadership": 99,
+        "strategy": 94,
+        "technical_understanding": 88,
+        "staff_management": 99,
+        "driver_management": 96,
+        "media_handling": 92,
+        "political_influence": 100,
+        "development_vision": 95,
+        "adaptability": 90,
+        "risk_taking": 71,
+        "sponsor_power": 96,
+        "pressure_management": 97
+      },
+      "personality": {
+        "aggression": 64,
+        "professionalism": 99,
+        "loyalty": 89,
+        "emotional_control": 94
+      },
+      "ai_behavior": {
+        "strategy_style": "calculated",
+        "upgrade_focus": "long_term",
+        "driver_priority": "balanced",
+        "contract_style": "elite_talent"
+      },
+      "career_rating": 99,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "fred_vasseur",
+      "team_id": "ferrari",
+      "first_name": "Fred",
+      "last_name": "Vasseur",
+      "full_name": "Fred Vasseur",
+      "nationality": "France",
+      "role": "Team Principal",
+      "is_active": true,
+      "price_idr": 920000000000,
+      "stats": {
+        "leadership": 91,
+        "strategy": 87,
+        "technical_understanding": 86,
+        "staff_management": 90,
+        "driver_management": 95,
+        "media_handling": 82,
+        "political_influence": 84,
+        "development_vision": 91,
+        "adaptability": 88,
+        "risk_taking": 73,
+        "sponsor_power": 85,
+        "pressure_management": 80
+      },
+      "personality": {
+        "aggression": 57,
+        "professionalism": 94,
+        "loyalty": 91,
+        "emotional_control": 87
+      },
+      "ai_behavior": {
+        "strategy_style": "adaptive",
+        "upgrade_focus": "balanced",
+        "driver_priority": "star_driver",
+        "contract_style": "young_talent"
+      },
+      "career_rating": 91,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "andrea_stella",
+      "team_id": "mclaren",
+      "first_name": "Andrea",
+      "last_name": "Stella",
+      "full_name": "Andrea Stella",
+      "nationality": "Italy",
+      "role": "Team Principal",
+      "is_active": true,
+      "price_idr": 1100000000000,
+      "stats": {
+        "leadership": 95,
+        "strategy": 96,
+        "technical_understanding": 95,
+        "staff_management": 92,
+        "driver_management": 93,
+        "media_handling": 79,
+        "political_influence": 80,
+        "development_vision": 97,
+        "adaptability": 96,
+        "risk_taking": 69,
+        "sponsor_power": 82,
+        "pressure_management": 94
+      },
+      "personality": {
+        "aggression": 42,
+        "professionalism": 98,
+        "loyalty": 95,
+        "emotional_control": 96
+      },
+      "ai_behavior": {
+        "strategy_style": "precision",
+        "upgrade_focus": "aerodynamics",
+        "driver_priority": "equal",
+        "contract_style": "stability"
+      },
+      "career_rating": 96,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "laurent_mekies",
+      "team_id": "red_bull_racing",
+      "first_name": "Laurent",
+      "last_name": "Mekies",
+      "full_name": "Laurent Mekies",
+      "nationality": "France",
+      "role": "Team Principal",
+      "is_active": true,
+      "price_idr": 680000000000,
+      "stats": {
+        "leadership": 86,
+        "strategy": 88,
+        "technical_understanding": 91,
+        "staff_management": 83,
+        "driver_management": 82,
+        "media_handling": 74,
+        "political_influence": 76,
+        "development_vision": 90,
+        "adaptability": 89,
+        "risk_taking": 84,
+        "sponsor_power": 70,
+        "pressure_management": 81
+      },
+      "personality": {
+        "aggression": 71,
+        "professionalism": 89,
+        "loyalty": 85,
+        "emotional_control": 78
+      },
+      "ai_behavior": {
+        "strategy_style": "aggressive",
+        "upgrade_focus": "performance",
+        "driver_priority": "lead_driver",
+        "contract_style": "performance_based"
+      },
+      "career_rating": 87,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "andy_cowell",
+      "team_id": "aston_martin",
+      "first_name": "Andy",
+      "last_name": "Cowell",
+      "full_name": "Andy Cowell",
+      "nationality": "United Kingdom",
+      "role": "Team Principal & CEO",
+      "is_active": true,
+      "price_idr": 880000000000,
+      "stats": {
+        "leadership": 87,
+        "strategy": 81,
+        "technical_understanding": 99,
+        "staff_management": 85,
+        "driver_management": 76,
+        "media_handling": 73,
+        "political_influence": 79,
+        "development_vision": 95,
+        "adaptability": 88,
+        "risk_taking": 62,
+        "sponsor_power": 77,
+        "pressure_management": 89
+      },
+      "personality": {
+        "aggression": 34,
+        "professionalism": 99,
+        "loyalty": 92,
+        "emotional_control": 95
+      },
+      "ai_behavior": {
+        "strategy_style": "engineering_first",
+        "upgrade_focus": "power_unit",
+        "driver_priority": "equal",
+        "contract_style": "technical_synergy"
+      },
+      "career_rating": 90,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "flavio_briatore",
+      "team_id": "alpine",
+      "first_name": "Flavio",
+      "last_name": "Briatore",
+      "full_name": "Flavio Briatore",
+      "nationality": "Italy",
+      "role": "Executive Advisor",
+      "is_active": true,
+      "price_idr": 760000000000,
+      "stats": {
+        "leadership": 90,
+        "strategy": 79,
+        "technical_understanding": 61,
+        "staff_management": 94,
+        "driver_management": 96,
+        "media_handling": 91,
+        "political_influence": 97,
+        "development_vision": 82,
+        "adaptability": 78,
+        "risk_taking": 95,
+        "sponsor_power": 93,
+        "pressure_management": 88
+      },
+      "personality": {
+        "aggression": 92,
+        "professionalism": 72,
+        "loyalty": 58,
+        "emotional_control": 66
+      },
+      "ai_behavior": {
+        "strategy_style": "opportunistic",
+        "upgrade_focus": "short_term",
+        "driver_priority": "number_one_driver",
+        "contract_style": "star_power"
+      },
+      "career_rating": 89,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "ayao_komatsu",
+      "team_id": "haas",
+      "first_name": "Ayao",
+      "last_name": "Komatsu",
+      "full_name": "Ayao Komatsu",
+      "nationality": "Japan",
+      "role": "Team Principal",
+      "is_active": true,
+      "price_idr": 540000000000,
+      "stats": {
+        "leadership": 80,
+        "strategy": 83,
+        "technical_understanding": 92,
+        "staff_management": 78,
+        "driver_management": 74,
+        "media_handling": 70,
+        "political_influence": 58,
+        "development_vision": 84,
+        "adaptability": 88,
+        "risk_taking": 65,
+        "sponsor_power": 51,
+        "pressure_management": 82
+      },
+      "personality": {
+        "aggression": 33,
+        "professionalism": 98,
+        "loyalty": 96,
+        "emotional_control": 94
+      },
+      "ai_behavior": {
+        "strategy_style": "technical",
+        "upgrade_focus": "efficiency",
+        "driver_priority": "balanced",
+        "contract_style": "value_based"
+      },
+      "career_rating": 82,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "alan_permane",
+      "team_id": "racing_bulls",
+      "first_name": "Alan",
+      "last_name": "Permane",
+      "full_name": "Alan Permane",
+      "nationality": "United Kingdom",
+      "role": "Team Principal",
+      "is_active": true,
+      "price_idr": 520000000000,
+      "stats": {
+        "leadership": 78,
+        "strategy": 86,
+        "technical_understanding": 89,
+        "staff_management": 80,
+        "driver_management": 75,
+        "media_handling": 67,
+        "political_influence": 55,
+        "development_vision": 81,
+        "adaptability": 84,
+        "risk_taking": 74,
+        "sponsor_power": 49,
+        "pressure_management": 85
+      },
+      "personality": {
+        "aggression": 48,
+        "professionalism": 96,
+        "loyalty": 93,
+        "emotional_control": 92
+      },
+      "ai_behavior": {
+        "strategy_style": "conservative",
+        "upgrade_focus": "reliability",
+        "driver_priority": "development",
+        "contract_style": "junior_program"
+      },
+      "career_rating": 81,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "james_vowles",
+      "team_id": "williams",
+      "first_name": "James",
+      "last_name": "Vowles",
+      "full_name": "James Vowles",
+      "nationality": "United Kingdom",
+      "role": "Team Principal",
+      "is_active": true,
+      "price_idr": 900000000000,
+      "stats": {
+        "leadership": 89,
+        "strategy": 92,
+        "technical_understanding": 87,
+        "staff_management": 90,
+        "driver_management": 85,
+        "media_handling": 88,
+        "political_influence": 74,
+        "development_vision": 93,
+        "adaptability": 92,
+        "risk_taking": 68,
+        "sponsor_power": 71,
+        "pressure_management": 90
+      },
+      "personality": {
+        "aggression": 39,
+        "professionalism": 97,
+        "loyalty": 94,
+        "emotional_control": 95
+      },
+      "ai_behavior": {
+        "strategy_style": "analytical",
+        "upgrade_focus": "infrastructure",
+        "driver_priority": "development",
+        "contract_style": "academy_focus"
+      },
+      "career_rating": 90,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "jonathan_wheatley",
+      "team_id": "audi",
+      "first_name": "Jonathan",
+      "last_name": "Wheatley",
+      "full_name": "Jonathan Wheatley",
+      "nationality": "United Kingdom",
+      "role": "Team Principal",
+      "is_active": true,
+      "price_idr": 650000000000,
+      "stats": {
+        "leadership": 84,
+        "strategy": 90,
+        "technical_understanding": 82,
+        "staff_management": 88,
+        "driver_management": 81,
+        "media_handling": 76,
+        "political_influence": 72,
+        "development_vision": 85,
+        "adaptability": 91,
+        "risk_taking": 77,
+        "sponsor_power": 69,
+        "pressure_management": 86
+      },
+      "personality": {
+        "aggression": 61,
+        "professionalism": 93,
+        "loyalty": 89,
+        "emotional_control": 90
+      },
+      "ai_behavior": {
+        "strategy_style": "reactive",
+        "upgrade_focus": "operational_efficiency",
+        "driver_priority": "equal",
+        "contract_style": "stable_growth"
+      },
+      "career_rating": 85,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "graeme_lowdon",
+      "team_id": "cadillac",
+      "first_name": "Graeme",
+      "last_name": "Lowdon",
+      "full_name": "Graeme Lowdon",
+      "nationality": "United Kingdom",
+      "role": "Team Principal",
+      "is_active": true,
+      "price_idr": 480000000000,
+      "stats": {
+        "leadership": 77,
+        "strategy": 71,
+        "technical_understanding": 69,
+        "staff_management": 82,
+        "driver_management": 73,
+        "media_handling": 81,
+        "political_influence": 61,
+        "development_vision": 86,
+        "adaptability": 94,
+        "risk_taking": 80,
+        "sponsor_power": 74,
+        "pressure_management": 79
+      },
+      "personality": {
+        "aggression": 55,
+        "professionalism": 88,
+        "loyalty": 87,
+        "emotional_control": 83
+      },
+      "ai_behavior": {
+        "strategy_style": "startup_growth",
+        "upgrade_focus": "rapid_expansion",
+        "driver_priority": "brand_value",
+        "contract_style": "american_market"
+      },
+      "career_rating": 78,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  ]
+}

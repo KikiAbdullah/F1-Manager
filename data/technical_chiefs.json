@@ -1,0 +1,491 @@
+{
+  "table": "technical_chiefs",
+  "description": "Master data Technical Director F1 musim 2026. FK: team_id → teams.id. Stats teknikal dan personality untuk simulasi game engine.",
+  "season_year": 2026,
+  "data": [
+    {
+      "id": "james_allison",
+      "team_id": "mercedes",
+      "first_name": "James",
+      "last_name": "Allison",
+      "full_name": "James Allison",
+      "nationality": "United Kingdom",
+      "role": "Technical Director",
+      "is_active": true,
+      "price_idr": 1120000000000,
+      "stats": {
+        "aerodynamics": 91,
+        "mechanical_design": 97,
+        "innovation": 95,
+        "reliability_focus": 94,
+        "development_speed": 92,
+        "setup_understanding": 95,
+        "regulation_adaptation": 98,
+        "simulator_correlation": 94,
+        "wind_tunnel_efficiency": 92,
+        "cooling_efficiency": 90,
+        "tyre_management_design": 93,
+        "weight_optimization": 91
+      },
+      "specializations": [
+        "balanced_chassis",
+        "regulation_mastery",
+        "race_consistency"
+      ],
+      "personality": {
+        "risk_taking": 63,
+        "perfectionism": 97,
+        "creativity": 91,
+        "adaptability": 96
+      },
+      "ai_behavior": {
+        "upgrade_style": "calculated",
+        "design_priority": "balanced_performance",
+        "season_focus": "long_term"
+      },
+      "career_rating": 98,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "loic_serra",
+      "team_id": "ferrari",
+      "first_name": "Loic",
+      "last_name": "Serra",
+      "full_name": "Loic Serra",
+      "nationality": "France",
+      "role": "Technical Director",
+      "is_active": true,
+      "price_idr": 860000000000,
+      "stats": {
+        "aerodynamics": 89,
+        "mechanical_design": 95,
+        "innovation": 87,
+        "reliability_focus": 88,
+        "development_speed": 89,
+        "setup_understanding": 96,
+        "regulation_adaptation": 91,
+        "simulator_correlation": 90,
+        "wind_tunnel_efficiency": 84,
+        "cooling_efficiency": 86,
+        "tyre_management_design": 97,
+        "weight_optimization": 88
+      },
+      "specializations": [
+        "vehicle_dynamics",
+        "tyre_preservation",
+        "race_setup"
+      ],
+      "personality": {
+        "risk_taking": 57,
+        "perfectionism": 95,
+        "creativity": 84,
+        "adaptability": 90
+      },
+      "ai_behavior": {
+        "upgrade_style": "iterative",
+        "design_priority": "race_pace",
+        "season_focus": "balanced"
+      },
+      "career_rating": 93,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "peter_prodromou",
+      "team_id": "mclaren",
+      "first_name": "Peter",
+      "last_name": "Prodromou",
+      "full_name": "Peter Prodromou",
+      "nationality": "Cyprus",
+      "role": "Technical Director",
+      "is_active": true,
+      "price_idr": 1080000000000,
+      "stats": {
+        "aerodynamics": 99,
+        "mechanical_design": 79,
+        "innovation": 96,
+        "reliability_focus": 82,
+        "development_speed": 94,
+        "setup_understanding": 81,
+        "regulation_adaptation": 97,
+        "simulator_correlation": 93,
+        "wind_tunnel_efficiency": 98,
+        "cooling_efficiency": 83,
+        "tyre_management_design": 85,
+        "weight_optimization": 88
+      },
+      "specializations": [
+        "high_downforce",
+        "aero_platform",
+        "high_speed_corners"
+      ],
+      "personality": {
+        "risk_taking": 72,
+        "perfectionism": 94,
+        "creativity": 98,
+        "adaptability": 93
+      },
+      "ai_behavior": {
+        "upgrade_style": "aggressive",
+        "design_priority": "aerodynamics",
+        "season_focus": "performance_peak"
+      },
+      "career_rating": 96,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "pierre_wache",
+      "team_id": "red_bull_racing",
+      "first_name": "Pierre",
+      "last_name": "Waché",
+      "full_name": "Pierre Waché",
+      "nationality": "France",
+      "role": "Technical Director",
+      "is_active": true,
+      "price_idr": 1200000000000,
+      "stats": {
+        "aerodynamics": 98,
+        "mechanical_design": 88,
+        "innovation": 99,
+        "reliability_focus": 78,
+        "development_speed": 97,
+        "setup_understanding": 86,
+        "regulation_adaptation": 96,
+        "simulator_correlation": 90,
+        "wind_tunnel_efficiency": 99,
+        "cooling_efficiency": 84,
+        "tyre_management_design": 81,
+        "weight_optimization": 95
+      },
+      "specializations": [
+        "extreme_aero",
+        "high_rake_concepts",
+        "qualifying_performance"
+      ],
+      "personality": {
+        "risk_taking": 91,
+        "perfectionism": 92,
+        "creativity": 99,
+        "adaptability": 89
+      },
+      "ai_behavior": {
+        "upgrade_style": "high_risk_high_reward",
+        "design_priority": "maximum_downforce",
+        "season_focus": "peak_performance"
+      },
+      "career_rating": 98,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "enrico_cardile",
+      "team_id": "aston_martin",
+      "first_name": "Enrico",
+      "last_name": "Cardile",
+      "full_name": "Enrico Cardile",
+      "nationality": "Italy",
+      "role": "Technical Director",
+      "is_active": true,
+      "price_idr": 900000000000,
+      "stats": {
+        "aerodynamics": 94,
+        "mechanical_design": 89,
+        "innovation": 92,
+        "reliability_focus": 81,
+        "development_speed": 91,
+        "setup_understanding": 84,
+        "regulation_adaptation": 93,
+        "simulator_correlation": 87,
+        "wind_tunnel_efficiency": 94,
+        "cooling_efficiency": 82,
+        "tyre_management_design": 83,
+        "weight_optimization": 91
+      },
+      "specializations": [
+        "aero_platform",
+        "high_efficiency",
+        "technical_rebuild"
+      ],
+      "personality": {
+        "risk_taking": 77,
+        "perfectionism": 91,
+        "creativity": 93,
+        "adaptability": 90
+      },
+      "ai_behavior": {
+        "upgrade_style": "performance_focused",
+        "design_priority": "aero_efficiency",
+        "season_focus": "championship_push"
+      },
+      "career_rating": 93,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "david_sanchez",
+      "team_id": "alpine",
+      "first_name": "David",
+      "last_name": "Sanchez",
+      "full_name": "David Sanchez",
+      "nationality": "France",
+      "role": "Technical Director",
+      "is_active": true,
+      "price_idr": 720000000000,
+      "stats": {
+        "aerodynamics": 90,
+        "mechanical_design": 84,
+        "innovation": 88,
+        "reliability_focus": 73,
+        "development_speed": 89,
+        "setup_understanding": 83,
+        "regulation_adaptation": 90,
+        "simulator_correlation": 81,
+        "wind_tunnel_efficiency": 88,
+        "cooling_efficiency": 80,
+        "tyre_management_design": 79,
+        "weight_optimization": 85
+      },
+      "specializations": [
+        "aero_efficiency",
+        "midfield_optimization",
+        "rapid_upgrades"
+      ],
+      "personality": {
+        "risk_taking": 74,
+        "perfectionism": 86,
+        "creativity": 87,
+        "adaptability": 88
+      },
+      "ai_behavior": {
+        "upgrade_style": "frequent_updates",
+        "design_priority": "efficiency",
+        "season_focus": "short_term_gains"
+      },
+      "career_rating": 88,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "andrea_de_zordo",
+      "team_id": "haas",
+      "first_name": "Andrea",
+      "last_name": "De Zordo",
+      "full_name": "Andrea De Zordo",
+      "nationality": "Italy",
+      "role": "Technical Director",
+      "is_active": true,
+      "price_idr": 520000000000,
+      "stats": {
+        "aerodynamics": 80,
+        "mechanical_design": 84,
+        "innovation": 74,
+        "reliability_focus": 87,
+        "development_speed": 73,
+        "setup_understanding": 79,
+        "regulation_adaptation": 78,
+        "simulator_correlation": 75,
+        "wind_tunnel_efficiency": 71,
+        "cooling_efficiency": 83,
+        "tyre_management_design": 76,
+        "weight_optimization": 79
+      },
+      "specializations": [
+        "budget_efficiency",
+        "compact_design",
+        "resource_management"
+      ],
+      "personality": {
+        "risk_taking": 39,
+        "perfectionism": 85,
+        "creativity": 69,
+        "adaptability": 80
+      },
+      "ai_behavior": {
+        "upgrade_style": "minimalist",
+        "design_priority": "cost_efficiency",
+        "season_focus": "resource_saving"
+      },
+      "career_rating": 80,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "jody_eggington",
+      "team_id": "racing_bulls",
+      "first_name": "Jody",
+      "last_name": "Eggington",
+      "full_name": "Jody Eggington",
+      "nationality": "United Kingdom",
+      "role": "Technical Director",
+      "is_active": true,
+      "price_idr": 580000000000,
+      "stats": {
+        "aerodynamics": 85,
+        "mechanical_design": 82,
+        "innovation": 81,
+        "reliability_focus": 84,
+        "development_speed": 85,
+        "setup_understanding": 81,
+        "regulation_adaptation": 84,
+        "simulator_correlation": 80,
+        "wind_tunnel_efficiency": 83,
+        "cooling_efficiency": 79,
+        "tyre_management_design": 77,
+        "weight_optimization": 82
+      },
+      "specializations": [
+        "midfield_efficiency",
+        "adaptable_platform",
+        "driver_friendly_balance"
+      ],
+      "personality": {
+        "risk_taking": 58,
+        "perfectionism": 84,
+        "creativity": 79,
+        "adaptability": 87
+      },
+      "ai_behavior": {
+        "upgrade_style": "adaptive",
+        "design_priority": "consistency",
+        "season_focus": "steady_progress"
+      },
+      "career_rating": 84,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "pat_fry",
+      "team_id": "williams",
+      "first_name": "Pat",
+      "last_name": "Fry",
+      "full_name": "Pat Fry",
+      "nationality": "United Kingdom",
+      "role": "Technical Director",
+      "is_active": true,
+      "price_idr": 780000000000,
+      "stats": {
+        "aerodynamics": 84,
+        "mechanical_design": 94,
+        "innovation": 82,
+        "reliability_focus": 93,
+        "development_speed": 78,
+        "setup_understanding": 92,
+        "regulation_adaptation": 88,
+        "simulator_correlation": 86,
+        "wind_tunnel_efficiency": 79,
+        "cooling_efficiency": 91,
+        "tyre_management_design": 88,
+        "weight_optimization": 83
+      },
+      "specializations": [
+        "mechanical_balance",
+        "reliability",
+        "race_consistency"
+      ],
+      "personality": {
+        "risk_taking": 41,
+        "perfectionism": 92,
+        "creativity": 74,
+        "adaptability": 84
+      },
+      "ai_behavior": {
+        "upgrade_style": "safe",
+        "design_priority": "stability",
+        "season_focus": "long_term_growth"
+      },
+      "career_rating": 89,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "mattia_binotto",
+      "team_id": "audi",
+      "first_name": "Mattia",
+      "last_name": "Binotto",
+      "full_name": "Mattia Binotto",
+      "nationality": "Italy",
+      "role": "Chief Technical Officer",
+      "is_active": true,
+      "price_idr": 840000000000,
+      "stats": {
+        "aerodynamics": 82,
+        "mechanical_design": 95,
+        "innovation": 86,
+        "reliability_focus": 89,
+        "development_speed": 80,
+        "setup_understanding": 88,
+        "regulation_adaptation": 92,
+        "simulator_correlation": 85,
+        "wind_tunnel_efficiency": 81,
+        "cooling_efficiency": 92,
+        "tyre_management_design": 79,
+        "weight_optimization": 87
+      },
+      "specializations": [
+        "power_unit_integration",
+        "technical_structure",
+        "hybrid_systems"
+      ],
+      "personality": {
+        "risk_taking": 48,
+        "perfectionism": 96,
+        "creativity": 81,
+        "adaptability": 85
+      },
+      "ai_behavior": {
+        "upgrade_style": "structured",
+        "design_priority": "system_integration",
+        "season_focus": "foundation_building"
+      },
+      "career_rating": 90,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "nick_chester",
+      "team_id": "cadillac",
+      "first_name": "Nick",
+      "last_name": "Chester",
+      "full_name": "Nick Chester",
+      "nationality": "United Kingdom",
+      "role": "Technical Director",
+      "is_active": true,
+      "price_idr": 500000000000,
+      "stats": {
+        "aerodynamics": 78,
+        "mechanical_design": 88,
+        "innovation": 73,
+        "reliability_focus": 90,
+        "development_speed": 69,
+        "setup_understanding": 84,
+        "regulation_adaptation": 83,
+        "simulator_correlation": 77,
+        "wind_tunnel_efficiency": 74,
+        "cooling_efficiency": 86,
+        "tyre_management_design": 81,
+        "weight_optimization": 76
+      },
+      "specializations": [
+        "new_team_foundation",
+        "mechanical_reliability",
+        "resource_structuring"
+      ],
+      "personality": {
+        "risk_taking": 36,
+        "perfectionism": 88,
+        "creativity": 70,
+        "adaptability": 91
+      },
+      "ai_behavior": {
+        "upgrade_style": "careful_growth",
+        "design_priority": "reliability",
+        "season_focus": "team_building"
+      },
+      "career_rating": 82,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>F1 Manager 2026</title>
+  <meta name="description" content="F1 Manager 2026 — Manage your Formula 1 team to championship glory." />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Titillium+Web:wght@300;400;600;700;900&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <!-- Tabler Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Tailwind config for custom tokens -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'f1-red':    '#e10600',
+            'f1-cyan':   '#00e5ff',
+            'f1-orange': '#ff8700',
+            'f1-dark':   '#1a1a20',
+            'f1-panel':  '#1a1a20',
+            'f1-border': '#383a45',
+            'f1-dim':    '#8b8d98',
+            'f1-bg':     '#d3d4d8',
+          },
+          fontFamily: {
+            'orbitron':  ['Orbitron', 'sans-serif'],
+            'titillium': ['Titillium Web', 'Arial', 'sans-serif'],
+            'exo':       ['Exo 2', 'Arial', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Global CSS -->
+  <link rel="stylesheet" href="src/styles/main.css" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <!-- Howler.js -->
+  <script src="https://cdn.jsdelivr.net/npm/howler@2.2.4/dist/howler.min.js"></script>
+</head>
+<body class="bg-f1-bg font-titillium text-white min-h-screen overflow-hidden">
+
+  <!-- App Shell -->
+  <div id="app" class="relative w-full h-screen overflow-hidden">
+
+    <!-- SCREEN: Main Menu -->
+    <div id="screen-main-menu" class="screen active"></div>
+
+    <!-- SCREEN: Create Team -->
+    <div id="screen-create-team" class="screen hidden"></div>
+
+    <!-- SCREEN: Dashboard -->
+    <div id="screen-dashboard" class="screen hidden"></div>
+
+    <!-- SCREEN: Race Weekend -->
+    <div id="screen-race" class="screen hidden"></div>
+
+    <!-- SCREEN: Personnel -->
+    <div id="screen-personnel" class="screen hidden"></div>
+
+    <!-- SCREEN: Finance -->
+    <div id="screen-finance" class="screen hidden"></div>
+
+    <!-- SCREEN: R&D -->
+    <div id="screen-rnd" class="screen hidden"></div>
+
+    <!-- SCREEN: Calendar -->
+    <div id="screen-calendar" class="screen hidden"></div>
+
+    <!-- Global Toast -->
+    <div id="toast" class="fixed bottom-8 right-8 z-[9999] hidden">
+      <div id="toast-inner" class="bg-f1-dark border border-f1-border text-white px-5 py-3 rounded-md text-sm font-titillium shadow-2xl"></div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="fixed inset-0 bg-black z-[9000] flex flex-col items-center justify-center">
+      <div class="f1-loader mb-6"></div>
+      <div id="loading-text" class="text-f1-dim text-sm font-orbitron tracking-widest">INITIALIZING...</div>
+    </div>
+  </div>
+
+  <!-- ES Module Entry -->
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

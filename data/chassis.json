@@ -1,0 +1,623 @@
+{
+  "table": "chassis",
+  "description": "Master data chassis/mobil F1 musim 2026. FK: team_id → teams.id. Stats lengkap untuk simulasi game engine.",
+  "season_year": 2026,
+  "data": [
+    {
+      "id": "mercedes_w17",
+      "team_id": "mercedes",
+      "name": "W17",
+      "design_philosophy": "balanced_low_drag",
+      "concept": "stable_platform",
+      "is_active": true,
+      "price_idr": 300000000000,
+      "stats": {
+        "overall_performance": 94,
+        "aerodynamics": {
+          "low_speed_cornering": 88,
+          "medium_speed_cornering": 95,
+          "high_speed_cornering": 97,
+          "dirty_air_tolerance": 92,
+          "aero_efficiency": 96,
+          "drs_efficiency": 91
+        },
+        "mechanical": {
+          "traction": 89,
+          "kerb_riding": 87,
+          "ride_stability": 95,
+          "weight_distribution": 93,
+          "suspension_quality": 96
+        },
+        "performance": {
+          "top_speed": 92,
+          "acceleration": 90,
+          "tyre_preservation": 95,
+          "fuel_efficiency": 91,
+          "ers_integration": 95
+        },
+        "reliability": {
+          "cooling_efficiency": 94,
+          "component_wear": 92,
+          "failure_resistance": 93
+        },
+        "development": {
+          "upgrade_potential": 94,
+          "setup_window": 95,
+          "regulation_adaptability": 97
+        }
+      },
+      "car_behavior": {
+        "driving_style": "stable_fast",
+        "qualifying_bias": 89,
+        "race_pace_bias": 96,
+        "wet_weather_performance": 92
+      },
+      "difficulty": {
+        "easy_to_setup": true,
+        "rookie_friendly": true
+      },
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "ferrari_sf26",
+      "team_id": "ferrari",
+      "name": "SF-26",
+      "design_philosophy": "high_rotation",
+      "concept": "aggressive_front_end",
+      "is_active": true,
+      "price_idr": 285000000000,
+      "stats": {
+        "overall_performance": 93,
+        "aerodynamics": {
+          "low_speed_cornering": 94,
+          "medium_speed_cornering": 93,
+          "high_speed_cornering": 90,
+          "dirty_air_tolerance": 84,
+          "aero_efficiency": 91,
+          "drs_efficiency": 93
+        },
+        "mechanical": {
+          "traction": 95,
+          "kerb_riding": 81,
+          "ride_stability": 84,
+          "weight_distribution": 90,
+          "suspension_quality": 88
+        },
+        "performance": {
+          "top_speed": 94,
+          "acceleration": 96,
+          "tyre_preservation": 82,
+          "fuel_efficiency": 86,
+          "ers_integration": 89
+        },
+        "reliability": {
+          "cooling_efficiency": 82,
+          "component_wear": 79,
+          "failure_resistance": 80
+        },
+        "development": {
+          "upgrade_potential": 92,
+          "setup_window": 80,
+          "regulation_adaptability": 90
+        }
+      },
+      "car_behavior": {
+        "driving_style": "aggressive",
+        "qualifying_bias": 97,
+        "race_pace_bias": 87,
+        "wet_weather_performance": 80
+      },
+      "difficulty": {
+        "easy_to_setup": false,
+        "rookie_friendly": false
+      },
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "mclaren_mcl40",
+      "team_id": "mclaren",
+      "name": "MCL40",
+      "design_philosophy": "efficient_downforce",
+      "concept": "aero_stability",
+      "is_active": true,
+      "price_idr": 320000000000,
+      "stats": {
+        "overall_performance": 96,
+        "aerodynamics": {
+          "low_speed_cornering": 90,
+          "medium_speed_cornering": 97,
+          "high_speed_cornering": 98,
+          "dirty_air_tolerance": 95,
+          "aero_efficiency": 98,
+          "drs_efficiency": 92
+        },
+        "mechanical": {
+          "traction": 90,
+          "kerb_riding": 89,
+          "ride_stability": 94,
+          "weight_distribution": 92,
+          "suspension_quality": 93
+        },
+        "performance": {
+          "top_speed": 91,
+          "acceleration": 91,
+          "tyre_preservation": 96,
+          "fuel_efficiency": 92,
+          "ers_integration": 92
+        },
+        "reliability": {
+          "cooling_efficiency": 93,
+          "component_wear": 91,
+          "failure_resistance": 92
+        },
+        "development": {
+          "upgrade_potential": 97,
+          "setup_window": 94,
+          "regulation_adaptability": 95
+        }
+      },
+      "car_behavior": {
+        "driving_style": "smooth",
+        "qualifying_bias": 91,
+        "race_pace_bias": 98,
+        "wet_weather_performance": 94
+      },
+      "difficulty": {
+        "easy_to_setup": true,
+        "rookie_friendly": true
+      },
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "redbull_rb22",
+      "team_id": "red_bull_racing",
+      "name": "RB22",
+      "design_philosophy": "extreme_aero",
+      "concept": "max_downforce_floor",
+      "is_active": true,
+      "price_idr": 330000000000,
+      "stats": {
+        "overall_performance": 97,
+        "aerodynamics": {
+          "low_speed_cornering": 95,
+          "medium_speed_cornering": 99,
+          "high_speed_cornering": 100,
+          "dirty_air_tolerance": 89,
+          "aero_efficiency": 99,
+          "drs_efficiency": 95
+        },
+        "mechanical": {
+          "traction": 92,
+          "kerb_riding": 79,
+          "ride_stability": 81,
+          "weight_distribution": 95,
+          "suspension_quality": 91
+        },
+        "performance": {
+          "top_speed": 96,
+          "acceleration": 94,
+          "tyre_preservation": 86,
+          "fuel_efficiency": 90,
+          "ers_integration": 93
+        },
+        "reliability": {
+          "cooling_efficiency": 79,
+          "component_wear": 77,
+          "failure_resistance": 75
+        },
+        "development": {
+          "upgrade_potential": 99,
+          "setup_window": 72,
+          "regulation_adaptability": 98
+        }
+      },
+      "car_behavior": {
+        "driving_style": "sharp_rotation",
+        "qualifying_bias": 98,
+        "race_pace_bias": 95,
+        "wet_weather_performance": 91
+      },
+      "difficulty": {
+        "easy_to_setup": false,
+        "rookie_friendly": false
+      },
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "aston_amr26",
+      "team_id": "aston_martin",
+      "name": "AMR26",
+      "design_philosophy": "newey_high_efficiency",
+      "concept": "extreme_packaging",
+      "is_active": true,
+      "price_idr": 310000000000,
+      "stats": {
+        "overall_performance": 95,
+        "aerodynamics": {
+          "low_speed_cornering": 91,
+          "medium_speed_cornering": 96,
+          "high_speed_cornering": 99,
+          "dirty_air_tolerance": 90,
+          "aero_efficiency": 98,
+          "drs_efficiency": 94
+        },
+        "mechanical": {
+          "traction": 89,
+          "kerb_riding": 78,
+          "ride_stability": 88,
+          "weight_distribution": 94,
+          "suspension_quality": 92
+        },
+        "performance": {
+          "top_speed": 94,
+          "acceleration": 92,
+          "tyre_preservation": 89,
+          "fuel_efficiency": 91,
+          "ers_integration": 93
+        },
+        "reliability": {
+          "cooling_efficiency": 80,
+          "component_wear": 79,
+          "failure_resistance": 78
+        },
+        "development": {
+          "upgrade_potential": 100,
+          "setup_window": 70,
+          "regulation_adaptability": 99
+        }
+      },
+      "car_behavior": {
+        "driving_style": "sensitive",
+        "qualifying_bias": 96,
+        "race_pace_bias": 92,
+        "wet_weather_performance": 90
+      },
+      "difficulty": {
+        "easy_to_setup": false,
+        "rookie_friendly": false
+      },
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "alpine_a526",
+      "team_id": "alpine",
+      "name": "A526",
+      "design_philosophy": "lightweight_agility",
+      "concept": "midfield_efficiency",
+      "is_active": true,
+      "price_idr": 160000000000,
+      "stats": {
+        "overall_performance": 84,
+        "aerodynamics": {
+          "low_speed_cornering": 85,
+          "medium_speed_cornering": 86,
+          "high_speed_cornering": 82,
+          "dirty_air_tolerance": 74,
+          "aero_efficiency": 83,
+          "drs_efficiency": 84
+        },
+        "mechanical": {
+          "traction": 83,
+          "kerb_riding": 76,
+          "ride_stability": 78,
+          "weight_distribution": 84,
+          "suspension_quality": 80
+        },
+        "performance": {
+          "top_speed": 86,
+          "acceleration": 84,
+          "tyre_preservation": 77,
+          "fuel_efficiency": 81,
+          "ers_integration": 82
+        },
+        "reliability": {
+          "cooling_efficiency": 79,
+          "component_wear": 74,
+          "failure_resistance": 73
+        },
+        "development": {
+          "upgrade_potential": 89,
+          "setup_window": 78,
+          "regulation_adaptability": 86
+        }
+      },
+      "car_behavior": {
+        "driving_style": "reactive",
+        "qualifying_bias": 83,
+        "race_pace_bias": 82,
+        "wet_weather_performance": 79
+      },
+      "difficulty": {
+        "easy_to_setup": false,
+        "rookie_friendly": true
+      },
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "haas_vf26",
+      "team_id": "haas",
+      "name": "VF-26",
+      "design_philosophy": "ferrari_customer",
+      "concept": "resource_efficiency",
+      "is_active": true,
+      "price_idr": 120000000000,
+      "stats": {
+        "overall_performance": 79,
+        "aerodynamics": {
+          "low_speed_cornering": 72,
+          "medium_speed_cornering": 77,
+          "high_speed_cornering": 79,
+          "dirty_air_tolerance": 69,
+          "aero_efficiency": 76,
+          "drs_efficiency": 80
+        },
+        "mechanical": {
+          "traction": 74,
+          "kerb_riding": 73,
+          "ride_stability": 77,
+          "weight_distribution": 75,
+          "suspension_quality": 74
+        },
+        "performance": {
+          "top_speed": 84,
+          "acceleration": 83,
+          "tyre_preservation": 70,
+          "fuel_efficiency": 82,
+          "ers_integration": 81
+        },
+        "reliability": {
+          "cooling_efficiency": 83,
+          "component_wear": 82,
+          "failure_resistance": 85
+        },
+        "development": {
+          "upgrade_potential": 74,
+          "setup_window": 77,
+          "regulation_adaptability": 76
+        }
+      },
+      "car_behavior": {
+        "driving_style": "simple",
+        "qualifying_bias": 78,
+        "race_pace_bias": 73,
+        "wet_weather_performance": 68
+      },
+      "difficulty": {
+        "easy_to_setup": true,
+        "rookie_friendly": true
+      },
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "racing_bulls_vcarb02",
+      "team_id": "racing_bulls",
+      "name": "VCARB 02",
+      "design_philosophy": "redbull_junior",
+      "concept": "adaptable_platform",
+      "is_active": true,
+      "price_idr": 140000000000,
+      "stats": {
+        "overall_performance": 81,
+        "aerodynamics": {
+          "low_speed_cornering": 79,
+          "medium_speed_cornering": 84,
+          "high_speed_cornering": 83,
+          "dirty_air_tolerance": 78,
+          "aero_efficiency": 84,
+          "drs_efficiency": 82
+        },
+        "mechanical": {
+          "traction": 81,
+          "kerb_riding": 77,
+          "ride_stability": 79,
+          "weight_distribution": 82,
+          "suspension_quality": 80
+        },
+        "performance": {
+          "top_speed": 82,
+          "acceleration": 84,
+          "tyre_preservation": 79,
+          "fuel_efficiency": 81,
+          "ers_integration": 82
+        },
+        "reliability": {
+          "cooling_efficiency": 79,
+          "component_wear": 76,
+          "failure_resistance": 78
+        },
+        "development": {
+          "upgrade_potential": 85,
+          "setup_window": 83,
+          "regulation_adaptability": 84
+        }
+      },
+      "car_behavior": {
+        "driving_style": "balanced",
+        "qualifying_bias": 80,
+        "race_pace_bias": 81,
+        "wet_weather_performance": 77
+      },
+      "difficulty": {
+        "easy_to_setup": true,
+        "rookie_friendly": true
+      },
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "williams_fw48",
+      "team_id": "williams",
+      "name": "FW48",
+      "design_philosophy": "low_drag_efficiency",
+      "concept": "straightline_focus",
+      "is_active": true,
+      "price_idr": 170000000000,
+      "stats": {
+        "overall_performance": 82,
+        "aerodynamics": {
+          "low_speed_cornering": 73,
+          "medium_speed_cornering": 79,
+          "high_speed_cornering": 84,
+          "dirty_air_tolerance": 72,
+          "aero_efficiency": 86,
+          "drs_efficiency": 88
+        },
+        "mechanical": {
+          "traction": 76,
+          "kerb_riding": 82,
+          "ride_stability": 80,
+          "weight_distribution": 78,
+          "suspension_quality": 81
+        },
+        "performance": {
+          "top_speed": 92,
+          "acceleration": 84,
+          "tyre_preservation": 73,
+          "fuel_efficiency": 86,
+          "ers_integration": 83
+        },
+        "reliability": {
+          "cooling_efficiency": 85,
+          "component_wear": 81,
+          "failure_resistance": 83
+        },
+        "development": {
+          "upgrade_potential": 90,
+          "setup_window": 82,
+          "regulation_adaptability": 88
+        }
+      },
+      "car_behavior": {
+        "driving_style": "top_speed_biased",
+        "qualifying_bias": 85,
+        "race_pace_bias": 78,
+        "wet_weather_performance": 71
+      },
+      "difficulty": {
+        "easy_to_setup": true,
+        "rookie_friendly": true
+      },
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "audi_c46",
+      "team_id": "audi",
+      "name": "C46",
+      "design_philosophy": "hybrid_efficiency",
+      "concept": "german_precision",
+      "is_active": true,
+      "price_idr": 240000000000,
+      "stats": {
+        "overall_performance": 87,
+        "aerodynamics": {
+          "low_speed_cornering": 81,
+          "medium_speed_cornering": 87,
+          "high_speed_cornering": 89,
+          "dirty_air_tolerance": 84,
+          "aero_efficiency": 90,
+          "drs_efficiency": 85
+        },
+        "mechanical": {
+          "traction": 82,
+          "kerb_riding": 78,
+          "ride_stability": 91,
+          "weight_distribution": 89,
+          "suspension_quality": 88
+        },
+        "performance": {
+          "top_speed": 88,
+          "acceleration": 87,
+          "tyre_preservation": 88,
+          "fuel_efficiency": 94,
+          "ers_integration": 97
+        },
+        "reliability": {
+          "cooling_efficiency": 92,
+          "component_wear": 89,
+          "failure_resistance": 91
+        },
+        "development": {
+          "upgrade_potential": 94,
+          "setup_window": 89,
+          "regulation_adaptability": 96
+        }
+      },
+      "car_behavior": {
+        "driving_style": "predictable",
+        "qualifying_bias": 82,
+        "race_pace_bias": 89,
+        "wet_weather_performance": 87
+      },
+      "difficulty": {
+        "easy_to_setup": true,
+        "rookie_friendly": true
+      },
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "cadillac_cad01",
+      "team_id": "cadillac",
+      "name": "CAD-01",
+      "design_philosophy": "american_entry",
+      "concept": "foundation_build",
+      "is_active": true,
+      "price_idr": 110000000000,
+      "stats": {
+        "overall_performance": 74,
+        "aerodynamics": {
+          "low_speed_cornering": 68,
+          "medium_speed_cornering": 72,
+          "high_speed_cornering": 74,
+          "dirty_air_tolerance": 71,
+          "aero_efficiency": 73,
+          "drs_efficiency": 76
+        },
+        "mechanical": {
+          "traction": 72,
+          "kerb_riding": 75,
+          "ride_stability": 79,
+          "weight_distribution": 74,
+          "suspension_quality": 73
+        },
+        "performance": {
+          "top_speed": 80,
+          "acceleration": 77,
+          "tyre_preservation": 71,
+          "fuel_efficiency": 79,
+          "ers_integration": 78
+        },
+        "reliability": {
+          "cooling_efficiency": 81,
+          "component_wear": 83,
+          "failure_resistance": 84
+        },
+        "development": {
+          "upgrade_potential": 92,
+          "setup_window": 74,
+          "regulation_adaptability": 89
+        }
+      },
+      "car_behavior": {
+        "driving_style": "stable_understeer",
+        "qualifying_bias": 71,
+        "race_pace_bias": 75,
+        "wet_weather_performance": 73
+      },
+      "difficulty": {
+        "easy_to_setup": true,
+        "rookie_friendly": true
+      },
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  ]
+}
