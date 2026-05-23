@@ -1001,7 +1001,7 @@ body {
   font-size: 42px;
   font-weight: 900;
   line-height: 0.95;
-  letter-spacing: -0.05em;
+  letter-spacing: normal;
   color: white;
 }
 
@@ -1165,7 +1165,7 @@ body {
   font-size: 42px;
   font-weight: 900;
   line-height: 0.95;
-  letter-spacing: -0.05em;
+  letter-spacing: normal;
   color: white;
 }
 
@@ -1338,6 +1338,200 @@ body {
 /* ============================================================
    WIZARD STEP 3: DRIVER SELECTION
    ============================================================ */
+
+/* ============================================================
+   WIZARD STEP 4: POWER UNIT
+   ============================================================ */
+
+.f1-pu-layout {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 22px;
+  min-height: 0;
+}
+
+.f1-pu-sidebar {
+  min-height: 0;
+}
+
+.f1-pu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 8px;
+  overflow-y: auto;
+  max-height: 62vh;
+}
+
+.f1-pu-option {
+  background: linear-gradient(
+    90deg,
+    rgba(24, 28, 40, 0.92),
+    rgba(16, 18, 26, 0.72)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 12px;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+  transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.f1-pu-option:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.f1-pu-option.selected {
+  border-color: var(--accent-cyan);
+  background: linear-gradient(
+    90deg,
+    rgba(0, 229, 255, 0.14),
+    rgba(16, 18, 26, 0.76)
+  );
+  box-shadow: 0 0 0 1px rgba(0, 229, 255, 0.12), 0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+.f1-pu-option-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.f1-pu-option-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: white;
+}
+
+.f1-pu-option-sub {
+  margin-top: 6px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.f1-pu-option-price {
+  margin-top: 8px;
+  font-size: 18px;
+  font-weight: 900;
+  font-family: var(--font-digits);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.f1-pu-detail-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  background: linear-gradient(
+    180deg,
+    rgba(18, 18, 26, 0.98),
+    rgba(8, 8, 14, 0.98)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  max-height: 62vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.f1-pu-detail-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at top right,
+    rgba(255, 255, 255, 0.08),
+    transparent 45%
+  );
+}
+
+.f1-pu-detail-content {
+  position: relative;
+  z-index: 2;
+  padding: 28px 28px 30px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+}
+
+.f1-pu-narrative {
+  margin-top: 18px;
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 13px;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.f1-pu-chip-row {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.f1-pu-chip {
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.f1-pu-chip span {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.f1-pu-chip strong {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-digits);
+  font-size: 13px;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.f1-pu-circuit-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.f1-pu-circuit-chip {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.02)
+  );
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+@media (max-width: 768px) {
+  .f1-pu-chip-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1100px) {
+  .f1-pu-layout {
+    grid-template-columns: 1fr;
+  }
+}
 
 .driver-select-grid {
   display: flex;

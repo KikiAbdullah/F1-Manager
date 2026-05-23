@@ -1095,37 +1095,196 @@ function calculateAge(dateOfBirth) {
 // ============================================================
 
 function renderPowerUnitStep(body) {
+  const activePowerUnits = wizardState.masterData.powerUnits.filter(
+    (x) => x.is_active
+  );
+
+  const selectedPu =
+    wizardState.masterData.powerUnitsById[wizardState.team.lineup.powerUnitId] ||
+    activePowerUnits[0];
+
   body.innerHTML = `
-    <div class="driver-select-grid">
+    <div class="f1-step-panel">
+      <div class="f1-create-header">
+        <div class="f1-create-subtitle"><span class="f1-accent-line"></span> STEP 4</div>
+        <h2 class="f1-create-title">POWER UNIT</h2>
+        <p class="f1-header-desc">Pilih mesin yang menentukan performa, drivability, dan reliability untuk musim ini.</p>
+      </div>
 
-      ${wizardState.masterData.powerUnits
-        .filter((x) => x.is_active)
-        .map(renderPowerUnitCard)
-        .join("")}
+      <div class="f1-pu-layout">
+        <div class="f1-pu-sidebar">
+          <div class="f1-pu-list" role="list">
+            ${activePowerUnits.map(renderPowerUnitOption).join("")}
+          </div>
+        </div>
 
+        <div class="f1-pu-detail">
+          ${selectedPu ? renderPowerUnitDetail(selectedPu) : ""}
+        </div>
+      </div>
     </div>
   `;
 }
 
-function renderPowerUnitCard(pu) {
+function renderPowerUnitOption(pu) {
   const selected = wizardState.team.lineup.powerUnitId === pu.id;
 
   return `
-    <div
-      class="driver-select-card ${selected ? "selected" : ""}"
+    <button
+      class="f1-pu-option ${selected ? "selected" : ""}"
       data-pu-id="${pu.id}"
+      type="button"
     >
-
-      <div class="d-name">
-        ${pu.manufacturer}
+      <div class="f1-pu-option-top">
+        <div class="f1-pu-option-title">${pu.manufacturer}</div>
+        ${selected ? '<div class="f1-ambition-check">✓</div>' : ""}
       </div>
+      <div class="f1-pu-option-sub">${pu.architecture ?? ""}</div>
+      <div class="f1-pu-option-price">Rp ${moneyCompact(pu.price_idr)}</div>
+    </button>
+  `;
+}
 
-      <div class="text-xs">
-        ${money(pu.price_idr)}
+function renderPowerUnitDetail(pu) {
+  const stats = pu.stats || {};
+  const ic = stats.internal_combustion || {};
+  const hyb = stats.hybrid_system || {};
+  const drv = stats.driveability || {};
+  const rel = stats.reliability || {};
+  const dev = stats.development || {};
+  const ch = pu.characteristics || {};
+  const ai = pu.ai_behavior || {};
+
+  const narrativeParts = [
+    pu.architecture
+      ? `Arsitektur ${pu.architecture} memberi karakter tenaga yang ${
+          ch.power_delivery ? humanizeEnum(ch.power_delivery) : "terukur"
+        } dengan fokus pada efisiensi.`
+      : null,
+    typeof stats.overall_performance === "number"
+      ? `Dengan rating performa keseluruhan ${stats.overall_performance}, paket ini cocok untuk tim yang mengejar poin setiap akhir pekan.`
+      : null,
+    typeof rel.failure_resistance === "number"
+      ? `Reliability dibangun lewat manajemen temperatur dan ketahanan kegagalan (resistance ${rel.failure_resistance}).`
+      : null,
+    typeof dev.regulation_adaptation === "number"
+      ? `Potensi pengembangan tetap tinggi, terutama adaptasi regulasi (${dev.regulation_adaptation}) dan upgrade potential (${dev.upgrade_potential ?? "-"}).`
+      : null,
+  ].filter(Boolean);
+
+  return `
+    <div class="f1-pu-detail-card">
+      <div class="f1-pu-detail-bg"></div>
+      <div class="f1-pu-detail-content">
+        <div class="f1-ambition-badge">${pu.country ?? ""}</div>
+        <div class="f1-ambition-title">${pu.manufacturer}</div>
+        <div class="f1-ambition-description">
+          <strong>Architecture:</strong> ${pu.architecture ?? "-"}<br>
+          <strong>Price:</strong> Rp ${moneyCompact(pu.price_idr)}
+        </div>
+
+        ${
+          narrativeParts.length
+            ? `
+          <div class="f1-pu-narrative">
+            ${narrativeParts.join(" ")}
+          </div>
+        `
+            : ""
+        }
+
+        <div class="f1-pu-chip-row">
+          <div class="f1-pu-chip"><span>Power Delivery</span><strong>${
+            ch.power_delivery ? humanizeEnum(ch.power_delivery) : "-"
+          }</strong></div>
+          <div class="f1-pu-chip"><span>Fuel Style</span><strong>${
+            ch.fuel_usage_style ? humanizeEnum(ch.fuel_usage_style) : "-"
+          }</strong></div>
+          <div class="f1-pu-chip"><span>AI ERS</span><strong>${
+            ai.ers_usage_style ? humanizeEnum(ai.ers_usage_style) : "-"
+          }</strong></div>
+        </div>
+
+        <div class="f1-detail-quality-wrapper">
+          <div class="f1-ambition-section">
+            <div class="f1-ambition-section-title">CORE</div>
+            <div class="f1-ambition-detail-table">
+              <div class="f1-detail-row">
+                <div class="f1-detail-label"><i class="ti ti-gauge"></i> Overall</div>
+                <div class="f1-detail-value">${stats.overall_performance ?? "-"}</div>
+              </div>
+              <div class="f1-detail-row">
+                <div class="f1-detail-label"><i class="ti ti-bolt"></i> Horsepower</div>
+                <div class="f1-detail-value">${ic.horsepower ?? "-"}</div>
+              </div>
+              <div class="f1-detail-row">
+                <div class="f1-detail-label"><i class="ti ti-leaf"></i> Fuel Efficiency</div>
+                <div class="f1-detail-value">${ic.fuel_efficiency ?? "-"}</div>
+              </div>
+              <div class="f1-detail-row">
+                <div class="f1-detail-label"><i class="ti ti-battery"></i> ERS Output</div>
+                <div class="f1-detail-value">${hyb.ers_output ?? "-"}</div>
+              </div>
+              <div class="f1-detail-row">
+                <div class="f1-detail-label"><i class="ti ti-wave-sine"></i> Throttle Smooth.</div>
+                <div class="f1-detail-value">${drv.throttle_smoothness ?? "-"}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="f1-ambition-section">
+            <div class="f1-ambition-section-title">RELIABILITY</div>
+            <div class="f1-ambition-detail-table">
+              <div class="f1-detail-row">
+                <div class="f1-detail-label"><i class="ti ti-tool"></i> Engine Wear</div>
+                <div class="f1-detail-value">${rel.engine_wear ?? "-"}</div>
+              </div>
+              <div class="f1-detail-row">
+                <div class="f1-detail-label"><i class="ti ti-snowflake"></i> Cooling</div>
+                <div class="f1-detail-value">${rel.cooling_efficiency ?? "-"}</div>
+              </div>
+              <div class="f1-detail-row">
+                <div class="f1-detail-label"><i class="ti ti-shield"></i> Failure Resist.</div>
+                <div class="f1-detail-value">${rel.failure_resistance ?? "-"}</div>
+              </div>
+              <div class="f1-detail-row">
+                <div class="f1-detail-label"><i class="ti ti-trending-up"></i> Upgrade Potential</div>
+                <div class="f1-detail-value">${dev.upgrade_potential ?? "-"}</div>
+              </div>
+              <div class="f1-detail-row">
+                <div class="f1-detail-label"><i class="ti ti-adjustments"></i> Reg. Adaptation</div>
+                <div class="f1-detail-value">${dev.regulation_adaptation ?? "-"}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        ${
+          Array.isArray(ch.best_circuit_ids) && ch.best_circuit_ids.length
+            ? `
+          <div class="f1-ambition-section">
+            <div class="f1-ambition-section-title">BEST CIRCUITS</div>
+            <div class="f1-pu-circuit-list">
+              ${ch.best_circuit_ids
+                .slice(0, 6)
+                .map((id) => `<div class="f1-pu-circuit-chip">${id.replaceAll("_", " ")}</div>`)
+                .join("")}
+            </div>
+          </div>
+        `
+            : ""
+        }
       </div>
-
+      <div class="f1-ambition-accent"></div>
     </div>
   `;
+}
+
+function humanizeEnum(v) {
+  return String(v || "")
+    .replaceAll("_", " ")
+    .trim()
+    .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 // ============================================================
