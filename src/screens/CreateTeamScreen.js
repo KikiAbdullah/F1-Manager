@@ -2186,11 +2186,6 @@ function renderConfirmationStep(body) {
       </div>
 
       <div class="panel mt-4" style="background: rgba(26,26,32,0.85); padding: 40px 30px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);">
-        
-        <div class="font-orbitron tracking-widest text-center mb-8" style="color: var(--accent-cyan); font-size: 1.2rem; text-shadow: 0 0 10px rgba(0,255,255,0.2);">
-          FINAL REVIEW
-        </div>
-
         <div class="f1-ambition-quality-grid" style="margin-top:40px; gap:24px; border-top:1px dashed rgba(255,255,255,0.1); padding-top:40px;">
         <div class="mb-8">
           <div class="text-xs font-orbitron tracking-widest text-f1-dim text-center mb-4"><i class="ti ti-steering-wheel"></i> DRIVERS</div>
