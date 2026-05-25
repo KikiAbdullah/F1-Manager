@@ -7,16 +7,57 @@ import { showToast } from "../components/toast.js";
 // Constants
 // ============================================================
 
-const TOTAL_STEPS = 6;
+const TOTAL_STEPS = 7;
 
 const STEP_RENDERERS = {
   1: renderIdentityStep,
   2: renderAmbitionStep,
   3: renderDriverSelectionStep,
-  4: renderPowerUnitStep,
-  5: renderChassisStep,
-  6: renderConfirmationStep,
+  4: renderPersonnelSelectionStep,
+  5: renderPowerUnitStep,
+  6: renderChassisStep,
+  7: renderConfirmationStep,
 };
+
+const TEAM_CHIEF_PHOTO_URL = "./assets/images/team-chief.png";
+
+const TECH_CHIEF_PHOTO_URL = "./assets/images/tech-chief.png";
+
+function getSelectedTier() {
+  return (
+    ambitionLevels[wizardState.team.ambitionTier] ||
+    Object.values(ambitionLevels)[0]
+  );
+}
+
+function renderBudgetPill() {
+  const remaining = getRemainingBudget();
+
+  return `
+    <div class="f1-budget-pill" title="Saldo Anggaran">
+      <i class="ti ti-cash"></i>
+      <span>Saldo</span>
+      <strong>${moneyCompact(remaining)}</strong>
+    </div>
+  `;
+}
+
+function canAffordDeltaSpend(deltaSpend) {
+  // deltaSpend = additional cost compared to current selection
+  const tier = ambitionLevels[wizardState.team.ambitionTier];
+  const nextRemaining =
+    tier.financials.initial_budget_idr -
+    (calculateTotalSpend() + (Number(deltaSpend) || 0));
+  return nextRemaining >= 0;
+}
+
+function budgetToast(deltaSpend) {
+  const tier = ambitionLevels[wizardState.team.ambitionTier];
+  const after =
+    tier.financials.initial_budget_idr -
+    (calculateTotalSpend() + (Number(deltaSpend) || 0));
+  showToast(`Saldo tidak cukup. Sisa ${moneyCompact(after)}.`);
+}
 
 export const ambitionLevels = {
   local_indonesia: {
@@ -46,7 +87,8 @@ export const ambitionLevels = {
     },
 
     financials: {
-      initial_budget_idr: 850000000000,
+      // Raised so the cheapest valid lineup (2 drivers + PU + chassis) is always selectable.
+      initial_budget_idr: 1200000000000,
 
       estimated_team_value_idr: 1200000000000,
 
@@ -459,10 +501,14 @@ const wizardState = {
       },
     },
 
-    ambitionTier: "new_entry",
+    ambitionTier: "local_indonesia",
 
     lineup: {
       driverIds: [],
+
+      teamChiefId: null,
+      technicalChiefId: null,
+
       powerUnitId: null,
       chassisId: null,
     },
@@ -471,6 +517,12 @@ const wizardState = {
   masterData: {
     drivers: [],
     driversById: {},
+
+    teamChiefs: [],
+    teamChiefsById: {},
+
+    technicalChiefs: [],
+    technicalChiefsById: {},
 
     powerUnits: [],
     powerUnitsById: {},
@@ -558,10 +610,14 @@ function resetWizardState() {
       },
     },
 
-    ambitionTier: "new_entry",
+    ambitionTier: "local_indonesia",
 
     lineup: {
       driverIds: [],
+
+      teamChiefId: null,
+      technicalChiefId: null,
+
       powerUnitId: null,
       chassisId: null,
     },
@@ -585,24 +641,40 @@ async function loadPickerData() {
     }));
   }
 
-  const [puRes, chassisRes, sponsorRes] = await Promise.all([
-    fetch("./data/power_units.json"),
-    fetch("./data/chassis.json"),
-    fetch("./data/sponsors.json"),
-  ]);
+  const [puRes, chassisRes, sponsorRes, teamChiefRes, techChiefRes] =
+    await Promise.all([
+      fetch("./data/power_units.json"),
+      fetch("./data/chassis.json"),
+      fetch("./data/sponsors.json"),
+      fetch("./data/team_chiefs.json"),
+      fetch("./data/technical_chiefs.json"),
+    ]);
 
   const powerUnits = (await puRes.json()).data ?? [];
   const chassis = (await chassisRes.json()).data ?? [];
   const sponsors = (await sponsorRes.json()).data ?? [];
+  const teamChiefs = (await teamChiefRes.json()).data ?? [];
+  const technicalChiefs = (await techChiefRes.json()).data ?? [];
+
+  // Keep pickers predictable: cheapest items first.
+  drivers.sort((a, b) => (a.price_idr ?? 0) - (b.price_idr ?? 0));
+  powerUnits.sort((a, b) => (a.price_idr ?? 0) - (b.price_idr ?? 0));
+  chassis.sort((a, b) => (a.price_idr ?? 0) - (b.price_idr ?? 0));
+  teamChiefs.sort((a, b) => (a.price_idr ?? 0) - (b.price_idr ?? 0));
+  technicalChiefs.sort((a, b) => (a.price_idr ?? 0) - (b.price_idr ?? 0));
 
   wizardState.masterData.drivers = drivers;
   wizardState.masterData.powerUnits = powerUnits;
   wizardState.masterData.chassis = chassis;
   wizardState.masterData.sponsors = sponsors;
+  wizardState.masterData.teamChiefs = teamChiefs;
+  wizardState.masterData.technicalChiefs = technicalChiefs;
 
   wizardState.masterData.driversById = normalize(drivers);
   wizardState.masterData.powerUnitsById = normalize(powerUnits);
   wizardState.masterData.chassisById = normalize(chassis);
+  wizardState.masterData.teamChiefsById = normalize(teamChiefs);
+  wizardState.masterData.technicalChiefsById = normalize(technicalChiefs);
 }
 
 function normalize(arr) {
@@ -668,6 +740,7 @@ async function handleNext() {
 
   if (!valid) return;
 
+  // FINAL STEP
   if (wizardState.currentStep === TOTAL_STEPS) {
     await saveTeam();
     return;
@@ -697,17 +770,72 @@ function handleWizardClick(e) {
   const driverCard = e.target.closest("[data-driver-id]");
 
   if (driverCard) {
+    if (driverCard.dataset.disabled === "1") {
+      showToast("Saldo tidak cukup untuk memilih pembalap ini.");
+      return;
+    }
     toggleDriver(driverCard.dataset.driverId);
 
+    return;
+  }
+
+  const teamChiefCard = e.target.closest("[data-team-chief-id]");
+
+  if (teamChiefCard) {
+    if (teamChiefCard.dataset.disabled === "1") {
+      showToast("Saldo tidak cukup untuk memilih team chief ini.");
+      return;
+    }
+
+    toggleTeamChief(teamChiefCard.dataset.teamChiefId);
+    return;
+  }
+
+  const techChiefCard = e.target.closest("[data-technical-chief-id]");
+
+  if (techChiefCard) {
+    if (techChiefCard.dataset.disabled === "1") {
+      showToast("Saldo tidak cukup untuk memilih technical chief ini.");
+      return;
+    }
+
+    toggleTechnicalChief(techChiefCard.dataset.technicalChiefId);
     return;
   }
 
   const puCard = e.target.closest("[data-pu-id]");
 
   if (puCard) {
+    if (puCard.disabled || puCard.getAttribute("aria-disabled") === "true") {
+      showToast("Saldo tidak cukup untuk memilih power unit ini.");
+      return;
+    }
+
+    // Guard again (in case DOM doesn't reflect latest budget state)
+    const currentPuPrice =
+      wizardState.masterData.powerUnitsById[wizardState.team.lineup.powerUnitId]
+        ?.price_idr ?? 0;
+    const nextPuPrice =
+      wizardState.masterData.powerUnitsById[puCard.dataset.puId]?.price_idr ??
+      0;
+    const delta = Math.max(0, nextPuPrice - currentPuPrice);
+    if (!canAffordDeltaSpend(delta)) {
+      budgetToast(delta);
+      return;
+    }
+
+    const body = document.getElementById("wizardBody");
+    const prevScrollTop = body?.scrollTop ?? 0;
+    const prevListScrollTop =
+      body?.querySelector(".f1-pu-list")?.scrollTop ?? 0;
+
     wizardState.team.lineup.powerUnitId = puCard.dataset.puId;
 
     renderCurrentStep();
+
+    if (body) body.scrollTop = prevScrollTop;
+    const list = body?.querySelector(".f1-pu-list");
+    if (list) list.scrollTop = prevListScrollTop;
 
     return;
   }
@@ -715,10 +843,286 @@ function handleWizardClick(e) {
   const chassisCard = e.target.closest("[data-chassis-id]");
 
   if (chassisCard) {
+    if (
+      chassisCard.disabled ||
+      chassisCard.getAttribute("aria-disabled") === "true"
+    ) {
+      showToast("Saldo tidak cukup untuk memilih chassis ini.");
+      return;
+    }
+
+    // Guard again (in case DOM doesn't reflect latest budget state)
+    const currentChPrice =
+      wizardState.masterData.chassisById[wizardState.team.lineup.chassisId]
+        ?.price_idr ?? 0;
+    const nextChPrice =
+      wizardState.masterData.chassisById[chassisCard.dataset.chassisId]
+        ?.price_idr ?? 0;
+    const delta = Math.max(0, nextChPrice - currentChPrice);
+    if (!canAffordDeltaSpend(delta)) {
+      budgetToast(delta);
+      return;
+    }
+
+    const body = document.getElementById("wizardBody");
+    const prevScrollTop = body?.scrollTop ?? 0;
+    const prevListScrollTop =
+      body?.querySelector(".f1-ch-list")?.scrollTop ?? 0;
+
     wizardState.team.lineup.chassisId = chassisCard.dataset.chassisId;
 
     renderCurrentStep();
+
+    if (body) body.scrollTop = prevScrollTop;
+    const list = body?.querySelector(".f1-ch-list");
+    if (list) list.scrollTop = prevListScrollTop;
   }
+}
+
+// ============================================================
+// STEP 4
+// ============================================================
+
+function renderPersonnelSelectionStep(body) {
+  const lineup = wizardState.team.lineup;
+  const hasTeamChief = Boolean(lineup.teamChiefId);
+  const hasTechChief = Boolean(lineup.technicalChiefId);
+
+  body.innerHTML = `
+    <div class="f1-step-panel">
+      <div class="f1-step3-header">
+        <div class="f1-create-header">
+          <div class="f1-create-subtitle"><span class="f1-accent-line"></span> STEP 4</div>
+          <h2 class="f1-create-title">TEAM MANAGEMENT</h2>
+          <p class="f1-header-desc">Pilih Team Chief dan Technical Chief. Klik kartu untuk memilih atau mengganti.</p>
+        </div>
+
+        <div class="f1-step-header-right">
+          ${renderBudgetPill()}
+          <div class="f1-car-indicators" aria-label="Selected management roles">
+            <div class="f1-car-indicator ${
+              hasTeamChief ? "active" : ""
+            }" title="Team Chief">
+              <i class="ti ti-crown"></i>
+              <span>TEAM CHIEF</span>
+            </div>
+            <div class="f1-car-indicator ${
+              hasTechChief ? "active" : ""
+            }" title="Technical Chief">
+              <i class="ti ti-settings"></i>
+              <span>TECH CHIEF</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-xs text-f1-dim font-orbitron" style="margin-top:10px;letter-spacing:0.06em;">TEAM CHIEF</div>
+      <div class="driver-select-grid" style="margin-top:8px;">
+        ${wizardState.masterData.teamChiefs.map(renderTeamChiefCard).join("")}
+      </div>
+
+      <div class="text-xs text-f1-dim font-orbitron" style="margin-top:18px;letter-spacing:0.06em;">TECHNICAL CHIEF</div>
+      <div class="driver-select-grid" style="margin-top:8px;">
+        ${wizardState.masterData.technicalChiefs
+          .map(renderTechnicalChiefCard)
+          .join("")}
+      </div>
+    </div>
+  `;
+}
+
+function renderTeamChiefCard(chief) {
+  const selected = wizardState.team.lineup.teamChiefId === chief.id;
+
+  // Disable card if selecting it would exceed budget.
+  let disabled = false;
+  if (!selected) {
+    const current =
+      wizardState.masterData.teamChiefsById[wizardState.team.lineup.teamChiefId]
+        ?.price_idr ?? 0;
+    const next = chief.price_idr ?? 0;
+    const delta = Math.max(0, next - current);
+    disabled = !canAffordDeltaSpend(delta);
+  }
+
+  const stats = chief.stats ?? {};
+  const overall =
+    chief.career_rating ??
+    Math.round(
+      avgNum([stats.leadership, stats.strategy, stats.technical_understanding])
+    );
+
+  const leadership = stats.leadership ?? 80;
+  const strategy = stats.strategy ?? 80;
+  const technical = stats.technical_understanding ?? 80;
+
+  return `
+    <div
+      class="f1-driver-card ${selected ? "selected" : ""} ${
+    disabled ? "opacity-40 pointer-events-none" : ""
+  }"
+      data-team-chief-id="${chief.id}"
+      data-disabled="${disabled ? "1" : "0"}"
+    >
+      ${selected ? '<div class="f1-driver-selected-icon">✔</div>' : ""}
+
+      <div class="f1-driver-top-right">
+        <div>Rp ${moneyCompact(
+          chief.price_idr
+        )} <span class="dim-text">/PA</span></div>
+        <div style="margin-top: 4px;"><span class="dim-text">ROLE:</span> ${
+          chief.role ?? "-"
+        }</div>
+      </div>
+
+      <div class="f1-driver-stats-right">
+        <div class="f1-driver-overall-wrap">
+          <span class="f1-driver-star">★</span>
+          <span class="f1-driver-overall">${overall ?? 80}</span>
+        </div>
+        <div class="f1-driver-substats">
+          <div class="substat"><span class="dim-text">LEA</span> ${leadership}</div>
+          <div class="substat"><span class="dim-text">STR</span> ${strategy}</div>
+          <div class="substat"><span class="dim-text">TEC</span> ${technical}</div>
+        </div>
+      </div>
+
+      <img
+        src="${TEAM_CHIEF_PHOTO_URL}"
+        class="f1-team-image"
+      />
+
+      <div class="f1-driver-bottom">
+        <div class="f1-driver-first-name">${chief.first_name ?? "-"}</div>
+        <div class="f1-driver-last-name">${chief.last_name ?? "-"}</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderTechnicalChiefCard(chief) {
+  const selected = wizardState.team.lineup.technicalChiefId === chief.id;
+
+  // Disable card if selecting it would exceed budget.
+  let disabled = false;
+  if (!selected) {
+    const current =
+      wizardState.masterData.technicalChiefsById[
+        wizardState.team.lineup.technicalChiefId
+      ]?.price_idr ?? 0;
+    const next = chief.price_idr ?? 0;
+    const delta = Math.max(0, next - current);
+    disabled = !canAffordDeltaSpend(delta);
+  }
+
+  const stats = chief.stats ?? {};
+  const overall =
+    chief.career_rating ??
+    Math.round(
+      avgNum([stats.aerodynamics, stats.mechanical_design, stats.innovation])
+    );
+
+  const aero = stats.aerodynamics ?? 80;
+  const mech = stats.mechanical_design ?? 80;
+  const innov = stats.innovation ?? 80;
+
+  return `
+    <div
+      class="f1-driver-card ${selected ? "selected" : ""} ${
+    disabled ? "opacity-40 pointer-events-none" : ""
+  }"
+      data-technical-chief-id="${chief.id}"
+      data-disabled="${disabled ? "1" : "0"}"
+    >
+      ${selected ? '<div class="f1-driver-selected-icon">✔</div>' : ""}
+
+      <div class="f1-driver-top-right">
+        <div>Rp ${moneyCompact(
+          chief.price_idr
+        )} <span class="dim-text">/PA</span></div>
+        <div style="margin-top: 4px;"><span class="dim-text">ROLE:</span> ${
+          chief.role ?? "-"
+        }</div>
+      </div>
+
+      <div class="f1-driver-stats-right">
+        <div class="f1-driver-overall-wrap">
+          <span class="f1-driver-star">★</span>
+          <span class="f1-driver-overall">${overall ?? 80}</span>
+        </div>
+        <div class="f1-driver-substats">
+          <div class="substat"><span class="dim-text">AER</span> ${aero}</div>
+          <div class="substat"><span class="dim-text">MEC</span> ${mech}</div>
+          <div class="substat"><span class="dim-text">INN</span> ${innov}</div>
+        </div>
+      </div>
+
+      <img
+        src="${TECH_CHIEF_PHOTO_URL}"
+        class="f1-team-image"
+      />
+
+      <div class="f1-driver-bottom">
+        <div class="f1-driver-first-name">${chief.first_name ?? "-"}</div>
+        <div class="f1-driver-last-name">${chief.last_name ?? "-"}</div>
+      </div>
+    </div>
+  `;
+}
+
+function toggleTeamChief(id) {
+  const body = document.getElementById("wizardBody");
+  const prevScrollTop = body?.scrollTop ?? 0;
+
+  const currentId = wizardState.team.lineup.teamChiefId;
+  if (currentId === id) {
+    wizardState.team.lineup.teamChiefId = null;
+  } else {
+    const currentPrice =
+      wizardState.masterData.teamChiefsById[currentId]?.price_idr ?? 0;
+    const nextPrice = wizardState.masterData.teamChiefsById[id]?.price_idr ?? 0;
+    const delta = Math.max(0, nextPrice - currentPrice);
+    if (!canAffordDeltaSpend(delta)) {
+      budgetToast(delta);
+      return;
+    }
+
+    wizardState.team.lineup.teamChiefId = id;
+  }
+
+  renderCurrentStep();
+  if (body) body.scrollTop = prevScrollTop;
+}
+
+function toggleTechnicalChief(id) {
+  const body = document.getElementById("wizardBody");
+  const prevScrollTop = body?.scrollTop ?? 0;
+
+  const currentId = wizardState.team.lineup.technicalChiefId;
+  if (currentId === id) {
+    wizardState.team.lineup.technicalChiefId = null;
+  } else {
+    const currentPrice =
+      wizardState.masterData.technicalChiefsById[currentId]?.price_idr ?? 0;
+    const nextPrice =
+      wizardState.masterData.technicalChiefsById[id]?.price_idr ?? 0;
+    const delta = Math.max(0, nextPrice - currentPrice);
+    if (!canAffordDeltaSpend(delta)) {
+      budgetToast(delta);
+      return;
+    }
+
+    wizardState.team.lineup.technicalChiefId = id;
+  }
+
+  renderCurrentStep();
+  if (body) body.scrollTop = prevScrollTop;
+}
+
+function avgNum(values) {
+  const nums = values.filter((v) => typeof v === "number" && !Number.isNaN(v));
+  if (!nums.length) return 80;
+  return nums.reduce((a, b) => a + b, 0) / nums.length;
 }
 
 // ============================================================
@@ -800,7 +1204,7 @@ function renderAmbitionStep(body) {
 
         <!-- LEFT -->
         <div class="f1-ambition-sidebar">
-          <div class="f1-ambition-list" role="list">
+          <div class="f1-ambition-list" role="list" style="max-height:60vh;overflow:auto;padding-right:8px;">
             ${Object.values(ambitionLevels)
               .map((tier) => renderTierSelector(tier))
               .join("")}
@@ -972,14 +1376,21 @@ function renderDriverSelectionStep(body) {
           <p class="f1-header-desc">Pilih dua pembalap untuk memulai karier. Klik kartu untuk memilih atau membatalkan.</p>
         </div>
 
-        <div class="f1-car-indicators" aria-label="Selected cars">
-          <div class="f1-car-indicator ${hasCar1 ? "active" : ""}" title="Car 1">
-            <i class="ti ti-car"></i>
-            <span>CAR 1</span>
-          </div>
-          <div class="f1-car-indicator ${hasCar2 ? "active" : ""}" title="Car 2">
-            <i class="ti ti-car"></i>
-            <span>CAR 2</span>
+        <div class="f1-step-header-right">
+          ${renderBudgetPill()}
+          <div class="f1-car-indicators" aria-label="Selected cars">
+            <div class="f1-car-indicator ${
+              hasCar1 ? "active" : ""
+            }" title="Car 1">
+              <i class="ti ti-car"></i>
+              <span>CAR 1</span>
+            </div>
+            <div class="f1-car-indicator ${
+              hasCar2 ? "active" : ""
+            }" title="Car 2">
+              <i class="ti ti-car"></i>
+              <span>CAR 2</span>
+            </div>
           </div>
         </div>
       </div>
@@ -994,6 +1405,13 @@ function renderDriverSelectionStep(body) {
 function renderDriverCard(driver) {
   const selected = wizardState.team.lineup.driverIds.includes(driver.id);
 
+  // Disable card if selecting it would exceed budget.
+  let disabled = false;
+  if (!selected) {
+    const delta = driver.price_idr ?? 0;
+    disabled = !canAffordDeltaSpend(delta);
+  }
+
   const overall = driver.stats?.overall ?? 80;
   const cornering = driver.stats?.cornering ?? 80;
   const braking = driver.stats?.braking ?? 80;
@@ -1002,8 +1420,11 @@ function renderDriverCard(driver) {
 
   return `
     <div
-      class="f1-driver-card ${selected ? "selected" : ""}"
+      class="f1-driver-card ${selected ? "selected" : ""} ${
+    disabled ? "opacity-40 pointer-events-none" : ""
+  }"
       data-driver-id="${driver.id}"
+      data-disabled="${disabled ? "1" : "0"}"
     >
       ${selected ? '<div class="f1-driver-selected-icon">✔</div>' : ""}
 
@@ -1047,8 +1468,9 @@ function renderDriverCard(driver) {
 function toggleDriver(id) {
   const body = document.getElementById("wizardBody");
   const prevScrollTop = body?.scrollTop ?? 0;
-  const prevGridScrollLeft = body?.querySelector(".driver-select-grid")
-    ?.scrollLeft;
+  const prevGridScrollLeft = body?.querySelector(
+    ".driver-select-grid"
+  )?.scrollLeft;
 
   const drivers = wizardState.team.lineup.driverIds;
 
@@ -1057,6 +1479,12 @@ function toggleDriver(id) {
   } else {
     if (drivers.length >= 2) {
       showToast("Maximum 2 drivers."); // Pastikan fungsi showToast sudah tersedia di kodemu
+      return;
+    }
+
+    const price = wizardState.masterData.driversById[id]?.price_idr ?? 0;
+    if (!canAffordDeltaSpend(price)) {
+      budgetToast(price);
       return;
     }
     drivers.push(id);
@@ -1100,20 +1528,26 @@ function renderPowerUnitStep(body) {
   );
 
   const selectedPu =
-    wizardState.masterData.powerUnitsById[wizardState.team.lineup.powerUnitId] ||
-    activePowerUnits[0];
+    wizardState.masterData.powerUnitsById[
+      wizardState.team.lineup.powerUnitId
+    ] || activePowerUnits[0];
 
   body.innerHTML = `
     <div class="f1-step-panel">
-      <div class="f1-create-header">
-        <div class="f1-create-subtitle"><span class="f1-accent-line"></span> STEP 4</div>
-        <h2 class="f1-create-title">POWER UNIT</h2>
-        <p class="f1-header-desc">Pilih mesin yang menentukan performa, drivability, dan reliability untuk musim ini.</p>
+      <div class="f1-step3-header">
+        <div class="f1-create-header">
+          <div class="f1-create-subtitle"><span class="f1-accent-line"></span> STEP 5</div>
+          <h2 class="f1-create-title">POWER UNIT</h2>
+          <p class="f1-header-desc">Pilih mesin yang menentukan performa, drivability, dan reliability untuk musim ini.</p>
+        </div>
+        <div class="f1-step-header-right">
+          ${renderBudgetPill()}
+        </div>
       </div>
 
       <div class="f1-pu-layout">
         <div class="f1-pu-sidebar">
-          <div class="f1-pu-list" role="list">
+          <div class="f1-pu-list" role="list" style="max-height:60vh;overflow:auto;padding-right:8px;">
             ${activePowerUnits.map(renderPowerUnitOption).join("")}
           </div>
         </div>
@@ -1129,11 +1563,22 @@ function renderPowerUnitStep(body) {
 function renderPowerUnitOption(pu) {
   const selected = wizardState.team.lineup.powerUnitId === pu.id;
 
+  const currentPuPrice =
+    wizardState.masterData.powerUnitsById[wizardState.team.lineup.powerUnitId]
+      ?.price_idr ?? 0;
+  const nextPuPrice = pu.price_idr ?? 0;
+  const delta = selected ? 0 : Math.max(0, nextPuPrice - currentPuPrice);
+  const disabled = !selected && !canAffordDeltaSpend(delta);
+
   return `
     <button
-      class="f1-pu-option ${selected ? "selected" : ""}"
+      class="f1-pu-option ${selected ? "selected" : ""} ${
+    disabled ? "opacity-40" : ""
+  }"
       data-pu-id="${pu.id}"
       type="button"
+      ${disabled ? "disabled" : ""}
+      aria-disabled="${disabled ? "true" : "false"}"
     >
       <div class="f1-pu-option-top">
         <div class="f1-pu-option-title">${pu.manufacturer}</div>
@@ -1168,7 +1613,9 @@ function renderPowerUnitDetail(pu) {
       ? `Reliability dibangun lewat manajemen temperatur dan ketahanan kegagalan (resistance ${rel.failure_resistance}).`
       : null,
     typeof dev.regulation_adaptation === "number"
-      ? `Potensi pengembangan tetap tinggi, terutama adaptasi regulasi (${dev.regulation_adaptation}) dan upgrade potential (${dev.upgrade_potential ?? "-"}).`
+      ? `Potensi pengembangan tetap tinggi, terutama adaptasi regulasi (${
+          dev.regulation_adaptation
+        }) dan upgrade potential (${dev.upgrade_potential ?? "-"}).`
       : null,
   ].filter(Boolean);
 
@@ -1211,7 +1658,9 @@ function renderPowerUnitDetail(pu) {
             <div class="f1-ambition-detail-table">
               <div class="f1-detail-row">
                 <div class="f1-detail-label"><i class="ti ti-gauge"></i> Overall</div>
-                <div class="f1-detail-value">${stats.overall_performance ?? "-"}</div>
+                <div class="f1-detail-value">${
+                  stats.overall_performance ?? "-"
+                }</div>
               </div>
               <div class="f1-detail-row">
                 <div class="f1-detail-label"><i class="ti ti-bolt"></i> Horsepower</div>
@@ -1227,7 +1676,9 @@ function renderPowerUnitDetail(pu) {
               </div>
               <div class="f1-detail-row">
                 <div class="f1-detail-label"><i class="ti ti-wave-sine"></i> Throttle Smooth.</div>
-                <div class="f1-detail-value">${drv.throttle_smoothness ?? "-"}</div>
+                <div class="f1-detail-value">${
+                  drv.throttle_smoothness ?? "-"
+                }</div>
               </div>
             </div>
           </div>
@@ -1241,19 +1692,27 @@ function renderPowerUnitDetail(pu) {
               </div>
               <div class="f1-detail-row">
                 <div class="f1-detail-label"><i class="ti ti-snowflake"></i> Cooling</div>
-                <div class="f1-detail-value">${rel.cooling_efficiency ?? "-"}</div>
+                <div class="f1-detail-value">${
+                  rel.cooling_efficiency ?? "-"
+                }</div>
               </div>
               <div class="f1-detail-row">
                 <div class="f1-detail-label"><i class="ti ti-shield"></i> Failure Resist.</div>
-                <div class="f1-detail-value">${rel.failure_resistance ?? "-"}</div>
+                <div class="f1-detail-value">${
+                  rel.failure_resistance ?? "-"
+                }</div>
               </div>
               <div class="f1-detail-row">
                 <div class="f1-detail-label"><i class="ti ti-trending-up"></i> Upgrade Potential</div>
-                <div class="f1-detail-value">${dev.upgrade_potential ?? "-"}</div>
+                <div class="f1-detail-value">${
+                  dev.upgrade_potential ?? "-"
+                }</div>
               </div>
               <div class="f1-detail-row">
                 <div class="f1-detail-label"><i class="ti ti-adjustments"></i> Reg. Adaptation</div>
-                <div class="f1-detail-value">${dev.regulation_adaptation ?? "-"}</div>
+                <div class="f1-detail-value">${
+                  dev.regulation_adaptation ?? "-"
+                }</div>
               </div>
             </div>
           </div>
@@ -1267,7 +1726,13 @@ function renderPowerUnitDetail(pu) {
             <div class="f1-pu-circuit-list">
               ${ch.best_circuit_ids
                 .slice(0, 6)
-                .map((id) => `<div class="f1-pu-circuit-chip">${id.replaceAll("_", " ")}</div>`)
+                .map(
+                  (id) =>
+                    `<div class="f1-pu-circuit-chip">${id.replaceAll(
+                      "_",
+                      " "
+                    )}</div>`
+                )
                 .join("")}
             </div>
           </div>
@@ -1288,45 +1753,410 @@ function humanizeEnum(v) {
 }
 
 // ============================================================
-// STEP 5
+// STEP 6
 // ============================================================
 
 function renderChassisStep(body) {
+  const activeChassis = wizardState.masterData.chassis.filter(
+    (x) => x.is_active
+  );
+
+  const selectedChassis =
+    wizardState.masterData.chassisById[wizardState.team.lineup.chassisId] ||
+    activeChassis[0];
+
   body.innerHTML = `
-    <div class="driver-select-grid">
+    <div class="f1-step-panel">
+      <div class="f1-step3-header">
+        <div class="f1-create-header">
+          <div class="f1-create-subtitle"><span class="f1-accent-line"></span> STEP 6</div>
+          <h2 class="f1-create-title">CHASSIS</h2>
+          <p class="f1-header-desc">Pilih platform sasis dan aero-package yang menentukan karakter mobil dalam balapan.</p>
+        </div>
+        <div class="f1-step-header-right">
+          ${renderBudgetPill()}
+        </div>
+      </div>
 
-      ${wizardState.masterData.chassis
-        .filter((x) => x.is_active)
-        .map(renderChassisCard)
-        .join("")}
+      <div class="f1-ch-layout">
+        <div class="f1-ch-sidebar">
+          <div class="f1-ch-list" role="list" style="max-height:60vh;overflow:auto;padding-right:8px;">
+            ${activeChassis.map(renderChassisOption).join("")}
+          </div>
+        </div>
 
+        <div class="f1-ch-detail">
+          ${selectedChassis ? renderChassisDetail(selectedChassis) : ""}
+        </div>
+      </div>
     </div>
   `;
 }
 
-function renderChassisCard(chassis) {
+function renderChassisOption(chassis) {
   const selected = wizardState.team.lineup.chassisId === chassis.id;
 
+  const currentChPrice =
+    wizardState.masterData.chassisById[wizardState.team.lineup.chassisId]
+      ?.price_idr ?? 0;
+  const nextChPrice = chassis.price_idr ?? 0;
+  const delta = selected ? 0 : Math.max(0, nextChPrice - currentChPrice);
+  const disabled = !selected && !canAffordDeltaSpend(delta);
+
   return `
-    <div
-      class="driver-select-card ${selected ? "selected" : ""}"
+    <button
+      class="f1-ch-option ${selected ? "selected" : ""} ${
+    disabled ? "opacity-40" : ""
+  }"
       data-chassis-id="${chassis.id}"
+      type="button"
+      ${disabled ? "disabled" : ""}
+      aria-disabled="${disabled ? "true" : "false"}"
     >
-
-      <div class="d-name">
-        ${chassis.name}
+      <div class="f1-ch-option-top">
+        <div class="f1-ch-option-title">${chassis.name}</div>
+        ${selected ? '<div class="f1-ambition-check">✓</div>' : ""}
       </div>
+      <div class="f1-ch-option-sub">${[
+        chassis.design_philosophy,
+        chassis.concept,
+      ]
+        .filter(Boolean)
+        .join(" • ")}</div>
+      <div class="f1-ch-option-price">Rp ${moneyCompact(
+        chassis.price_idr
+      )}</div>
+    </button>
+  `;
+}
 
-      <div class="text-xs">
-        ${money(chassis.price_idr)}
+function renderChassisDetail(chassis) {
+  const stats = chassis.stats || {};
+  const aero = stats.aerodynamics || {};
+  const mech = stats.mechanical || {};
+  const perf = stats.performance || {};
+  const rel = stats.reliability || {};
+  const dev = stats.development || {};
+  const behavior = chassis.car_behavior || {};
+  const difficulty = chassis.difficulty || {};
+
+  const interpretations = interpretChassis({ aero, mech, perf });
+
+  const narrativeParts = [
+    chassis.design_philosophy
+      ? `Filosofi desain ${humanizeEnum(
+          chassis.design_philosophy
+        )} membentuk baseline mobil: efisien di lintasan cepat tanpa mengorbankan stabilitas.`
+      : null,
+    chassis.concept
+      ? `Konsep ${humanizeEnum(
+          chassis.concept
+        )} memberi rasa setir yang konsisten, terutama saat masuk tikungan kecepatan menengah hingga tinggi.`
+      : null,
+    typeof stats.overall_performance === "number"
+      ? `Dengan overall performance ${stats.overall_performance}, platform ini ideal untuk tim yang ingin performa race pace yang kuat dan ban awet.`
+      : null,
+    typeof dev.setup_window === "number"
+      ? `Setup window yang lebar (${dev.setup_window}) mengurangi risiko salah arah saat pengembangan set-up di akhir pekan balap.`
+      : null,
+  ].filter(Boolean);
+
+  return `
+    <div class="f1-ch-detail-card">
+      <div class="f1-ch-detail-bg"></div>
+      <div class="f1-ch-detail-content">
+        <div class="f1-ambition-badge">${(chassis.team_id ?? "").replaceAll(
+          "_",
+          " "
+        )}</div>
+        <div class="f1-ambition-title">${chassis.name}</div>
+        <div class="f1-ambition-description">
+          <strong>Philosophy:</strong> ${
+            chassis.design_philosophy
+              ? humanizeEnum(chassis.design_philosophy)
+              : "-"
+          }<br>
+          <strong>Concept:</strong> ${
+            chassis.concept ? humanizeEnum(chassis.concept) : "-"
+          }<br>
+          <strong>Price:</strong> Rp ${moneyCompact(chassis.price_idr)}
+        </div>
+
+        ${
+          interpretations.length
+            ? `
+          <div class="f1-ch-interpret-row" aria-label="Chassis interpretation">
+            ${interpretations
+              .map(
+                (x) => `
+              <div class="f1-ch-interpret-chip" title="${escapeHtml(x.reason)}">
+                <span>${x.label}</span>
+              </div>
+            `
+              )
+              .join("")}
+          </div>
+        `
+            : ""
+        }
+
+        ${
+          narrativeParts.length
+            ? `
+          <div class="f1-ch-narrative">${narrativeParts.join(" ")}</div>
+        `
+            : ""
+        }
+
+        <div class="f1-ch-chip-row">
+          <div class="f1-ch-chip"><span>Driving Style</span><strong>${
+            behavior.driving_style ? humanizeEnum(behavior.driving_style) : "-"
+          }</strong></div>
+          <div class="f1-ch-chip"><span>Qualifying Bias</span><strong>${
+            behavior.qualifying_bias ?? "-"
+          }</strong></div>
+          <div class="f1-ch-chip"><span>Race Pace Bias</span><strong>${
+            behavior.race_pace_bias ?? "-"
+          }</strong></div>
+        </div>
+
+        <div class="f1-detail-quality-wrapper">
+          <div class="f1-ambition-section">
+            <div class="f1-ambition-section-title">AERODYNAMICS</div>
+            <div class="f1-ambition-detail-table">
+              <div class="f1-detail-row"><div class="f1-detail-label"><i class="ti ti-wind"></i> Low Speed</div><div class="f1-detail-value">${
+                aero.low_speed_cornering ?? "-"
+              }</div></div>
+              <div class="f1-detail-row"><div class="f1-detail-label"><i class="ti ti-wind"></i> Medium Speed</div><div class="f1-detail-value">${
+                aero.medium_speed_cornering ?? "-"
+              }</div></div>
+              <div class="f1-detail-row"><div class="f1-detail-label"><i class="ti ti-wind"></i> High Speed</div><div class="f1-detail-value">${
+                aero.high_speed_cornering ?? "-"
+              }</div></div>
+              <div class="f1-detail-row"><div class="f1-detail-label"><i class="ti ti-arrows-exchange"></i> Dirty Air</div><div class="f1-detail-value">${
+                aero.dirty_air_tolerance ?? "-"
+              }</div></div>
+              <div class="f1-detail-row"><div class="f1-detail-label"><i class="ti ti-bolt"></i> Aero Eff.</div><div class="f1-detail-value">${
+                aero.aero_efficiency ?? "-"
+              }</div></div>
+            </div>
+          </div>
+
+          <div class="f1-ambition-section">
+            <div class="f1-ambition-section-title">MECHANICAL</div>
+            <div class="f1-ambition-detail-table">
+              <div class="f1-detail-row"><div class="f1-detail-label"><i class="ti ti-tire"></i> Traction</div><div class="f1-detail-value">${
+                mech.traction ?? "-"
+              }</div></div>
+              <div class="f1-detail-row"><div class="f1-detail-label"><i class="ti ti-road"></i> Kerb Riding</div><div class="f1-detail-value">${
+                mech.kerb_riding ?? "-"
+              }</div></div>
+              <div class="f1-detail-row"><div class="f1-detail-label"><i class="ti ti-arrows-move-vertical"></i> Ride Stability</div><div class="f1-detail-value">${
+                mech.ride_stability ?? "-"
+              }</div></div>
+              <div class="f1-detail-row"><div class="f1-detail-label"><i class="ti ti-settings"></i> Suspension</div><div class="f1-detail-value">${
+                mech.suspension_quality ?? "-"
+              }</div></div>
+              <div class="f1-detail-row"><div class="f1-detail-label"><i class="ti ti-scale"></i> Weight Dist.</div><div class="f1-detail-value">${
+                mech.weight_distribution ?? "-"
+              }</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="f1-detail-quality-wrapper">
+          <div class="f1-ambition-section">
+            <div class="f1-ambition-section-title">PERFORMANCE</div>
+            <div class="f1-ambition-detail-table">
+              <div class="f1-detail-row"><div class="f1-detail-label"><i class="ti ti-speedometer"></i> Top Speed</div><div class="f1-detail-value">${
+                perf.top_speed ?? "-"
+              }</div></div>
+              <div class="f1-detail-row"><div class="f1-detail-label"><i class="ti ti-rocket"></i> Acceleration</div><div class="f1-detail-value">${
+                perf.acceleration ?? "-"
+              }</div></div>
+              <div class="f1-detail-row"><div class="f1-detail-label"><i class="ti ti-brand-stackoverflow"></i> Tyre Pres.</div><div class="f1-detail-value">${
+                perf.tyre_preservation ?? "-"
+              }</div></div>
+              <div class="f1-detail-row"><div class="f1-detail-label"><i class="ti ti-leaf"></i> Fuel Eff.</div><div class="f1-detail-value">${
+                perf.fuel_efficiency ?? "-"
+              }</div></div>
+              <div class="f1-detail-row"><div class="f1-detail-label"><i class="ti ti-battery"></i> ERS Integr.</div><div class="f1-detail-value">${
+                perf.ers_integration ?? "-"
+              }</div></div>
+            </div>
+          </div>
+
+          <div class="f1-ambition-section">
+            <div class="f1-ambition-section-title">DEVELOPMENT</div>
+            <div class="f1-ambition-detail-table">
+              <div class="f1-detail-row"><div class="f1-detail-label"><i class="ti ti-trending-up"></i> Upgrade Pot.</div><div class="f1-detail-value">${
+                dev.upgrade_potential ?? "-"
+              }</div></div>
+              <div class="f1-detail-row"><div class="f1-detail-label"><i class="ti ti-adjustments"></i> Setup Window</div><div class="f1-detail-value">${
+                dev.setup_window ?? "-"
+              }</div></div>
+              <div class="f1-detail-row"><div class="f1-detail-label"><i class="ti ti-file-settings"></i> Reg. Adapt.</div><div class="f1-detail-value">${
+                dev.regulation_adaptability ?? "-"
+              }</div></div>
+              <div class="f1-detail-row"><div class="f1-detail-label"><i class="ti ti-shield"></i> Failure Resist.</div><div class="f1-detail-value">${
+                rel.failure_resistance ?? "-"
+              }</div></div>
+              <div class="f1-detail-row"><div class="f1-detail-label"><i class="ti ti-snowflake"></i> Cooling</div><div class="f1-detail-value">${
+                rel.cooling_efficiency ?? "-"
+              }</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="f1-ch-flag-row">
+          <div class="f1-ch-flag ${difficulty.easy_to_setup ? "active" : ""}">
+            <i class="ti ti-adjustments"></i> Easy To Setup
+          </div>
+          <div class="f1-ch-flag ${difficulty.rookie_friendly ? "active" : ""}">
+            <i class="ti ti-user"></i> Rookie Friendly
+          </div>
+          <div class="f1-ch-flag ${
+            typeof behavior.wet_weather_performance === "number" &&
+            behavior.wet_weather_performance >= 90
+              ? "active"
+              : ""
+          }">
+            <i class="ti ti-cloud-rain"></i> Strong In Wet
+          </div>
+        </div>
       </div>
-
+      <div class="f1-ambition-accent"></div>
     </div>
   `;
+}
+
+function interpretChassis({ aero, mech, perf }) {
+  const tags = [];
+
+  const hs = aero.high_speed_cornering ?? null;
+  const ms = aero.medium_speed_cornering ?? null;
+  const ls = aero.low_speed_cornering ?? null;
+  const dirty = aero.dirty_air_tolerance ?? null;
+  const tyre = perf.tyre_preservation ?? null;
+  const topSpeed = perf.top_speed ?? null;
+  const traction = mech.traction ?? null;
+  const kerb = mech.kerb_riding ?? null;
+  const ride = mech.ride_stability ?? null;
+
+  if (typeof hs === "number" && hs >= 95) {
+    tags.push({
+      label: "High-Speed Monster",
+      reason: `High-speed cornering ${hs} membuat mobil ini sangat kuat di tikungan cepat.`,
+    });
+  }
+
+  if (typeof tyre === "number" && tyre >= 94) {
+    tags.push({
+      label: "Tyre Whisperer",
+      reason: `Tyre preservation ${tyre} membantu menjaga pace panjang dan strategi fleksibel.`,
+    });
+  }
+
+  if (typeof dirty === "number" && dirty >= 92) {
+    tags.push({
+      label: "Dirty-Air Specialist",
+      reason: `Dirty air tolerance ${dirty} membuat mobil tetap stabil saat mengikuti lawan dekat.`,
+    });
+  }
+
+  if (typeof topSpeed === "number" && topSpeed >= 92) {
+    tags.push({
+      label: "Straight-Line Threat",
+      reason: `Top speed ${topSpeed} memberi keuntungan di trek power dan zona DRS panjang.`,
+    });
+  }
+
+  if (typeof traction === "number" && traction >= 90) {
+    tags.push({
+      label: "Exit Traction",
+      reason: `Traction ${traction} membuat akselerasi keluar tikungan lebih bersih dan konsisten.`,
+    });
+  }
+
+  if (typeof kerb === "number" && kerb >= 88) {
+    tags.push({
+      label: "Kerb Eater",
+      reason: `Kerb riding ${kerb} membantu agresif di chicane dan track limits.`,
+    });
+  }
+
+  // If none triggered, derive a best-in-class style based on peak values.
+  if (!tags.length) {
+    const candidates = [
+      {
+        key: "aero_high_speed",
+        v: hs,
+        label: "High-Speed Bias",
+        reason: `High-speed cornering ${
+          hs ?? "-"
+        } adalah kekuatan utama paket ini.`,
+      },
+      {
+        key: "tyre_preservation",
+        v: tyre,
+        label: "Long-Run Focus",
+        reason: `Tyre preservation ${
+          tyre ?? "-"
+        } membuatnya kompetitif dalam stint panjang.`,
+      },
+      {
+        key: "dirty_air",
+        v: dirty,
+        label: "Close-Following",
+        reason: `Dirty air tolerance ${
+          dirty ?? "-"
+        } membantu dalam duel dan DRS train.`,
+      },
+      {
+        key: "mechanical_ride",
+        v: ride,
+        label: "Stable Platform",
+        reason: `Ride stability ${
+          ride ?? "-"
+        } memberi rasa percaya diri dan konsistensi.`,
+      },
+      {
+        key: "medium_speed",
+        v: ms,
+        label: "Medium-Speed King",
+        reason: `Medium-speed cornering ${
+          ms ?? "-"
+        } cocok untuk sirkuit teknikal modern.`,
+      },
+      {
+        key: "low_speed",
+        v: ls,
+        label: "Low-Speed Rotation",
+        reason: `Low-speed cornering ${
+          ls ?? "-"
+        } membantu di hairpin dan slow complexes.`,
+      },
+    ].filter((x) => typeof x.v === "number");
+
+    candidates.sort((a, b) => b.v - a.v);
+    if (candidates[0])
+      tags.push({ label: candidates[0].label, reason: candidates[0].reason });
+  }
+
+  return tags.slice(0, 3);
+}
+
+function escapeHtml(s) {
+  return String(s ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
 // ============================================================
-// STEP 6
+// STEP 7
 // ============================================================
 
 function renderConfirmationStep(body) {
@@ -1340,26 +2170,111 @@ function renderConfirmationStep(body) {
 
   const chassis = wizardState.masterData.chassisById[lineup.chassisId];
 
+  const teamChief = wizardState.masterData.teamChiefsById[lineup.teamChiefId];
+
+  const technicalChief =
+    wizardState.masterData.technicalChiefsById[lineup.technicalChiefId];
+
+  const tier = ambitionLevels[wizardState.team.ambitionTier];
+  const startingBudget = tier?.financials?.initial_budget_idr ?? 0;
+  const totalSpend = calculateTotalSpend();
+  const remaining = getRemainingBudget();
+
   body.innerHTML = `
-    <div class="panel">
-
-      <div>${d1?.full_name ?? "-"}</div>
-      <div>${d2?.full_name ?? "-"}</div>
-
-      <hr>
-
-      <div>PU: ${pu?.manufacturer ?? "-"}</div>
-
-      <div>
-        Chassis:
-        ${chassis?.name ?? "-"}
+    <div class="f1-step-panel">
+      <div class="f1-step3-header">
+        <div class="f1-create-header">
+          <div class="f1-create-subtitle"><span class="f1-accent-line"></span> STEP 7</div>
+          <h2 class="f1-create-title">CONFIRMATION</h2>
+          <p class="f1-header-desc">Review konfigurasi akhir tim balapmu sebelum memulai karier profesional.</p>
+        </div>
+        <div class="f1-step-header-right">
+          <!-- keep header clean; show finance breakdown inside the card -->
+        </div>
       </div>
 
-      <div>
-        Remaining Budget:
-        ${money(getRemainingBudget())}
-      </div>
+      <div class="panel mt-4" style="background: rgba(26,26,32,0.78); padding: 30px; border-radius: 16px;">
+        <div class="text-xs font-orbitron tracking-widest text-f1-dim text-center mb-6 text-lg" style="color: var(--accent-cyan);">FINAL REVIEW</div>
 
+        <div style="display:flex;gap:24px;flex-wrap:wrap;margin-top:12px;justify-content:center;">
+          ${renderConfirmDriverCard(d1, "CAR 1")}
+          ${renderConfirmDriverCard(d2, "CAR 2")}
+        </div>
+
+        <div style="display:flex;gap:24px;flex-wrap:wrap;margin-top:24px;justify-content:center;">
+          ${renderConfirmChiefCard(teamChief, "TEAM CHIEF", "team")}
+          ${renderConfirmChiefCard(technicalChief, "TECH CHIEF", "tech")}
+        </div>
+
+        <div class="f1-ambition-quality-grid" style="margin-top:32px; gap:24px; border-top:1px solid var(--panel-border); padding-top:32px;">
+          <div class="f1-quality-box" style="text-align: left; padding: 20px;">
+             <span style="color: var(--accent-cyan); font-size: 12px;"><i class="ti ti-settings"></i> HARDWARE</span>
+             <div style="display:grid;gap:16px;margin-top:16px;">
+                <div style="display:flex;justify-content:space-between;gap:12px; align-items:center;">
+                  <div class="text-xs font-orbitron tracking-widest text-f1-dim">POWER UNIT</div>
+                  <div class="font-orbitron" style="letter-spacing:0.04em; font-size:16px;">${pu?.manufacturer ?? "-"}</div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px; align-items:center;">
+                  <div class="text-xs font-orbitron tracking-widest text-f1-dim">CHASSIS</div>
+                  <div class="font-orbitron" style="letter-spacing:0.04em; font-size:16px;">${chassis?.name ?? "-"}</div>
+                </div>
+             </div>
+          </div>
+          
+          <div class="f1-quality-box" style="text-align: left; padding: 20px;">
+             <span style="color: var(--accent-cyan); font-size: 12px;"><i class="ti ti-cash"></i> FINANCE</span>
+             <div style="display:grid;gap:16px;margin-top:16px;">
+                <div style="display:flex;justify-content:space-between;gap:12px; align-items:center;">
+                  <div class="text-xs font-orbitron tracking-widest text-f1-dim">STARTING BUDGET</div>
+                  <div class="font-orbitron" style="font-size:16px;">${money(startingBudget)}</div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px; align-items:center;">
+                  <div class="text-xs font-orbitron tracking-widest text-f1-dim">TOTAL SPEND</div>
+                  <div class="font-orbitron" style="color: var(--accent-orange); font-size:16px;">${money(totalSpend)}</div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px; align-items:center; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 12px;">
+                  <div class="text-xs font-orbitron tracking-widest text-f1-dim text-white">REMAINING</div>
+                  <div class="font-orbitron font-bold" style="font-size:18px; color:${
+                    remaining >= 0 ? "var(--accent-cyan)" : "var(--accent-red)"
+                  };">${money(remaining)}</div>
+                </div>
+             </div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;border-top:1px solid var(--panel-border);padding-top:12px;display:grid;grid-template-columns:1fr;gap:10px;">
+          <div style="display:flex;justify-content:space-between;gap:12px;">
+            <div class="text-xs font-orbitron tracking-widest text-f1-dim">POWER UNIT</div>
+            <div class="font-orbitron" style="letter-spacing:0.04em;">${
+              pu?.manufacturer ?? "-"
+            }</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;gap:12px;">
+            <div class="text-xs font-orbitron tracking-widest text-f1-dim">CHASSIS</div>
+            <div class="font-orbitron" style="letter-spacing:0.04em;">${
+              chassis?.name ?? "-"
+            }</div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;border-top:1px solid var(--panel-border);padding-top:12px;display:grid;grid-template-columns:1fr;gap:8px;">
+          <div class="text-xs font-orbitron tracking-widest text-f1-dim">FINANCE</div>
+          <div style="display:flex;justify-content:space-between;gap:12px;">
+            <div class="text-f1-dim">Budget Awal</div>
+            <div class="font-orbitron">${money(startingBudget)}</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;gap:12px;">
+            <div class="text-f1-dim">Total Biaya</div>
+            <div class="font-orbitron">${money(totalSpend)}</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;gap:12px;">
+            <div class="text-f1-dim">Saldo Tersisa</div>
+            <div class="font-orbitron" style="color:${
+              remaining >= 0 ? "var(--accent-cyan)" : "var(--accent-red)"
+            };">${money(remaining)}</div>
+          </div>
+        </div>
+      </div>
     </div>
   `;
 
@@ -1369,12 +2284,146 @@ function renderConfirmationStep(body) {
   `;
 }
 
+function renderConfirmChiefCard(chief, label, kind) {
+  const readOnlyCard = chief
+    ? renderChiefCardReadOnly(chief, kind)
+    : `
+      <div class="f1-driver-card opacity-40 pointer-events-none">
+        <div class="f1-driver-top-right">
+          <div class="dim-text">-</div>
+          <div style="margin-top: 4px;"><span class="dim-text">ROLE:</span> -</div>
+        </div>
+        <div class="f1-driver-stats-right">
+          <div class="f1-driver-overall-wrap">
+            <span class="f1-driver-star">★</span>
+            <span class="f1-driver-overall">-</span>
+          </div>
+          <div class="f1-driver-substats">
+            <div class="substat"><span class="dim-text">-</span> -</div>
+            <div class="substat"><span class="dim-text">-</span> -</div>
+            <div class="substat"><span class="dim-text">-</span> -</div>
+          </div>
+        </div>
+        <div class="f1-driver-bottom">
+          <div class="f1-driver-first-name">EMPTY</div>
+          <div class="f1-driver-last-name">SLOT</div>
+        </div>
+      </div>
+    `;
+
+  return `
+    <div style="flex: 0 1 260px;min-width:240px;display:flex;flex-direction:column;align-items:center;">
+      <div class="text-xs font-orbitron tracking-widest text-f1-dim" style="margin:2px 0 8px 0;">${label}</div>
+      ${readOnlyCard}
+    </div>
+  `;
+}
+
+function renderChiefCardReadOnly(chief, kind) {
+  const stats = chief?.stats ?? {};
+
+  const overall = chief?.career_rating ?? 80;
+
+  const isTeam = kind === "team";
+  const s1 = isTeam ? stats.leadership : stats.aerodynamics;
+  const s2 = isTeam ? stats.strategy : stats.mechanical_design;
+  const s3 = isTeam ? stats.technical_understanding : stats.innovation;
+  const k1 = isTeam ? "LEA" : "AER";
+  const k2 = isTeam ? "STR" : "MEC";
+  const k3 = isTeam ? "TEC" : "INN";
+
+  return `
+    <div class="f1-driver-card pointer-events-none">
+      <div class="f1-driver-top-right">
+        <div>Rp ${moneyCompact(
+          chief?.price_idr
+        )} <span class="dim-text">/PA</span></div>
+        <div style="margin-top: 4px;"><span class="dim-text">ROLE:</span> ${
+          chief?.role ?? "-"
+        }</div>
+      </div>
+
+      <div class="f1-driver-stats-right">
+        <div class="f1-driver-overall-wrap">
+          <span class="f1-driver-star">★</span>
+          <span class="f1-driver-overall">${overall}</span>
+        </div>
+        <div class="f1-driver-substats">
+          <div class="substat"><span class="dim-text">${k1}</span> ${
+    s1 ?? 80
+  }</div>
+          <div class="substat"><span class="dim-text">${k2}</span> ${
+    s2 ?? 80
+  }</div>
+          <div class="substat"><span class="dim-text">${k3}</span> ${
+    s3 ?? 80
+  }</div>
+        </div>
+      </div>
+
+      <img
+        src="${kind === "team" ? TEAM_CHIEF_PHOTO_URL : TECH_CHIEF_PHOTO_URL}"
+        class="f1-team-image"
+      />
+
+      <div class="f1-driver-bottom">
+        <div class="f1-driver-first-name">${chief?.first_name ?? "-"}</div>
+        <div class="f1-driver-last-name">${chief?.last_name ?? "-"}</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderConfirmDriverCard(driver, label) {
+  // On confirmation step, we want the exact same look as the driver selection
+  // cards, but read-only (no click handlers, no budget/disabled logic).
+  const driverCard = driver
+    ? renderDriverCard(driver)
+        .replace("data-driver-id=", "data-driver-id-confirm=")
+        .replace("f1-driver-card", "f1-driver-card pointer-events-none")
+    : `
+      <div class="f1-driver-card opacity-40 pointer-events-none">
+        <div class="f1-driver-top-right">
+          <div class="dim-text">-</div>
+          <div style="margin-top: 4px;"><span class="dim-text">AGE:</span> -</div>
+        </div>
+        <div class="f1-driver-stats-right">
+          <div class="f1-driver-overall-wrap">
+            <span class="f1-driver-star">★</span>
+            <span class="f1-driver-overall">-</span>
+          </div>
+          <div class="f1-driver-substats">
+            <div class="substat"><span class="dim-text">COR</span> -</div>
+            <div class="substat"><span class="dim-text">BRK</span> -</div>
+            <div class="substat"><span class="dim-text">REA</span> -</div>
+          </div>
+        </div>
+        <div class="f1-driver-bottom">
+          <div class="f1-driver-first-name">EMPTY</div>
+          <div class="f1-driver-last-name">SLOT</div>
+        </div>
+      </div>
+    `;
+
+  return `
+    <div style="flex: 0 1 260px;min-width:240px;display:flex;flex-direction:column;align-items:center;">
+      <div class="text-xs font-orbitron tracking-widest text-f1-dim" style="margin:2px 0 8px 0;">${label}</div>
+      ${driverCard}
+    </div>
+  `;
+}
+
 // ============================================================
 // Validation
 // ============================================================
 
 function validateCurrentStep() {
   const team = wizardState.team;
+
+  if (getRemainingBudget() < 0) {
+    showToast("Saldo tidak cukup.");
+    return false;
+  }
 
   if (wizardState.currentStep === 1) {
     const name = document.getElementById("inp-name")?.value?.trim();
@@ -1402,12 +2451,20 @@ function validateCurrentStep() {
     return false;
   }
 
-  if (wizardState.currentStep === 4 && !team.lineup.powerUnitId) {
+  if (
+    wizardState.currentStep === 4 &&
+    (!team.lineup.teamChiefId || !team.lineup.technicalChiefId)
+  ) {
+    showToast("Select Team Chief and Technical Chief.");
+    return false;
+  }
+
+  if (wizardState.currentStep === 5 && !team.lineup.powerUnitId) {
     showToast("Select power unit.");
     return false;
   }
 
-  if (wizardState.currentStep === 5 && !team.lineup.chassisId) {
+  if (wizardState.currentStep === 6 && !team.lineup.chassisId) {
     showToast("Select chassis.");
     return false;
   }
@@ -1444,6 +2501,10 @@ async function saveTeam() {
 
       sporting: {
         drivers: [...wizardState.team.lineup.driverIds],
+
+        team_chief_id: wizardState.team.lineup.teamChiefId,
+
+        technical_chief_id: wizardState.team.lineup.technicalChiefId,
 
         power_unit_id: wizardState.team.lineup.powerUnitId,
 
@@ -1512,6 +2573,15 @@ function calculateTotalSpend() {
     return sum + (wizardState.masterData.driversById[id]?.price_idr ?? 0);
   }, 0);
 
+  const teamChief =
+    wizardState.masterData.teamChiefsById[wizardState.team.lineup.teamChiefId]
+      ?.price_idr ?? 0;
+
+  const technicalChief =
+    wizardState.masterData.technicalChiefsById[
+      wizardState.team.lineup.technicalChiefId
+    ]?.price_idr ?? 0;
+
   const pu =
     wizardState.masterData.powerUnitsById[wizardState.team.lineup.powerUnitId]
       ?.price_idr ?? 0;
@@ -1520,7 +2590,7 @@ function calculateTotalSpend() {
     wizardState.masterData.chassisById[wizardState.team.lineup.chassisId]
       ?.price_idr ?? 0;
 
-  return drivers + pu + chassis;
+  return drivers + teamChief + technicalChief + pu + chassis;
 }
 
 function getRemainingBudget() {
@@ -1531,9 +2601,9 @@ function getRemainingBudget() {
 
 function assignSponsors() {
   const sponsorTierMap = {
-    new_entry: ["C", "B"],
-    midfield: ["B", "A"],
-    top_tier: ["A", "S"],
+    local_indonesia: ["C", "B"],
+    asian_contender: ["B", "A"],
+    global_powerhouse: ["A", "S"],
   };
 
   return wizardState.masterData.sponsors
