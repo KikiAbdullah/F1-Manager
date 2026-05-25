@@ -2156,22 +2156,17 @@ function escapeHtml(s) {
 }
 
 // ============================================================
-// STEP 7
+// STEP 7: CONFIRMATION
 // ============================================================
 
 function renderConfirmationStep(body) {
   const lineup = wizardState.team.lineup;
 
   const d1 = wizardState.masterData.driversById[lineup.driverIds[0]];
-
   const d2 = wizardState.masterData.driversById[lineup.driverIds[1]];
-
   const pu = wizardState.masterData.powerUnitsById[lineup.powerUnitId];
-
   const chassis = wizardState.masterData.chassisById[lineup.chassisId];
-
   const teamChief = wizardState.masterData.teamChiefsById[lineup.teamChiefId];
-
   const technicalChief =
     wizardState.masterData.technicalChiefsById[lineup.technicalChiefId];
 
@@ -2188,99 +2183,84 @@ function renderConfirmationStep(body) {
           <h2 class="f1-create-title">CONFIRMATION</h2>
           <p class="f1-header-desc">Review konfigurasi akhir tim balapmu sebelum memulai karier profesional.</p>
         </div>
-        <div class="f1-step-header-right">
-          <!-- keep header clean; show finance breakdown inside the card -->
-        </div>
       </div>
 
-      <div class="panel mt-4" style="background: rgba(26,26,32,0.78); padding: 30px; border-radius: 16px;">
-        <div class="text-xs font-orbitron tracking-widest text-f1-dim text-center mb-6 text-lg" style="color: var(--accent-cyan);">FINAL REVIEW</div>
-
-        <div style="display:flex;gap:24px;flex-wrap:wrap;margin-top:12px;justify-content:center;">
-          ${renderConfirmDriverCard(d1, "CAR 1")}
-          ${renderConfirmDriverCard(d2, "CAR 2")}
+      <div class="panel mt-4" style="background: rgba(26,26,32,0.85); padding: 40px 30px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);">
+        
+        <div class="font-orbitron tracking-widest text-center mb-8" style="color: var(--accent-cyan); font-size: 1.2rem; text-shadow: 0 0 10px rgba(0,255,255,0.2);">
+          FINAL REVIEW
         </div>
 
-        <div style="display:flex;gap:24px;flex-wrap:wrap;margin-top:24px;justify-content:center;">
-          ${renderConfirmChiefCard(teamChief, "TEAM CHIEF", "team")}
-          ${renderConfirmChiefCard(technicalChief, "TECH CHIEF", "tech")}
+        <div class="f1-ambition-quality-grid" style="margin-top:40px; gap:24px; border-top:1px dashed rgba(255,255,255,0.1); padding-top:40px;">
+        <div class="mb-8">
+          <div class="text-xs font-orbitron tracking-widest text-f1-dim text-center mb-4"><i class="ti ti-steering-wheel"></i> DRIVERS</div>
+          <div style="display:flex; gap:32px; flex-wrap:wrap; justify-content:center;">
+            ${renderConfirmDriverCard(d1, "CAR 1")}
+            ${renderConfirmDriverCard(d2, "CAR 2")}
+          </div>
         </div>
 
-        <div class="f1-ambition-quality-grid" style="margin-top:32px; gap:24px; border-top:1px solid var(--panel-border); padding-top:32px;">
-          <div class="f1-quality-box" style="text-align: left; padding: 20px;">
-             <span style="color: var(--accent-cyan); font-size: 12px;"><i class="ti ti-settings"></i> HARDWARE</span>
-             <div style="display:grid;gap:16px;margin-top:16px;">
-                <div style="display:flex;justify-content:space-between;gap:12px; align-items:center;">
+        <div class="mb-8">
+          <div class="text-xs font-orbitron tracking-widest text-f1-dim text-center mb-4"><i class="ti ti-users"></i> MANAGEMENT</div>
+          <div style="display:flex; gap:32px; flex-wrap:wrap; justify-content:center;">
+            ${renderConfirmChiefCard(teamChief, "TEAM CHIEF", "team")}
+            ${renderConfirmChiefCard(technicalChief, "TECH CHIEF", "tech")}
+          </div>
+        </div>  
+        </div>
+        <div class="f1-ambition-quality-grid" style="margin-top:40px; gap:24px; border-top:1px dashed rgba(255,255,255,0.1); padding-top:40px;">
+          
+          <div class="f1-quality-box" style="text-align: left; padding: 24px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+             <span style="color: var(--accent-cyan); font-size: 13px; font-weight: bold; letter-spacing: 1px;"><i class="ti ti-settings"></i> HARDWARE</span>
+             <div style="display:grid; gap:20px; margin-top:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
                   <div class="text-xs font-orbitron tracking-widest text-f1-dim">POWER UNIT</div>
-                  <div class="font-orbitron" style="letter-spacing:0.04em; font-size:16px;">${pu?.manufacturer ?? "-"}</div>
+                  <div class="font-orbitron text-white" style="letter-spacing:0.04em; font-size:16px;">${
+                    pu?.manufacturer ?? "-"
+                  }</div>
                 </div>
-                <div style="display:flex;justify-content:space-between;gap:12px; align-items:center;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
                   <div class="text-xs font-orbitron tracking-widest text-f1-dim">CHASSIS</div>
-                  <div class="font-orbitron" style="letter-spacing:0.04em; font-size:16px;">${chassis?.name ?? "-"}</div>
+                  <div class="font-orbitron text-white" style="letter-spacing:0.04em; font-size:16px;">${
+                    chassis?.name ?? "-"
+                  }</div>
                 </div>
              </div>
           </div>
           
-          <div class="f1-quality-box" style="text-align: left; padding: 20px;">
-             <span style="color: var(--accent-cyan); font-size: 12px;"><i class="ti ti-cash"></i> FINANCE</span>
-             <div style="display:grid;gap:16px;margin-top:16px;">
-                <div style="display:flex;justify-content:space-between;gap:12px; align-items:center;">
+          <div class="f1-quality-box" style="text-align: left; padding: 24px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+             <span style="color: var(--accent-cyan); font-size: 13px; font-weight: bold; letter-spacing: 1px;"><i class="ti ti-cash"></i> FINANCE</span>
+             <div style="display:grid; gap:16px; margin-top:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
                   <div class="text-xs font-orbitron tracking-widest text-f1-dim">STARTING BUDGET</div>
-                  <div class="font-orbitron" style="font-size:16px;">${money(startingBudget)}</div>
+                  <div class="font-orbitron text-white" style="font-size:15px;">${moneyCompact(
+                    startingBudget
+                  )}</div>
                 </div>
-                <div style="display:flex;justify-content:space-between;gap:12px; align-items:center;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
                   <div class="text-xs font-orbitron tracking-widest text-f1-dim">TOTAL SPEND</div>
-                  <div class="font-orbitron" style="color: var(--accent-orange); font-size:16px;">${money(totalSpend)}</div>
+                  <div class="font-orbitron" style="color: var(--accent-orange); font-size:15px;">${moneyCompact(
+                    totalSpend
+                  )}</div>
                 </div>
-                <div style="display:flex;justify-content:space-between;gap:12px; align-items:center; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 12px;">
-                  <div class="text-xs font-orbitron tracking-widest text-f1-dim text-white">REMAINING</div>
-                  <div class="font-orbitron font-bold" style="font-size:18px; color:${
+                <div style="display:flex; justify-content:space-between; align-items:center; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 16px; margin-top: 4px;">
+                  <div class="text-xs font-orbitron tracking-widest text-white">REMAINING</div>
+                  <div class="font-orbitron font-bold" style="font-size:20px; color:${
                     remaining >= 0 ? "var(--accent-cyan)" : "var(--accent-red)"
-                  };">${money(remaining)}</div>
+                  }; text-shadow: 0 0 10px ${
+    remaining >= 0 ? "rgba(0,255,255,0.3)" : "rgba(255,0,0,0.3)"
+  };">${moneyCompact(remaining)}</div>
                 </div>
              </div>
           </div>
-        </div>
 
-        <div style="margin-top:14px;border-top:1px solid var(--panel-border);padding-top:12px;display:grid;grid-template-columns:1fr;gap:10px;">
-          <div style="display:flex;justify-content:space-between;gap:12px;">
-            <div class="text-xs font-orbitron tracking-widest text-f1-dim">POWER UNIT</div>
-            <div class="font-orbitron" style="letter-spacing:0.04em;">${
-              pu?.manufacturer ?? "-"
-            }</div>
-          </div>
-          <div style="display:flex;justify-content:space-between;gap:12px;">
-            <div class="text-xs font-orbitron tracking-widest text-f1-dim">CHASSIS</div>
-            <div class="font-orbitron" style="letter-spacing:0.04em;">${
-              chassis?.name ?? "-"
-            }</div>
-          </div>
-        </div>
-
-        <div style="margin-top:14px;border-top:1px solid var(--panel-border);padding-top:12px;display:grid;grid-template-columns:1fr;gap:8px;">
-          <div class="text-xs font-orbitron tracking-widest text-f1-dim">FINANCE</div>
-          <div style="display:flex;justify-content:space-between;gap:12px;">
-            <div class="text-f1-dim">Budget Awal</div>
-            <div class="font-orbitron">${money(startingBudget)}</div>
-          </div>
-          <div style="display:flex;justify-content:space-between;gap:12px;">
-            <div class="text-f1-dim">Total Biaya</div>
-            <div class="font-orbitron">${money(totalSpend)}</div>
-          </div>
-          <div style="display:flex;justify-content:space-between;gap:12px;">
-            <div class="text-f1-dim">Saldo Tersisa</div>
-            <div class="font-orbitron" style="color:${
-              remaining >= 0 ? "var(--accent-cyan)" : "var(--accent-red)"
-            };">${money(remaining)}</div>
-          </div>
         </div>
       </div>
     </div>
   `;
 
   document.getElementById("btnNext").innerHTML = `
-    <i class="ti ti-flag-check"></i>
-    START CAREER
+    <i class="ti ti-flag-check"></i> START CAREER
   `;
 }
 
@@ -2312,8 +2292,8 @@ function renderConfirmChiefCard(chief, label, kind) {
     `;
 
   return `
-    <div style="flex: 0 1 260px;min-width:240px;display:flex;flex-direction:column;align-items:center;">
-      <div class="text-xs font-orbitron tracking-widest text-f1-dim" style="margin:2px 0 8px 0;">${label}</div>
+    <div style="flex: 0 1 260px; min-width:240px; display:flex; flex-direction:column; align-items:center;">
+      <div class="text-xs font-orbitron tracking-widest" style="color: var(--accent-cyan); margin-bottom: 12px; letter-spacing: 2px;">${label}</div>
       ${readOnlyCard}
     </div>
   `;
@@ -2321,7 +2301,6 @@ function renderConfirmChiefCard(chief, label, kind) {
 
 function renderChiefCardReadOnly(chief, kind) {
   const stats = chief?.stats ?? {};
-
   const overall = chief?.career_rating ?? 80;
 
   const isTeam = kind === "team";
@@ -2361,10 +2340,9 @@ function renderChiefCardReadOnly(chief, kind) {
         </div>
       </div>
 
-      <img
-        src="${kind === "team" ? TEAM_CHIEF_PHOTO_URL : TECH_CHIEF_PHOTO_URL}"
-        class="f1-team-image"
-      />
+      <img src="${
+        kind === "team" ? TEAM_CHIEF_PHOTO_URL : TECH_CHIEF_PHOTO_URL
+      }" class="f1-team-image" />
 
       <div class="f1-driver-bottom">
         <div class="f1-driver-first-name">${chief?.first_name ?? "-"}</div>
@@ -2375,8 +2353,6 @@ function renderChiefCardReadOnly(chief, kind) {
 }
 
 function renderConfirmDriverCard(driver, label) {
-  // On confirmation step, we want the exact same look as the driver selection
-  // cards, but read-only (no click handlers, no budget/disabled logic).
   const driverCard = driver
     ? renderDriverCard(driver)
         .replace("data-driver-id=", "data-driver-id-confirm=")
@@ -2406,8 +2382,8 @@ function renderConfirmDriverCard(driver, label) {
     `;
 
   return `
-    <div style="flex: 0 1 260px;min-width:240px;display:flex;flex-direction:column;align-items:center;">
-      <div class="text-xs font-orbitron tracking-widest text-f1-dim" style="margin:2px 0 8px 0;">${label}</div>
+    <div style="flex: 0 1 260px; min-width:240px; display:flex; flex-direction:column; align-items:center;">
+      <div class="text-xs font-orbitron tracking-widest" style="color: var(--accent-cyan); margin-bottom: 12px; letter-spacing: 2px;">${label}</div>
       ${driverCard}
     </div>
   `;
