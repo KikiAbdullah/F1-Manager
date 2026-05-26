@@ -22,6 +22,38 @@ const _state = {
 
 const _listeners = {}
 
+function _loadStateFromLocalStorage() {
+  try {
+    const serializedPlayerTeam = localStorage.getItem('playerTeam');
+    const serializedGameState = localStorage.getItem('gameState');
+    if (serializedPlayerTeam) {
+      _state.playerTeam = JSON.parse(serializedPlayerTeam);
+    }
+    if (serializedGameState) {
+      _state.gameState = JSON.parse(serializedGameState);
+    }
+  } catch (error) {
+    console.error("Error loading state from localStorage:", error);
+  }
+}
+
+function _saveStateToLocalStorage() {
+  try {
+    if (_state.playerTeam) {
+      localStorage.setItem('playerTeam', JSON.stringify(_state.playerTeam));
+    } else {
+      localStorage.removeItem('playerTeam');
+    }
+    if (_state.gameState) {
+      localStorage.setItem('gameState', JSON.stringify(_state.gameState));
+    } else {
+      localStorage.removeItem('gameState');
+    }
+  } catch (error) {
+    console.error("Error saving state to localStorage:", error);
+  }
+}
+
 export const store = {
   /** Get a value */
   get(key) {
@@ -36,6 +68,9 @@ export const store = {
   /** Set a value and notify listeners */
   set(key, value) {
     _state[key] = value
+    if (key === 'playerTeam' || key === 'gameState') {
+      _saveStateToLocalStorage();
+    }
     if (_listeners[key]) {
       _listeners[key].forEach(cb => cb(value))
     }
@@ -79,3 +114,6 @@ export const store = {
     return (_state.allCircuits || []).find(c => c.id === sched.circuit_id) ?? null
   },
 }
+
+// Load initial state from localStorage
+_loadStateFromLocalStorage();

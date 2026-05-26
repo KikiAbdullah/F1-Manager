@@ -3,29 +3,32 @@
 // Main game hub matching template.html visual layout
 // ============================================================
 
-import { store }  from '../core/store.js'
-import { router } from '../core/router.js'
+import { store } from "../core/store.js";
+import { router } from "../core/router.js";
 
 export function renderDashboard() {
-  const el = document.getElementById('screen-dashboard')
-  if (!el) return
+  const el = document.getElementById("screen-dashboard");
+  if (!el) return;
 
-  const team    = store.get('playerTeam')
-  const drivers = store.getDrivers()
-  const teams   = store.get('allTeams') ?? []
-  const nextRace = store.getNextRace()
-  const circuit  = nextRace ? store.getCircuitFor(nextRace.id) : null
+  const team = store.get("playerTeam");
+  const drivers = store.getDrivers();
+  const teams = store.get("allTeams") ?? [];
+  const nextRace = store.getNextRace();
+  const circuit = nextRace ? store.getCircuitFor(nextRace.id) : null;
 
-  const d1 = drivers.find(d => d.id === team?.driver1_id)
-  const d2 = drivers.find(d => d.id === team?.driver2_id)
-  const teamColor = team?.color ?? '#ff8700'
-  const cash = team?.economy?.cash_reserve ?? 20000000
+  const d1 = drivers.find((d) => d.id === team?.driver1_id);
+  const d2 = drivers.find((d) => d.id === team?.driver2_id);
+  const teamColor = team?.color ?? "#ff8700";
+  const cash = team?.economy?.cash_reserve ?? 20000000;
 
   // Sort teams by points for standings
   const standings = [...teams]
-    .filter(t => t.performance_state)
-    .sort((a, b) => (b.performance_state?.points ?? 0) - (a.performance_state?.points ?? 0))
-    .slice(0, 10)
+    .filter((t) => t.performance_state)
+    .sort(
+      (a, b) =>
+        (b.performance_state?.points ?? 0) - (a.performance_state?.points ?? 0)
+    )
+    .slice(0, 10);
 
   el.innerHTML = `
   <div class="dashboard">
@@ -40,7 +43,11 @@ export function renderDashboard() {
         </span>
         <span class="sub">
           <i class="ti ti-calendar-time nav-svg"></i>
-          ${nextRace ? `To ${nextRace.grand_prix ?? 'Next Race'}` : 'Season Start'}
+          ${
+            nextRace
+              ? `To ${nextRace.grand_prix ?? "Next Race"}`
+              : "Season Start"
+          }
         </span>
       </button>
     </div>
@@ -51,13 +58,21 @@ export function renderDashboard() {
       <!-- Col 1: Team Info Panel -->
       <div class="panel">
         <div class="team-logo">
-          <span style="color:${teamColor}">${(team?.name ?? 'MY TEAM').toUpperCase()}</span>
+          <span style="color:${teamColor}">${(
+    team?.name ?? "MY TEAM"
+  ).toUpperCase()}</span>
           <div class="sub-logo">FORMULA 1 TEAM</div>
         </div>
         <div class="spacer"></div>
         <div class="objective-row">
           <span class="objective-label">Season Objective</span>
-          <span>${team?.status?.tier === 'top' ? '1st' : team?.status?.tier === 'midfield' ? '5th or Above' : '8th or Above'}</span>
+          <span>${
+            team?.status?.tier === "top"
+              ? "1st"
+              : team?.status?.tier === "midfield"
+              ? "5th or Above"
+              : "8th or Above"
+          }</span>
         </div>
         <div class="objective-row">
           <span class="objective-label">Cash Reserve</span>
@@ -65,7 +80,9 @@ export function renderDashboard() {
         </div>
         <div class="objective-row">
           <span class="objective-label">Position</span>
-          <span class="font-digits">${team?.performance_state?.championship_position ?? '–'}TH</span>
+          <span class="font-digits">${
+            team?.performance_state?.championship_position ?? "–"
+          }TH</span>
         </div>
         <div class="board-selector" id="btn-board">
           <span><i class="ti ti-clipboard-list nav-svg"></i> The Board</span>
@@ -75,8 +92,12 @@ export function renderDashboard() {
 
       <!-- Col 2: Drivers -->
       <div class="drivers-container">
-        ${_driverCard(d1, team?.performance_state?.championship_position ?? '–', teamColor)}
-        ${_driverCard(d2, '–', teamColor)}
+        ${_driverCard(
+          d1,
+          team?.performance_state?.championship_position ?? "–",
+          teamColor
+        )}
+        ${_driverCard(d2, "–", teamColor)}
       </div>
 
       <!-- Col 3: Mentality Hub -->
@@ -92,7 +113,7 @@ export function renderDashboard() {
         </div>
         <div class="mentality-issue">
           <span class="objective-label">↓ Lowest Mentality</span>
-          <span>${d2?.full_name ?? d2?.name ?? '–'}</span>
+          <span>${d2?.full_name ?? d2?.name ?? "–"}</span>
         </div>
         <div class="mentality-issue">
           <span class="objective-label">! Biggest Issue</span>
@@ -110,26 +131,38 @@ export function renderDashboard() {
           <div><i class="ti ti-building nav-svg"></i> Constructors</div>
           <div><i class="ti ti-wheel nav-svg"></i> Drivers</div>
         </div>
-        ${standings.length ? standings.map((t, i) => {
-          const isPlayer = t.id === team?.id || t.is_player_team
-          return `<div class="standing-row ${isPlayer ? 'highlight' : ''}">
+        ${
+          standings.length
+            ? standings
+                .map((t, i) => {
+                  const isPlayer = t.id === team?.id || t.is_player_team;
+                  return `<div class="standing-row ${
+                    isPlayer ? "highlight" : ""
+                  }">
             <span class="pos">${i + 1}</span>
             <span class="team-name-col">${t.name ?? t.id}</span>
             <span class="pts">${t.performance_state?.points ?? 0}</span>
-          </div>`
-        }).join('') : `
+          </div>`;
+                })
+                .join("")
+            : `
           <div class="text-f1-dim text-xs py-4 text-center">No standings data yet.</div>
-        `}
+        `
+        }
       </div>
 
       <!-- Col 5: Up Next -->
       <div class="panel up-next-panel">
         <div class="up-next-header"><i class="ti ti-road nav-svg"></i> UP NEXT</div>
-        <div class="up-next-badge font-digits">${nextRace?.round ?? '01'}</div>
+        <div class="up-next-badge font-digits">${nextRace?.round ?? "01"}</div>
         <div class="up-next-bg">
           <div class="track-placeholder"></div>
-          <div class="race-title">${circuit?.name ?? nextRace?.grand_prix ?? 'UPCOMING'}</div>
-          <div class="race-date">${nextRace?.country ?? ''} ${circuit?.city ? '• ' + circuit.city : ''}</div>
+          <div class="race-title">${
+            circuit?.name ?? nextRace?.grand_prix ?? "UPCOMING"
+          }</div>
+          <div class="race-date">${nextRace?.country ?? ""} ${
+    circuit?.city ? "• " + circuit.city : ""
+  }</div>
         </div>
       </div>
 
@@ -140,7 +173,9 @@ export function renderDashboard() {
           <div class="event-time"><i class="ti ti-clock nav-svg"></i> NEXT</div>
           <div class="event-item red">
             <div class="event-info">
-              <h4><i class="ti ti-flag nav-svg"></i> ${nextRace?.grand_prix ?? 'Season Start'}</h4>
+              <h4><i class="ti ti-flag nav-svg"></i> ${
+                nextRace?.grand_prix ?? "Season Start"
+              }</h4>
               <p>Round ${nextRace?.round ?? 1}</p>
             </div>
           </div>
@@ -175,48 +210,69 @@ export function renderDashboard() {
       </div>
       <div class="bottom-info">
         <span class="font-digits">2026</span>
-        <span>${nextRace ? nextRace.country : ''}</span>
+        <span>${nextRace ? nextRace.country : ""}</span>
         <span class="money">$${(cash / 1e6).toFixed(1)}M</span>
       </div>
     </div>
   </div>
-  `
+  `;
 
   // GSAP animate panels
   if (window.gsap) {
-    gsap.from('.main-grid > *', {
-      opacity: 0, y: 20, duration: 0.4,
-      stagger: 0.08, ease: 'power2.out', delay: 0.15,
-    })
+    gsap.from(".main-grid > *", {
+      opacity: 0,
+      y: 20,
+      duration: 0.4,
+      stagger: 0.08,
+      ease: "power2.out",
+      delay: 0.15,
+    });
   }
 
   // Nav events
-  document.querySelectorAll('[data-nav]').forEach(nav => {
-    nav.addEventListener('click', () => {
-      const target = nav.dataset.nav
-      if (target && target !== 'dashboard') router.goTo(target)
-    })
-  })
+  document.querySelectorAll("[data-nav]").forEach((nav) => {
+    nav.addEventListener("click", () => {
+      const target = nav.dataset.nav;
+      if (target && target !== "dashboard") router.goTo(target);
+    });
+  });
 
-  document.getElementById('btn-main-menu')?.addEventListener('click', () => router.goTo('main-menu'))
-  document.getElementById('btn-continue')?.addEventListener('click', () => router.goTo('race'))
+  document
+    .getElementById("btn-main-menu")
+    ?.addEventListener("click", () => router.goTo("main-menu"));
+  document
+    .getElementById("btn-continue")
+    ?.addEventListener("click", () => router.goTo("race"));
 
   // Chart.js mentality donut
-  _renderMentalityChart()
+  _renderMentalityChart();
 }
 
 function _driverCard(driver, rank, teamColor) {
-  if (!driver) return `
+  if (!driver)
+    return `
     <div class="driver-card" style="border-top:3px solid ${teamColor}">
       <div class="driver-stats"><span class="driver-rank">–</span></div>
       <div class="driver-image-placeholder"><span class="text-f1-dim text-sm">No Driver</span></div>
       <div class="driver-name"><small style="color:${teamColor}">–</small><strong>VACANT</strong></div>
-    </div>`
+    </div>`;
 
-  const stats = driver.stats ?? {}
-  const ovr = Math.round(((stats.pace ?? 70) + (stats.racecraft ?? 70) + (stats.concentration ?? 70)) / 3)
-  const lastName = (driver.full_name ?? driver.name ?? '').split(' ').pop().toUpperCase()
-  const firstName = (driver.full_name ?? driver.name ?? '').split(' ').slice(0, -1).join(' ').toUpperCase()
+  const stats = driver.stats ?? {};
+  const ovr = Math.round(
+    ((stats.pace ?? 70) +
+      (stats.racecraft ?? 70) +
+      (stats.concentration ?? 70)) /
+      3
+  );
+  const lastName = (driver.full_name ?? driver.name ?? "")
+    .split(" ")
+    .pop()
+    .toUpperCase();
+  const firstName = (driver.full_name ?? driver.name ?? "")
+    .split(" ")
+    .slice(0, -1)
+    .join(" ")
+    .toUpperCase();
 
   return `
     <div class="driver-card" style="border-top:3px solid ${teamColor}">
@@ -232,31 +288,33 @@ function _driverCard(driver, rank, teamColor) {
         <strong>${lastName}</strong>
       </div>
     </div>
-  `
+  `;
 }
 
 function _renderMentalityChart() {
-  const canvas = document.createElement('canvas')
-  canvas.width = 80
-  canvas.height = 80
-  const donut = document.getElementById('mentalityDonut')
-  if (!donut || !window.Chart) return
-  donut.innerHTML = ''
-  donut.style.background = 'none'
-  donut.appendChild(canvas)
+  const canvas = document.createElement("canvas");
+  canvas.width = 80;
+  canvas.height = 80;
+  const donut = document.getElementById("mentalityDonut");
+  if (!donut || !window.Chart) return;
+  donut.innerHTML = "";
+  donut.style.background = "none";
+  donut.appendChild(canvas);
   new Chart(canvas, {
-    type: 'doughnut',
+    type: "doughnut",
     data: {
-      datasets: [{
-        data: [75, 25],
-        backgroundColor: ['#00e5ff', '#333'],
-        borderWidth: 0,
-      }]
+      datasets: [
+        {
+          data: [75, 25],
+          backgroundColor: ["#00e5ff", "#333"],
+          borderWidth: 0,
+        },
+      ],
     },
     options: {
-      cutout: '70%',
+      cutout: "70%",
       responsive: false,
       plugins: { legend: { display: false }, tooltip: { enabled: false } },
-    }
-  })
+    },
+  });
 }

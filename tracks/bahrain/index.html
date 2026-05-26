@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 Manager - Bahrain Circuit Simulation</title>
+    <style>
+        :root {
+            --bg-color: #0f111a;
+            --panel-bg: #1e2235;
+            --f1-red: #e10600;
+            --f1-neon: #00ff87;
+            --text-color: #ffffff;
+            --text-muted: #8b92b3;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+            letter-spacing: 1px;
+            color: var(--text-color);
+            border-left: 5px solid var(--f1-red);
+            padding-left: 10px;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .canvas-container {
+            position: relative;
+            background-color: var(--panel-bg);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            flex: 2;
+        }
+
+        canvas {
+            display: block;
+            background-color: #151824;
+            border-radius: 8px;
+            width: 100%;
+            height: auto;
+        }
+
+        .dashboard {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .panel {
+            background-color: var(--panel-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        .panel-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .telemetry-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .telemetry-item {
+            background: rgba(255,255,255,0.03);
+            padding: 12px;
+            border-radius: 8px;
+            border-bottom: 2px solid transparent;
+        }
+
+        .telemetry-item.active-sector {
+            border-bottom-color: var(--f1-neon);
+        }
+
+        .label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .value {
+            font-size: 22px;
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .value.speed { color: var(--f1-neon); }
+        .value.lap { color: var(--text-color); }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        button {
+            background-color: #2a2f4c;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #373e65;
+        }
+
+        button.btn-active {
+            background-color: var(--f1-red);
+        }
+
+        button#btn-ers.active {
+            background-color: #00ff87;
+            color: #000;
+            box-shadow: 0 0 12px rgba(0, 255, 135, 0.4);
+        }
+
+        .speed-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div style="width: 100%; max-width: 1200px; margin-bottom: 15px;">
+        <h1>F1 MANAGER: BAHRAIN CIRCUIT</h1>
+    </div>
+
+    <div class="container">
+        <div class="canvas-container">
+            <canvas id="trackCanvas" width="900" height="550"></canvas>
+        </div>
+
+        <div class="dashboard">
+            <div class="panel">
+                <div class="panel-title">Live Telemetry</div>
+                <div class="telemetry-grid">
+                    <div class="telemetry-item">
+                        <div class="label">LAP</div>
+                        <div id="telemetry-lap" class="value lap">1</div>
+                    </div>
+                    <div class="telemetry-item">
+                        <div class="label">SPEED</div>
+                        <div id="telemetry-speed" class="value speed">0 km/h</div>
+                    </div>
+                    <div class="telemetry-item" id="sector-panel">
+                        <div class="label">SECTOR</div>
+                        <div id="telemetry-sector" class="value" style="color: #ffb703;">1</div>
+                    </div>
+                    <div class="telemetry-item">
+                        <div class="label">ZONE</div>
+                        <div id="telemetry-zone" class="value" style="font-size: 16px; padding-top: 5px;">Main Straight</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel controls">
+                <div class="panel-title">Race Control</div>
+                <button id="btn-play" class="btn-active">PAUSE SIMULATION</button>
+                <button id="btn-ers">OVERTAKE MODE (ERS)</button>
+                
+                <div class="label" style="margin-top: 10px;">Simulation Speed</div>
+                <div class="speed-options">
+                    <button class="btn-speed btn-active" data-speed="1">1x</button>
+                    <button class="btn-speed" data-speed="2">2x</button>
+                    <button class="btn-speed" data-speed="4">4x</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('trackCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Status Aplikasi
+        let isRunning = true;
+        let simSpeed = 1;
+        let ersActive = false;
+        let currentLap = 1;
+        let carProgress = 0; // Index posisi mobil pada lintasan array
+
+        // Mendefinisikan Titik Kunci (Waypoints) Sirkuit Bahrain sesuai Gambar
+        // Searah jarum jam dimulai dari garis Start/Finish di bagian bawah (menuju ke kiri)
+        const keyPoints = [
+            { x: 650, y: 500, type: 'straight', zone: 'Main Straight', sector: 3, targetSpeed: 310 }, // Start/Finish Line
+            { x: 350, y: 500, type: 'straight', zone: 'Main Straight', sector: 3, targetSpeed: 330 },
+            { x: 140, y: 500, type: 'corner', zone: 'Turn 1 (Hairpin)', sector: 1, targetSpeed: 85 },  // T1
+            { x: 175, y: 440, type: 'corner', zone: 'Turn 2-3', sector: 1, targetSpeed: 140 },          // T2
+            { x: 155, y: 390, type: 'straight', zone: 'Sector 1 Straight', sector: 1, targetSpeed: 290 },// T3 keluar
+            { x: 185, y: 70,  type: 'corner', zone: 'Turn 4', sector: 1, targetSpeed: 110 },           // T4
+            { x: 320, y: 150, type: 'corner', zone: 'Turn 5-6', sector: 2, targetSpeed: 180 },         // T5
+            { x: 370, y: 175, type: 'corner', zone: 'Turn 7', sector: 2, targetSpeed: 160 },           // T6-7
+            { x: 345, y: 220, type: 'straight', zone: 'Downhill Straight', sector: 2, targetSpeed: 240 },
+            { x: 480, y: 340, type: 'corner', zone: 'Turn 8 (Hairpin)', sector: 2, targetSpeed: 90 },  // T8
+            { x: 270, y: 315, type: 'corner', zone: 'Turn 9', sector: 2, targetSpeed: 130 },           // T9
+            { x: 215, y: 375, type: 'straight', zone: 'Sector 2 Straight', sector: 2, targetSpeed: 290 },// T10
+            { x: 630, y: 395, type: 'corner', zone: 'Turn 11', sector: 2, targetSpeed: 170 },          // T11
+            { x: 540, y: 220, type: 'corner', zone: 'Turn 12', sector: 3, targetSpeed: 210 },          // T12
+            { x: 600, y: 70,  type: 'corner', zone: 'Turn 13', sector: 3, targetSpeed: 140 },          // T13
+            { x: 830, y: 460, type: 'corner', zone: 'Turn 14', sector: 3, targetSpeed: 120 },          // T14
+            { x: 800, y: 500, type: 'straight', zone: 'Main Straight', sector: 3, targetSpeed: 260 }   // T15
+        ];
+
+        // Generate lintasan yang halus (Interpolasi antar titik kunci)
+        let trackPoints = [];
+        function generateSmoothTrack() {
+            for (let i = 0; i < keyPoints.length; i++) {
+                let p1 = keyPoints[i];
+                let p2 = keyPoints[(i + 1) % keyPoints.length];
+                
+                // Berapa banyak sub-titik per segmen agar pergerakan halus
+                let steps = p1.type === 'corner' ? 40 : 70; 
+                
+                for (let s = 0; s < steps; s++) {
+                    let t = s / steps;
+                    // Linear Interpolation untuk koordinat dan target kecepatan
+                    let x = p1.x + (p2.x - p1.x) * t;
+                    let y = p1.y + (p2.y - p1.y) * t;
+                    let speed = p1.targetSpeed + (p2.targetSpeed - p1.targetSpeed) * t;
+                    
+                    trackPoints.push({
+                        x: x,
+                        y: y,
+                        speed: speed,
+                        zone: p1.zone,
+                        sector: p1.sector
+                    });
+                }
+            }
+        }
+        generateSmoothTrack();
+
+        // Object Mobil F1
+        const car = {
+            x: trackPoints[0].x,
+            y: trackPoints[0].y,
+            currentSpeed: 0,
+            color: varColor('--f1-red')
+        };
+
+        function varColor(varName) {
+            return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+        }
+
+        // Fungsi Menggambar Layout Sirkuit Utama
+        function drawTrack() {
+            // Gambar Aspal Utama (Abu-abu Gelap)
+            ctx.beginPath();
+            ctx.lineWidth = 24;
+            ctx.strokeStyle = '#2d324d';
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.moveTo(keyPoints[0].x, keyPoints[0].y);
+            for (let i = 1; i < keyPoints.length; i++) {
+                ctx.lineTo(keyPoints[i].x, keyPoints[i].y);
+            }
+            ctx.closePath();
+            ctx.stroke();
+
+            // Gambar Garis Tengah Putih Lintasan
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+            ctx.setLineDash([5, 10]);
+            ctx.moveTo(keyPoints[0].x, keyPoints[0].y);
+            for (let i = 1; i < keyPoints.length; i++) {
+                ctx.lineTo(keyPoints[i].x, keyPoints[i].y);
+            }
+            ctx.closePath();
+            ctx.stroke();
+            ctx.setLineDash([]); // Reset line dash
+
+            // Gambar Garis Start / Finish (Kotak-Kotak Hitam Putih)
+            ctx.save();
+            ctx.translate(650, 500);
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(-2, -12, 4, 24);
+            ctx.fillStyle = '#000';
+            ctx.fillRect(-2, -12, 2, 6);
+            ctx.fillRect(0, -6, 2, 6);
+            ctx.fillRect(-2, 0, 2, 6);
+            ctx.fillRect(0, 6, 2, 6);
+            ctx.restore();
+
+            // Tanda Nomor Tikungan / Sektor secara Visual
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 12px monospace';
+            ctx.fillText("SECTOR 1", 110, 220);
+            ctx.fillText("SECTOR 2", 400, 420);
+            ctx.fillText("SECTOR 3", 750, 250);
+        }
+
+        // Fungsi Menggambar Mobil
+        function drawCar(x, y, sector) {
+            // Efek aura/glow mobil
+            ctx.beginPath();
+            ctx.arc(x, y, 10, 0, Math.PI * 2);
+            ctx.fillStyle = ersActive ? 'rgba(0, 255, 135, 0.3)' : 'rgba(225, 6, 0, 0.3)';
+            ctx.fill();
+
+            // Inti Bodi Mobil
+            ctx.beginPath();
+            ctx.arc(x, y, 6, 0, Math.PI * 2);
+            ctx.fillStyle = ersActive ? '#00ff87' : '#e10600';
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1.5;
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        // Loop Update Logic & Animasi
+        function updateSimulation() {
+            if (!isRunning) return;
+
+            // Jalankan perulangan ekstra sesuai kelipatan kecepatan simulasi (1x, 2x, 4x)
+            for (let step = 0; step < simSpeed; step++) {
+                let currentPoint = trackPoints[carProgress];
+                
+                // Kalkulasi kecepatan sesaat berdasarkan karakteristik trek + ERS
+                let baseSpeed = currentPoint.speed;
+                if (ersActive && currentPoint.zone.includes("Straight")) {
+                    baseSpeed += 35; // Tambahan top speed saat tombol DRS/ERS aktif di trek lurus
+                }
+                
+                // Efek akselerasi dan deselerasi halus
+                car.currentSpeed += (baseSpeed - car.currentSpeed) * 0.1;
+
+                // Logika langkah mobil pada array trackPoints berdasarkan kecepatan nyata km/jam
+                // Semakin cepat mobil, semakin banyak indeks titik yang diloncati per frame
+                let stepMove = Math.max(1, Math.round(car.currentSpeed / 45));
+                carProgress += stepMove;
+
+                // Cek jika mobil melewati garis finish (kembali ke awal sirkuit)
+                if (carProgress >= trackPoints.length) {
+                    carProgress = 0;
+                    currentLap++;
+                    document.getElementById('telemetry-lap').innerText = currentLap;
+                }
+            }
+
+            // Dapatkan info posisi riil mobil sekarang setelah diupdate
+            let activePoint = trackPoints[carProgress];
+            car.x = activePoint.x;
+            car.y = activePoint.y;
+
+            // Update Tampilan Informasi Telemetri ke UI
+            document.getElementById('telemetry-speed').innerText = `${Math.round(car.currentSpeed)} km/h`;
+            document.getElementById('telemetry-sector').innerText = activePoint.sector;
+            document.getElementById('telemetry-zone').innerText = activePoint.zone;
+
+            // Ubah indikator warna sektor aktif
+            const sectorPanel = document.getElementById('sector-panel');
+            if(activePoint.sector === 1) sectorPanel.style.borderBottomColor = '#ff4d4d';
+            else if(activePoint.sector === 2) sectorPanel.style.borderBottomColor = '#ffb703';
+            else sectorPanel.style.borderBottomColor = '#00ff87';
+        }
+
+        function gameLoop() {
+            // Clear canvas untuk frame baru
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw sirkuit dan mobil
+            drawTrack();
+            drawCar(car.x, car.y, trackPoints[carProgress].sector);
+            
+            // Update posisi logis
+            updateSimulation();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // --- Event Listener Kontrol Dashboard ---
+        
+        // Play / Pause
+        const btnPlay = document.getElementById('btn-play');
+        btnPlay.addEventListener('click', () => {
+            isRunning = !isRunning;
+            if (isRunning) {
+                btnPlay.innerText = "PAUSE SIMULATION";
+                btnPlay.classList.add('btn-active');
+            } else {
+                btnPlay.innerText = "RESUME SIMULATION";
+                btnPlay.classList.remove('btn-active');
+            }
+        });
+
+        // Overtake / ERS Mode
+        const btnErs = document.getElementById('btn-ers');
+        btnErs.addEventListener('click', () => {
+            ersActive = !ersActive;
+            if (ersActive) {
+                btnErs.classList.add('active');
+                btnErs.innerText = "ERS MODE: ATTACK";
+            } else {
+                btnErs.classList.remove('active');
+                btnErs.innerText = "OVERTAKE MODE (ERS)";
+            }
+        });
+
+        // Pengatur Kecepatan Waktu Simulasi
+        const speedButtons = document.querySelectorAll('.btn-speed');
+        speedButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                speedButtons.forEach(b => b.classList.remove('btn-active'));
+                e.target.classList.add('btn-active');
+                simSpeed = parseInt(e.target.getAttribute('data-speed'));
+            });
+        });
+
+        // Memulai Jalannya Simulasi Pertama Kali
+        gameLoop();
+    </script>
+</body>
+</html>

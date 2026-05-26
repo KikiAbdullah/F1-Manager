@@ -34,8 +34,8 @@
 }
 
 /* ============================================================
-   RESET
-   ============================================================ */
+     RESET
+     ============================================================ */
 
 *,
 *::before,
@@ -59,8 +59,8 @@ body {
 }
 
 /* ============================================================
-   GLOBAL UI
-   ============================================================ */
+     GLOBAL UI
+     ============================================================ */
 
 /* Screen system */
 .screen {
@@ -163,9 +163,9 @@ body {
 }
 
 /* ============================================================
-   GLOBAL UTILITIES (used by Main Menu markup)
-   Keep minimal; these are NOT a full utility framework.
-   ============================================================ */
+     GLOBAL UTILITIES (used by Main Menu markup)
+     Keep minimal; these are NOT a full utility framework.
+     ============================================================ */
 
 .hidden {
   display: none !important;
@@ -224,8 +224,8 @@ body {
 }
 
 /* ============================================================
-   SCREEN: MAIN MENU (MainMenuScreen.js)
-   ============================================================ */
+     SCREEN: MAIN MENU (MainMenuScreen.js)
+     ============================================================ */
 
 .main-menu-bg {
   width: 100vw;
@@ -430,9 +430,9 @@ body {
 }
 
 /* ============================================================
-   SCREEN: CREATE TEAM (CreateTeamScreen.js)
-   Wizard styles grouped by step.
-   ============================================================ */
+     SCREEN: CREATE TEAM (CreateTeamScreen.js)
+     Wizard styles grouped by step.
+     ============================================================ */
 
 /* Wizard shell */
 .wizard-overlay {
@@ -580,8 +580,8 @@ body {
 }
 
 /* ============================================================
-   WIZARD STEP 1: TEAM IDENTITY
-   ============================================================ */
+     WIZARD STEP 1: TEAM IDENTITY
+     ============================================================ */
 
 /* Shared panel wrapper for wizard steps */
 .f1-step-panel {
@@ -609,11 +609,21 @@ body {
   gap: 16px;
 }
 
-.mb-6 { margin-bottom: 1.5rem; }
-.text-center { text-align: center; }
-.text-lg { font-size: 1.125rem; }
-.text-white { color: #fff; }
-.font-bold { font-weight: 700; }
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+.text-center {
+  text-align: center;
+}
+.text-lg {
+  font-size: 1.125rem;
+}
+.text-white {
+  color: #fff;
+}
+.font-bold {
+  font-weight: 700;
+}
 
 .f1-budget-pill {
   display: inline-flex;
@@ -858,8 +868,8 @@ body {
 }
 
 /* ============================================================
-   WIZARD STEP 2: SPONSOR AWAL (Ambition)
-   ============================================================ */
+     WIZARD STEP 2: SPONSOR AWAL (Ambition)
+     ============================================================ */
 
 .f1-tier-section-title {
   margin-bottom: 14px;
@@ -1138,8 +1148,8 @@ body {
 }
 
 /* Pastikan kotak Quality dibuat 2 kolom (2x2)
-  agar muat di ruang yang sekarang lebih sempit
-*/
+    agar muat di ruang yang sekarang lebih sempit
+  */
 .f1-ambition-quality-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1347,8 +1357,8 @@ body {
 }
 
 /* Pastikan kotak Quality dibuat 2 kolom (2x2)
-  agar muat di ruang yang sekarang lebih sempit
-*/
+    agar muat di ruang yang sekarang lebih sempit
+  */
 .f1-ambition-quality-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1383,12 +1393,12 @@ body {
 }
 
 /* ============================================================
-   WIZARD STEP 3: DRIVER SELECTION
-   ============================================================ */
+     WIZARD STEP 3: DRIVER SELECTION
+     ============================================================ */
 
 /* ============================================================
-   WIZARD STEP 4: POWER UNIT
-   ============================================================ */
+     WIZARD STEP 4: POWER UNIT
+     ============================================================ */
 
 .f1-pu-layout {
   display: grid;
@@ -1582,8 +1592,8 @@ body {
 }
 
 /* ============================================================
-   WIZARD STEP 5: CHASSIS
-   ============================================================ */
+     WIZARD STEP 5: CHASSIS
+     ============================================================ */
 
 .f1-ch-layout {
   display: grid;
