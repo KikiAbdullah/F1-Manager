@@ -272,21 +272,24 @@
                 <div class="telemetry-item"><span class="telemetry-label">Sector</span><strong id="telemetry-sector">Sector 1</strong></div>
                 <div class="telemetry-item"><span class="telemetry-label">Zone</span><strong id="telemetry-zone">Main Straight</strong></div>
               </div>
+              <div id="strategy-under-track" class="strategy-under-track"></div>
             </div>
 
-            <div class="player-controls panel compact-controls">
-              <div class="control-group">
-                <label>SIMULATION SPEED</label>
-                <div class="speed-options">
-                  <button class="btn-speed btn-active" onclick="Engine.setSimSpeed(1, this)">1x</button>
-                  <button class="btn-speed" onclick="Engine.setSimSpeed(2, this)">2x</button>
-                  <button class="btn-speed" onclick="Engine.setSimSpeed(4, this)">4x</button>
-                  <button class="btn-speed" onclick="Engine.setSimSpeed(8, this)">8x</button>
+            <div class="controls-column" style="display: flex; flex-direction: column; gap: 15px;">
+              <div class="player-controls panel compact-controls">
+                <div class="control-group">
+                  <label>SIMULATION SPEED</label>
+                  <div class="speed-options">
+                    <button class="btn-speed btn-active" onclick="Engine.setSimSpeed(1, this)">1x</button>
+                    <button class="btn-speed" onclick="Engine.setSimSpeed(2, this)">2x</button>
+                    <button class="btn-speed" onclick="Engine.setSimSpeed(4, this)">4x</button>
+                    <button class="btn-speed" onclick="Engine.setSimSpeed(8, this)">8x</button>
+                  </div>
                 </div>
+                <button id="btn-play" onclick="Engine.toggleSim()" class="btn-active">PAUSE SIMULATION</button>
               </div>
-              <button id="btn-play" onclick="Engine.toggleSim()" class="btn-active">PAUSE SIMULATION</button>
+              <div id="session-next-action-container"></div>
             </div>
-            <div id="strategy-under-track" class="strategy-under-track"></div>
           </div>
 
           <!-- Area Hasil Sesi (Klasemen) -->
@@ -305,7 +308,7 @@
     <script src="js/ui.js"></script>
     <script src="js/main.js"></script>
 
-    <!-- Race Detail Modal -->
+        <!-- Race Detail Modal -->
     <div id="race-detail-modal" class="modal hidden">
       <div class="modal-content">
         <button class="close-button" onclick="UI.hideRaceDetailsModal()">
@@ -314,8 +317,11 @@
         <h3 id="modal-grand-prix-name"></h3>
         <p id="modal-circuit-name"></p>
         <p id="modal-date-range"></p>
-        <div id="modal-sessions-list">
-          <!-- Session details will be populated here -->
+        <div class="modal-body-split">
+          <div id="modal-sessions-list">
+            <!-- Session details will be populated here -->
+          </div>
+          <div id="modal-history-list"></div>
         </div>
       </div>
     </div>

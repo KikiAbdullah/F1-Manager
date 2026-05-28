@@ -91,6 +91,35 @@ nav#main-nav {
   flex-direction: column;
   gap: 8px;
   overflow-y: auto; /* Bisa scroll sidebar jika layar pendek */
+  transition: width 0.3s ease;
+  position: relative;
+}
+nav#main-nav.collapsed {
+  width: 60px;
+}
+nav#main-nav.collapsed .nav-label {
+  display: none;
+}
+nav#main-nav.collapsed .nav-item {
+  text-align: center;
+  padding: 14px 0;
+}
+nav#main-nav.collapsed .nav-icon {
+  margin: 0;
+  font-size: 16px;
+}
+.nav-toggle {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 16px;
+  cursor: pointer;
+  text-align: right;
+  padding: 5px 10px;
+  margin-bottom: 10px;
+}
+nav#main-nav.collapsed .nav-toggle {
+  text-align: center;
 }
 .nav-item {
   background: none;
@@ -618,7 +647,21 @@ button:disabled {
 .session-next-action {
   margin-top: 14px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: stretch;
+}
+
+.session-next-action button {
+  width: 100%;
+  background-color: var(--f1-neon);
+  color: black;
+  font-size: 14px;
+  font-weight: 900;
+  padding: 12px 24px;
+  border: 1px solid #000;
+  box-shadow: 0 0 15px rgba(0, 255, 135, 0.4);
+}
+.session-next-action button:hover {
+  background-color: #00e075;
 }
 
 .race-setup-label,
@@ -674,9 +717,11 @@ button:disabled {
 }
 
 .strategy-under-track {
-  grid-column: 2;
   display: grid;
   gap: 8px;
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
 }
 
 .driver-strategy-row {
@@ -1277,11 +1322,18 @@ button#btn-ers.active {
   padding: 30px;
   border-radius: 12px;
   width: 90%;
-  max-width: 500px;
+  max-width: 800px;
   position: relative;
   box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
   animation: slideInModal 0.3s ease-out;
   border: 1px solid var(--border-dark);
+}
+
+.modal-body-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-top: 20px;
 }
 
 .modal-content h3 {
@@ -1336,9 +1388,7 @@ button#btn-ers.active {
 }
 
 .modal-results-history {
-  margin-top: 18px;
-  padding-top: 15px;
-  border-top: 1px solid var(--border-dark);
+  padding-top: 5px;
 }
 
 .modal-results-history h4 {

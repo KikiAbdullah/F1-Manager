@@ -374,6 +374,9 @@ const Engine = {
     this.sim.isRunning = true;
     this.sim.currentLap = 0;
 
+    const nextContainer = document.getElementById("session-next-action-container");
+    if (nextContainer) nextContainer.innerHTML = "";
+
     this.setupSessionContext();
 
     // Lap dibuat sedikit, tetapi progress per frame lebih lambat agar 1 lap terasa panjang.
@@ -986,15 +989,18 @@ const Engine = {
     const playerCar = this.currentGrid.find((r) => r.isPlayer);
     if (playerCar) {
       const activePoint = this.sim.trackPoints[playerCar.progress];
-      document.getElementById(
-        "telemetry-lap"
-      ).innerText = `${playerCar.currentLap} / ${maxLaps}`;
+      const lapEl = document.getElementById("telemetry-lap");
+      if (lapEl) lapEl.innerText = `${playerCar.currentLap} / ${maxLaps}`;
+      
       const speedEl = document.getElementById("telemetry-speed");
       if (speedEl) speedEl.innerText = `${Math.round(playerCar.currentSpeed)} km/h`;
-      document.getElementById(
-        "telemetry-sector"
-      ).innerText = `Sector ${activePoint.sector}`;
-      document.getElementById("telemetry-zone").innerText = `${activePoint.zone} | ${this.weather}`;
+      
+      const sectorEl = document.getElementById("telemetry-sector");
+      if (sectorEl) sectorEl.innerText = `Sector ${activePoint.sector}`;
+      
+      const zoneEl = document.getElementById("telemetry-zone");
+      if (zoneEl) zoneEl.innerText = `${activePoint.zone} | ${this.weather}`;
+      
       const tireEl = document.getElementById("telemetry-tire");
       const fuelEl = document.getElementById("telemetry-fuel");
       if (tireEl) tireEl.innerText = `${Math.round(playerCar.tireWear)}%`;
@@ -1103,7 +1109,11 @@ const Engine = {
       UI.renderSessionResults(results, `RACE RESULTS - POINTS ${rewards.points} - Rp ${rewards.money.toLocaleString("id-ID")}`);
       const resultTable = document.getElementById("result-table");
       if (resultTable) {
-        resultTable.innerHTML += `<div class="weekend-reward-box"><strong>Race Weekend Complete</strong><span>Poin didapatkan: ${rewards.points}</span><span>Hadiah: Rp ${rewards.money.toLocaleString("id-ID")}</span><button onclick="UI.initRaceWeekend()">NEXT SCHEDULE</button></div>`;
+        resultTable.innerHTML += `<div class="weekend-reward-box"><strong>Race Weekend Complete</strong><span>Poin didapatkan: ${rewards.points}</span><span>Hadiah: Rp ${rewards.money.toLocaleString("id-ID")}</span></div>`;
+      }
+      const nextContainer = document.getElementById("session-next-action-container");
+      if (nextContainer) {
+        nextContainer.innerHTML = `<div class="session-next-action"><button onclick="UI.initRaceWeekend()">NEXT SCHEDULE</button></div>`;
       }
       State.currentRound += 1;
       UI.updateTopBar();
@@ -1141,9 +1151,9 @@ const Engine = {
   },
 
   appendNextSessionButton(label) {
-    const resultTable = document.getElementById("result-table");
-    if (resultTable) {
-      resultTable.innerHTML += `<div class="session-next-action"><button onclick="UI.showRaceWeekendSummary()">${label}</button></div>`;
+    const nextContainer = document.getElementById("session-next-action-container");
+    if (nextContainer) {
+      nextContainer.innerHTML = `<div class="session-next-action"><button onclick="UI.showRaceWeekendSummary()">${label}</button></div>`;
     }
   },
 };

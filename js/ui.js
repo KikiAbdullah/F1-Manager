@@ -112,6 +112,8 @@ const UI = {
   showRaceWeekendSummary() {
     const simArea = document.getElementById("sim-area");
     if (simArea) simArea.classList.add("hidden");
+    const nextContainer = document.getElementById("session-next-action-container");
+    if (nextContainer) nextContainer.innerHTML = "";
     const data = Engine.getWeekendData(State.currentRound);
     const event = Data.schedules.find((s) => s.round === State.currentRound && s.type === "race_weekend");
     const circuit = event ? Data.circuits.find((c) => c.id === event.circuit_id) : null;
@@ -343,12 +345,12 @@ const UI = {
       sessionsList.appendChild(sessionDiv);
     });
 
+    const historyList = document.getElementById("modal-history-list");
+    historyList.innerHTML = '';
+
     const weekend = State.raceWeekends && State.raceWeekends[scheduleItem.round];
     if (weekend && (weekend.fp || weekend.q1 || weekend.qualifyingGrid || weekend.race)) {
-      const historyDiv = document.createElement("div");
-      historyDiv.className = "modal-results-history";
-      historyDiv.innerHTML = `<h4>HASIL WEEKEND</h4>${this.renderWeekendHistoryHtml(weekend)}`;
-      sessionsList.appendChild(historyDiv);
+      historyList.innerHTML = `<div class="modal-results-history"><h4>HASIL WEEKEND</h4>${this.renderWeekendHistoryHtml(weekend)}</div>`;
     }
 
     modal.classList.remove("hidden");
@@ -594,5 +596,10 @@ const UI = {
     if (nextRoundEl) nextRoundEl.innerText = nextEvent ? `R${nextEvent.round} - ${nextEvent.grand_prix}` : "Season Complete";
     if (completedEl) completedEl.innerText = `${completed} race weekend`;
     if (pointsEl) pointsEl.innerText = pointText;
+  },
+
+  toggleSidebar() {
+    const nav = document.getElementById("main-nav");
+    if (nav) nav.classList.toggle("collapsed");
   },
 };
