@@ -1,0 +1,608 @@
+{
+  "table": "schedules",
+  "description": "Kalender event F1 musim 2026. FK: season_id → seasons.id, circuit_id → circuits.id. Setiap GP di-group sebagai 1 event utama berisi sesi-sesi (FP, Quali, Sprint, Race).",
+  "season_year": 2026,
+  "data": [
+    {
+      "id": "2026_preseason_testing",
+      "season_id": "2026",
+      "circuit_id": "bahrain",
+      "round": 0,
+      "type": "preseason_testing",
+      "grand_prix": "Pre-Season Testing",
+      "country": "Bahrain",
+      "city": "Sakhir",
+      "is_sprint_weekend": false,
+      "is_night_race": false,
+      "sessions": [
+        {
+          "session": "Testing Day 1",
+          "date": "2026-02-11",
+          "time_utc": "08:00:00"
+        },
+        {
+          "session": "Testing Day 2",
+          "date": "2026-02-12",
+          "time_utc": "08:00:00"
+        },
+        {
+          "session": "Testing Day 3",
+          "date": "2026-02-13",
+          "time_utc": "08:00:00"
+        }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "2026_r01_australia",
+      "season_id": "2026",
+      "circuit_id": "albert_park",
+      "round": 1,
+      "type": "race_weekend",
+      "grand_prix": "Australian Grand Prix",
+      "country": "Australia",
+      "city": "Melbourne",
+      "is_sprint_weekend": false,
+      "is_night_race": false,
+      "sessions": [
+        { "session": "FP1", "date": "2026-03-13", "time_utc": "01:30:00" },
+        { "session": "FP2", "date": "2026-03-13", "time_utc": "05:00:00" },
+        { "session": "FP3", "date": "2026-03-14", "time_utc": "01:30:00" },
+        {
+          "session": "Qualifying",
+          "date": "2026-03-14",
+          "time_utc": "05:00:00"
+        },
+        { "session": "Race", "date": "2026-03-15", "time_utc": "04:00:00" }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "2026_r02_china",
+      "season_id": "2026",
+      "circuit_id": "shanghai",
+      "round": 2,
+      "type": "race_weekend",
+      "grand_prix": "Chinese Grand Prix",
+      "country": "China",
+      "city": "Shanghai",
+      "is_sprint_weekend": true,
+      "is_night_race": false,
+      "sessions": [
+        { "session": "FP1", "date": "2026-03-27", "time_utc": "03:30:00" },
+        {
+          "session": "Sprint Qualifying",
+          "date": "2026-03-27",
+          "time_utc": "07:30:00"
+        },
+        { "session": "Sprint", "date": "2026-03-28", "time_utc": "03:30:00" },
+        {
+          "session": "Qualifying",
+          "date": "2026-03-28",
+          "time_utc": "07:00:00"
+        },
+        { "session": "Race", "date": "2026-03-29", "time_utc": "07:00:00" }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "2026_r03_japan",
+      "season_id": "2026",
+      "circuit_id": "suzuka",
+      "round": 3,
+      "type": "race_weekend",
+      "grand_prix": "Japanese Grand Prix",
+      "country": "Japan",
+      "city": "Suzuka",
+      "is_sprint_weekend": false,
+      "is_night_race": false,
+      "sessions": [
+        { "session": "FP1", "date": "2026-04-03", "time_utc": "02:30:00" },
+        { "session": "FP2", "date": "2026-04-03", "time_utc": "06:00:00" },
+        { "session": "FP3", "date": "2026-04-04", "time_utc": "02:30:00" },
+        {
+          "session": "Qualifying",
+          "date": "2026-04-04",
+          "time_utc": "06:00:00"
+        },
+        { "session": "Race", "date": "2026-04-05", "time_utc": "05:00:00" }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "2026_r04_bahrain",
+      "season_id": "2026",
+      "circuit_id": "bahrain",
+      "round": 4,
+      "type": "race_weekend",
+      "grand_prix": "Bahrain Grand Prix",
+      "country": "Bahrain",
+      "city": "Sakhir",
+      "is_sprint_weekend": false,
+      "is_night_race": true,
+      "sessions": [
+        { "session": "FP1", "date": "2026-04-10", "time_utc": "11:30:00" },
+        { "session": "FP2", "date": "2026-04-10", "time_utc": "15:00:00" },
+        { "session": "FP3", "date": "2026-04-11", "time_utc": "12:30:00" },
+        {
+          "session": "Qualifying",
+          "date": "2026-04-11",
+          "time_utc": "16:00:00"
+        },
+        { "session": "Race", "date": "2026-04-12", "time_utc": "15:00:00" }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "2026_r05_saudi_arabia",
+      "season_id": "2026",
+      "circuit_id": "jeddah",
+      "round": 5,
+      "type": "race_weekend",
+      "grand_prix": "Saudi Arabian Grand Prix",
+      "country": "Saudi Arabia",
+      "city": "Jeddah",
+      "is_sprint_weekend": false,
+      "is_night_race": true,
+      "sessions": [
+        { "session": "FP1", "date": "2026-04-17", "time_utc": "13:30:00" },
+        { "session": "FP2", "date": "2026-04-17", "time_utc": "17:00:00" },
+        { "session": "FP3", "date": "2026-04-18", "time_utc": "13:30:00" },
+        {
+          "session": "Qualifying",
+          "date": "2026-04-18",
+          "time_utc": "17:00:00"
+        },
+        { "session": "Race", "date": "2026-04-19", "time_utc": "17:00:00" }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "2026_r06_miami",
+      "season_id": "2026",
+      "circuit_id": "miami",
+      "round": 6,
+      "type": "race_weekend",
+      "grand_prix": "Miami Grand Prix",
+      "country": "United States",
+      "city": "Miami",
+      "is_sprint_weekend": true,
+      "is_night_race": false,
+      "sessions": [
+        { "session": "FP1", "date": "2026-05-01", "time_utc": "16:30:00" },
+        {
+          "session": "Sprint Qualifying",
+          "date": "2026-05-01",
+          "time_utc": "20:30:00"
+        },
+        { "session": "Sprint", "date": "2026-05-02", "time_utc": "16:00:00" },
+        {
+          "session": "Qualifying",
+          "date": "2026-05-02",
+          "time_utc": "20:00:00"
+        },
+        { "session": "Race", "date": "2026-05-03", "time_utc": "20:00:00" }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "2026_r07_monaco",
+      "season_id": "2026",
+      "circuit_id": "monaco",
+      "round": 7,
+      "type": "race_weekend",
+      "grand_prix": "Monaco Grand Prix",
+      "country": "Monaco",
+      "city": "Monte Carlo",
+      "is_sprint_weekend": false,
+      "is_night_race": false,
+      "sessions": [
+        { "session": "FP1", "date": "2026-05-21", "time_utc": "11:30:00" },
+        { "session": "FP2", "date": "2026-05-21", "time_utc": "15:00:00" },
+        { "session": "FP3", "date": "2026-05-22", "time_utc": "10:30:00" },
+        {
+          "session": "Qualifying",
+          "date": "2026-05-22",
+          "time_utc": "14:00:00"
+        },
+        { "session": "Race", "date": "2026-05-23", "time_utc": "13:00:00" }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "2026_r08_spain",
+      "season_id": "2026",
+      "circuit_id": "madrid",
+      "round": 8,
+      "type": "race_weekend",
+      "grand_prix": "Spanish Grand Prix",
+      "country": "Spain",
+      "city": "Madrid",
+      "is_sprint_weekend": false,
+      "is_night_race": false,
+      "sessions": [
+        { "session": "FP1", "date": "2026-06-05", "time_utc": "11:30:00" },
+        { "session": "FP2", "date": "2026-06-05", "time_utc": "15:00:00" },
+        { "session": "FP3", "date": "2026-06-06", "time_utc": "10:30:00" },
+        {
+          "session": "Qualifying",
+          "date": "2026-06-06",
+          "time_utc": "14:00:00"
+        },
+        { "session": "Race", "date": "2026-06-07", "time_utc": "13:00:00" }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "2026_r09_azerbaijan",
+      "season_id": "2026",
+      "circuit_id": "baku",
+      "round": 9,
+      "type": "race_weekend",
+      "grand_prix": "Azerbaijan Grand Prix",
+      "country": "Azerbaijan",
+      "city": "Baku",
+      "is_sprint_weekend": false,
+      "is_night_race": false,
+      "sessions": [
+        { "session": "FP1", "date": "2026-06-12", "time_utc": "09:30:00" },
+        { "session": "FP2", "date": "2026-06-12", "time_utc": "13:00:00" },
+        { "session": "FP3", "date": "2026-06-13", "time_utc": "08:30:00" },
+        {
+          "session": "Qualifying",
+          "date": "2026-06-13",
+          "time_utc": "12:00:00"
+        },
+        { "session": "Race", "date": "2026-06-14", "time_utc": "11:00:00" }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "2026_r10_austria",
+      "season_id": "2026",
+      "circuit_id": "red_bull_ring",
+      "round": 10,
+      "type": "race_weekend",
+      "grand_prix": "Austrian Grand Prix",
+      "country": "Austria",
+      "city": "Spielberg",
+      "is_sprint_weekend": true,
+      "is_night_race": false,
+      "sessions": [
+        { "session": "FP1", "date": "2026-06-26", "time_utc": "10:30:00" },
+        {
+          "session": "Sprint Qualifying",
+          "date": "2026-06-26",
+          "time_utc": "14:30:00"
+        },
+        { "session": "Sprint", "date": "2026-06-27", "time_utc": "10:00:00" },
+        {
+          "session": "Qualifying",
+          "date": "2026-06-27",
+          "time_utc": "14:00:00"
+        },
+        { "session": "Race", "date": "2026-06-28", "time_utc": "13:00:00" }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "2026_r11_great_britain",
+      "season_id": "2026",
+      "circuit_id": "silverstone",
+      "round": 11,
+      "type": "race_weekend",
+      "grand_prix": "British Grand Prix",
+      "country": "United Kingdom",
+      "city": "Silverstone",
+      "is_sprint_weekend": false,
+      "is_night_race": false,
+      "sessions": [
+        { "session": "FP1", "date": "2026-07-03", "time_utc": "11:30:00" },
+        { "session": "FP2", "date": "2026-07-03", "time_utc": "15:00:00" },
+        { "session": "FP3", "date": "2026-07-04", "time_utc": "10:30:00" },
+        {
+          "session": "Qualifying",
+          "date": "2026-07-04",
+          "time_utc": "14:00:00"
+        },
+        { "session": "Race", "date": "2026-07-05", "time_utc": "14:00:00" }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "2026_r12_belgium",
+      "season_id": "2026",
+      "circuit_id": "spa",
+      "round": 12,
+      "type": "race_weekend",
+      "grand_prix": "Belgian Grand Prix",
+      "country": "Belgium",
+      "city": "Spa",
+      "is_sprint_weekend": false,
+      "is_night_race": false,
+      "sessions": [
+        { "session": "FP1", "date": "2026-07-24", "time_utc": "11:30:00" },
+        { "session": "FP2", "date": "2026-07-24", "time_utc": "15:00:00" },
+        { "session": "FP3", "date": "2026-07-25", "time_utc": "10:30:00" },
+        {
+          "session": "Qualifying",
+          "date": "2026-07-25",
+          "time_utc": "14:00:00"
+        },
+        { "session": "Race", "date": "2026-07-26", "time_utc": "13:00:00" }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "2026_r13_hungary",
+      "season_id": "2026",
+      "circuit_id": "hungaroring",
+      "round": 13,
+      "type": "race_weekend",
+      "grand_prix": "Hungarian Grand Prix",
+      "country": "Hungary",
+      "city": "Budapest",
+      "is_sprint_weekend": false,
+      "is_night_race": false,
+      "sessions": [
+        { "session": "FP1", "date": "2026-08-28", "time_utc": "11:30:00" },
+        { "session": "FP2", "date": "2026-08-28", "time_utc": "15:00:00" },
+        { "session": "FP3", "date": "2026-08-29", "time_utc": "10:30:00" },
+        {
+          "session": "Qualifying",
+          "date": "2026-08-29",
+          "time_utc": "14:00:00"
+        },
+        { "session": "Race", "date": "2026-08-30", "time_utc": "13:00:00" }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "2026_r14_netherlands",
+      "season_id": "2026",
+      "circuit_id": "zandvoort",
+      "round": 14,
+      "type": "race_weekend",
+      "grand_prix": "Dutch Grand Prix",
+      "country": "Netherlands",
+      "city": "Zandvoort",
+      "is_sprint_weekend": false,
+      "is_night_race": false,
+      "sessions": [
+        { "session": "FP1", "date": "2026-09-04", "time_utc": "10:30:00" },
+        { "session": "FP2", "date": "2026-09-04", "time_utc": "14:00:00" },
+        { "session": "FP3", "date": "2026-09-05", "time_utc": "09:30:00" },
+        {
+          "session": "Qualifying",
+          "date": "2026-09-05",
+          "time_utc": "13:00:00"
+        },
+        { "session": "Race", "date": "2026-09-06", "time_utc": "13:00:00" }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "2026_r15_italy",
+      "season_id": "2026",
+      "circuit_id": "monza",
+      "round": 15,
+      "type": "race_weekend",
+      "grand_prix": "Italian Grand Prix",
+      "country": "Italy",
+      "city": "Monza",
+      "is_sprint_weekend": false,
+      "is_night_race": false,
+      "sessions": [
+        { "session": "FP1", "date": "2026-09-11", "time_utc": "11:30:00" },
+        { "session": "FP2", "date": "2026-09-11", "time_utc": "15:00:00" },
+        { "session": "FP3", "date": "2026-09-12", "time_utc": "10:30:00" },
+        {
+          "session": "Qualifying",
+          "date": "2026-09-12",
+          "time_utc": "14:00:00"
+        },
+        { "session": "Race", "date": "2026-09-13", "time_utc": "13:00:00" }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "2026_r16_singapore",
+      "season_id": "2026",
+      "circuit_id": "marina_bay",
+      "round": 16,
+      "type": "race_weekend",
+      "grand_prix": "Singapore Grand Prix",
+      "country": "Singapore",
+      "city": "Singapore",
+      "is_sprint_weekend": false,
+      "is_night_race": true,
+      "sessions": [
+        { "session": "FP1", "date": "2026-10-02", "time_utc": "09:30:00" },
+        { "session": "FP2", "date": "2026-10-02", "time_utc": "13:00:00" },
+        { "session": "FP3", "date": "2026-10-03", "time_utc": "09:30:00" },
+        {
+          "session": "Qualifying",
+          "date": "2026-10-03",
+          "time_utc": "13:00:00"
+        },
+        { "session": "Race", "date": "2026-10-04", "time_utc": "12:00:00" }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "2026_r17_united_states",
+      "season_id": "2026",
+      "circuit_id": "cota",
+      "round": 17,
+      "type": "race_weekend",
+      "grand_prix": "United States Grand Prix",
+      "country": "United States",
+      "city": "Austin",
+      "is_sprint_weekend": true,
+      "is_night_race": false,
+      "sessions": [
+        { "session": "FP1", "date": "2026-10-16", "time_utc": "17:30:00" },
+        {
+          "session": "Sprint Qualifying",
+          "date": "2026-10-16",
+          "time_utc": "21:30:00"
+        },
+        { "session": "Sprint", "date": "2026-10-17", "time_utc": "18:00:00" },
+        {
+          "session": "Qualifying",
+          "date": "2026-10-17",
+          "time_utc": "22:00:00"
+        },
+        { "session": "Race", "date": "2026-10-18", "time_utc": "19:00:00" }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "2026_r18_mexico",
+      "season_id": "2026",
+      "circuit_id": "mexico_city",
+      "round": 18,
+      "type": "race_weekend",
+      "grand_prix": "Mexico City Grand Prix",
+      "country": "Mexico",
+      "city": "Mexico City",
+      "is_sprint_weekend": false,
+      "is_night_race": false,
+      "sessions": [
+        { "session": "FP1", "date": "2026-10-23", "time_utc": "18:30:00" },
+        { "session": "FP2", "date": "2026-10-23", "time_utc": "22:00:00" },
+        { "session": "FP3", "date": "2026-10-24", "time_utc": "17:30:00" },
+        {
+          "session": "Qualifying",
+          "date": "2026-10-24",
+          "time_utc": "21:00:00"
+        },
+        { "session": "Race", "date": "2026-10-25", "time_utc": "20:00:00" }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "2026_r19_brazil",
+      "season_id": "2026",
+      "circuit_id": "interlagos",
+      "round": 19,
+      "type": "race_weekend",
+      "grand_prix": "São Paulo Grand Prix",
+      "country": "Brazil",
+      "city": "São Paulo",
+      "is_sprint_weekend": true,
+      "is_night_race": false,
+      "sessions": [
+        { "session": "FP1", "date": "2026-10-30", "time_utc": "14:30:00" },
+        {
+          "session": "Sprint Qualifying",
+          "date": "2026-10-30",
+          "time_utc": "18:30:00"
+        },
+        { "session": "Sprint", "date": "2026-10-31", "time_utc": "14:00:00" },
+        {
+          "session": "Qualifying",
+          "date": "2026-10-31",
+          "time_utc": "18:00:00"
+        },
+        { "session": "Race", "date": "2026-11-01", "time_utc": "17:00:00" }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "2026_r20_las_vegas",
+      "season_id": "2026",
+      "circuit_id": "las_vegas",
+      "round": 20,
+      "type": "race_weekend",
+      "grand_prix": "Las Vegas Grand Prix",
+      "country": "United States",
+      "city": "Las Vegas",
+      "is_sprint_weekend": false,
+      "is_night_race": true,
+      "sessions": [
+        { "session": "FP1", "date": "2026-11-13", "time_utc": "02:30:00" },
+        { "session": "FP2", "date": "2026-11-13", "time_utc": "06:00:00" },
+        { "session": "FP3", "date": "2026-11-14", "time_utc": "02:30:00" },
+        {
+          "session": "Qualifying",
+          "date": "2026-11-14",
+          "time_utc": "06:00:00"
+        },
+        { "session": "Race", "date": "2026-11-15", "time_utc": "06:00:00" }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "2026_r21_qatar",
+      "season_id": "2026",
+      "circuit_id": "lusail",
+      "round": 21,
+      "type": "race_weekend",
+      "grand_prix": "Qatar Grand Prix",
+      "country": "Qatar",
+      "city": "Lusail",
+      "is_sprint_weekend": false,
+      "is_night_race": true,
+      "sessions": [
+        { "session": "FP1", "date": "2026-11-27", "time_utc": "13:30:00" },
+        { "session": "FP2", "date": "2026-11-27", "time_utc": "17:00:00" },
+        { "session": "FP3", "date": "2026-11-28", "time_utc": "14:30:00" },
+        {
+          "session": "Qualifying",
+          "date": "2026-11-28",
+          "time_utc": "18:00:00"
+        },
+        { "session": "Race", "date": "2026-11-29", "time_utc": "17:00:00" }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "2026_r22_abu_dhabi",
+      "season_id": "2026",
+      "circuit_id": "yas_marina",
+      "round": 22,
+      "type": "race_weekend",
+      "grand_prix": "Abu Dhabi Grand Prix",
+      "country": "United Arab Emirates",
+      "city": "Abu Dhabi",
+      "is_sprint_weekend": false,
+      "is_night_race": true,
+      "sessions": [
+        { "session": "FP1", "date": "2026-12-04", "time_utc": "09:30:00" },
+        { "session": "FP2", "date": "2026-12-04", "time_utc": "13:00:00" },
+        { "session": "FP3", "date": "2026-12-05", "time_utc": "10:30:00" },
+        {
+          "session": "Qualifying",
+          "date": "2026-12-05",
+          "time_utc": "14:00:00"
+        },
+        { "session": "Race", "date": "2026-12-06", "time_utc": "13:00:00" }
+      ],
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  ]
+}

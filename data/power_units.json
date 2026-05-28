@@ -1,0 +1,319 @@
+{
+  "table": "power_units",
+  "description": "Master data power unit/mesin F1 musim 2026. Standalone entity. Relasi ke tim melalui junction tabel power_unit_suppliers.",
+  "season_year": 2026,
+  "data": [
+    {
+      "id": "mercedes_2026",
+      "manufacturer": "Mercedes-AMG High Performance Powertrains",
+      "country": "Germany",
+      "architecture": "1.6L V6 Turbo Hybrid",
+      "is_active": true,
+      "price_idr": 1280000000000,
+      "stats": {
+        "overall_performance": 98,
+        "internal_combustion": {
+          "horsepower": 96,
+          "fuel_efficiency": 97,
+          "thermal_efficiency": 99,
+          "high_rpm_stability": 96
+        },
+        "hybrid_system": {
+          "ers_output": 100,
+          "energy_recovery": 99,
+          "battery_efficiency": 98,
+          "deployment_efficiency": 100
+        },
+        "driveability": {
+          "low_speed_response": 95,
+          "mid_range_torque": 97,
+          "top_end_power": 98,
+          "throttle_smoothness": 96
+        },
+        "reliability": {
+          "engine_wear": 94,
+          "cooling_efficiency": 96,
+          "failure_resistance": 95
+        },
+        "development": {
+          "upgrade_potential": 95,
+          "regulation_adaptation": 99,
+          "packaging_efficiency": 97
+        }
+      },
+      "characteristics": {
+        "power_delivery": "smooth_linear",
+        "fuel_usage_style": "efficient",
+        "best_circuit_ids": ["monza", "las_vegas", "spa"]
+      },
+      "ai_behavior": {
+        "engine_mode_bias": "balanced",
+        "ers_usage_style": "optimized",
+        "reliability_management": "safe"
+      },
+      "career_rating": 99,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "ferrari_066_26",
+      "manufacturer": "Ferrari",
+      "country": "Italy",
+      "architecture": "1.6L V6 Turbo Hybrid",
+      "is_active": true,
+      "price_idr": 1040000000000,
+      "stats": {
+        "overall_performance": 93,
+        "internal_combustion": {
+          "horsepower": 97,
+          "fuel_efficiency": 86,
+          "thermal_efficiency": 88,
+          "high_rpm_stability": 95
+        },
+        "hybrid_system": {
+          "ers_output": 89,
+          "energy_recovery": 87,
+          "battery_efficiency": 84,
+          "deployment_efficiency": 88
+        },
+        "driveability": {
+          "low_speed_response": 96,
+          "mid_range_torque": 94,
+          "top_end_power": 99,
+          "throttle_smoothness": 88
+        },
+        "reliability": {
+          "engine_wear": 81,
+          "cooling_efficiency": 79,
+          "failure_resistance": 80
+        },
+        "development": {
+          "upgrade_potential": 94,
+          "regulation_adaptation": 88,
+          "packaging_efficiency": 85
+        }
+      },
+      "characteristics": {
+        "power_delivery": "aggressive_peak",
+        "fuel_usage_style": "power_hungry",
+        "best_circuit_ids": ["monza", "baku", "mexico_city"]
+      },
+      "ai_behavior": {
+        "engine_mode_bias": "attack",
+        "ers_usage_style": "aggressive",
+        "reliability_management": "medium_risk"
+      },
+      "career_rating": 93,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "redbull_ford_rbpt26",
+      "manufacturer": "Red Bull Powertrains Ford",
+      "country": "United Kingdom",
+      "architecture": "1.6L V6 Turbo Hybrid",
+      "is_active": true,
+      "price_idr": 1200000000000,
+      "stats": {
+        "overall_performance": 96,
+        "internal_combustion": {
+          "horsepower": 95,
+          "fuel_efficiency": 92,
+          "thermal_efficiency": 95,
+          "high_rpm_stability": 94
+        },
+        "hybrid_system": {
+          "ers_output": 95,
+          "energy_recovery": 94,
+          "battery_efficiency": 92,
+          "deployment_efficiency": 96
+        },
+        "driveability": {
+          "low_speed_response": 92,
+          "mid_range_torque": 95,
+          "top_end_power": 97,
+          "throttle_smoothness": 91
+        },
+        "reliability": {
+          "engine_wear": 84,
+          "cooling_efficiency": 83,
+          "failure_resistance": 82
+        },
+        "development": {
+          "upgrade_potential": 100,
+          "regulation_adaptation": 95,
+          "packaging_efficiency": 98
+        }
+      },
+      "characteristics": {
+        "power_delivery": "explosive",
+        "fuel_usage_style": "balanced_attack",
+        "best_circuit_ids": ["suzuka", "silverstone", "spa"]
+      },
+      "ai_behavior": {
+        "engine_mode_bias": "maximum_attack",
+        "ers_usage_style": "qualifying_focused",
+        "reliability_management": "high_risk"
+      },
+      "career_rating": 97,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "honda_ra626h",
+      "manufacturer": "Honda Racing Corporation",
+      "country": "Japan",
+      "architecture": "1.6L V6 Turbo Hybrid",
+      "is_active": true,
+      "price_idr": 720000000000,
+      "stats": {
+        "overall_performance": 88,
+        "internal_combustion": {
+          "horsepower": 86,
+          "fuel_efficiency": 83,
+          "thermal_efficiency": 82,
+          "high_rpm_stability": 90
+        },
+        "hybrid_system": {
+          "ers_output": 85,
+          "energy_recovery": 84,
+          "battery_efficiency": 82,
+          "deployment_efficiency": 86
+        },
+        "driveability": {
+          "low_speed_response": 91,
+          "mid_range_torque": 89,
+          "top_end_power": 84,
+          "throttle_smoothness": 94
+        },
+        "reliability": {
+          "engine_wear": 76,
+          "cooling_efficiency": 78,
+          "failure_resistance": 74
+        },
+        "development": {
+          "upgrade_potential": 96,
+          "regulation_adaptation": 82,
+          "packaging_efficiency": 89
+        }
+      },
+      "characteristics": {
+        "power_delivery": "torquey",
+        "fuel_usage_style": "moderate",
+        "best_circuit_ids": ["marina_bay", "hungaroring", "suzuka"]
+      },
+      "ai_behavior": {
+        "engine_mode_bias": "technical_balance",
+        "ers_usage_style": "efficient",
+        "reliability_management": "conservative"
+      },
+      "career_rating": 88,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "audi_e_power_1",
+      "manufacturer": "Audi",
+      "country": "Germany",
+      "architecture": "1.6L V6 Turbo Hybrid",
+      "is_active": true,
+      "price_idr": 860000000000,
+      "stats": {
+        "overall_performance": 90,
+        "internal_combustion": {
+          "horsepower": 89,
+          "fuel_efficiency": 95,
+          "thermal_efficiency": 94,
+          "high_rpm_stability": 88
+        },
+        "hybrid_system": {
+          "ers_output": 94,
+          "energy_recovery": 96,
+          "battery_efficiency": 97,
+          "deployment_efficiency": 92
+        },
+        "driveability": {
+          "low_speed_response": 84,
+          "mid_range_torque": 90,
+          "top_end_power": 87,
+          "throttle_smoothness": 95
+        },
+        "reliability": {
+          "engine_wear": 91,
+          "cooling_efficiency": 92,
+          "failure_resistance": 93
+        },
+        "development": {
+          "upgrade_potential": 98,
+          "regulation_adaptation": 96,
+          "packaging_efficiency": 90
+        }
+      },
+      "characteristics": {
+        "power_delivery": "ultra_efficient",
+        "fuel_usage_style": "eco_performance",
+        "best_circuit_ids": ["lusail", "miami", "madrid"]
+      },
+      "ai_behavior": {
+        "engine_mode_bias": "efficiency",
+        "ers_usage_style": "recovery_heavy",
+        "reliability_management": "very_safe"
+      },
+      "career_rating": 91,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": "renault_e_tech_26",
+      "manufacturer": "Renault Alpine Racing",
+      "country": "France",
+      "architecture": "1.6L V6 Turbo Hybrid",
+      "is_active": false,
+      "price_idr": 420000000000,
+      "stats": {
+        "overall_performance": 79,
+        "internal_combustion": {
+          "horsepower": 78,
+          "fuel_efficiency": 81,
+          "thermal_efficiency": 79,
+          "high_rpm_stability": 77
+        },
+        "hybrid_system": {
+          "ers_output": 80,
+          "energy_recovery": 82,
+          "battery_efficiency": 81,
+          "deployment_efficiency": 79
+        },
+        "driveability": {
+          "low_speed_response": 80,
+          "mid_range_torque": 81,
+          "top_end_power": 76,
+          "throttle_smoothness": 84
+        },
+        "reliability": {
+          "engine_wear": 73,
+          "cooling_efficiency": 76,
+          "failure_resistance": 71
+        },
+        "development": {
+          "upgrade_potential": 72,
+          "regulation_adaptation": 75,
+          "packaging_efficiency": 78
+        }
+      },
+      "characteristics": {
+        "power_delivery": "predictable",
+        "fuel_usage_style": "balanced",
+        "best_circuit_ids": ["monaco", "hungaroring"]
+      },
+      "ai_behavior": {
+        "engine_mode_bias": "safe",
+        "ers_usage_style": "balanced",
+        "reliability_management": "conservative"
+      },
+      "career_rating": 78,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  ]
+}

@@ -1,0 +1,239 @@
+{
+  "table": "team_sponsors",
+  "description": "Master data sponsor ecosystem F1 2026. Includes financial power, brand tiering, and AI impact on team resources.",
+  "season_year": 2026,
+  "currency": "IDR",
+  "data": [
+    {
+      "team_id": "red_bull_racing",
+      "title_sponsor": "Oracle",
+      "country_focus": "USA / Austria",
+      "sponsor_tier": "S",
+      "financials": {
+        "estimated_annual_value_idr": 1748000000000,
+        "estimated_range_idr": "1.6T - 2.0T",
+        "budget_impact_score": 99,
+        "upgrade_funding_multiplier": 1.35
+      },
+      "ecosystem": {
+        "tech": ["Oracle", "Hexagon", "Siemens"],
+        "energy": ["ExxonMobil", "Mobil 1"],
+        "luxury": ["TAG Heuer"],
+        "consumer": ["Rauch", "Castore"]
+      },
+      "ai_effects": {
+        "development_speed_boost": 15,
+        "pit_infrastructure_level": 98,
+        "marketing_pressure": "extreme"
+      }
+    },
+    {
+      "team_id": "ferrari",
+      "title_sponsor": "HP",
+      "country_focus": "Italy / USA",
+      "sponsor_tier": "S",
+      "financials": {
+        "estimated_annual_value_idr": 1580000000000,
+        "estimated_range_idr": "1.4T - 1.9T",
+        "budget_impact_score": 97,
+        "upgrade_funding_multiplier": 1.3
+      },
+      "ecosystem": {
+        "tech": ["HP", "Shell Tech", "IBM-like partners"],
+        "finance": ["UniCredit"],
+        "luxury": ["Ray-Ban ecosystem"],
+        "energy": ["Shell"]
+      },
+      "ai_effects": {
+        "development_speed_boost": 13,
+        "driver_pressure_multiplier": 1.25,
+        "brand_expectation": "ultra_high"
+      }
+    },
+    {
+      "team_id": "mclaren",
+      "title_sponsor": "Mastercard",
+      "country_focus": "UK / USA",
+      "sponsor_tier": "S",
+      "financials": {
+        "estimated_annual_value_idr": 1422000000000,
+        "estimated_range_idr": "1.3T - 1.7T",
+        "budget_impact_score": 98,
+        "upgrade_funding_multiplier": 1.33
+      },
+      "ecosystem": {
+        "tech": ["Google", "OKX", "AI partners"],
+        "finance": ["Mastercard", "Goldman Sachs"],
+        "consumer": ["Monster Energy", "PUMA"]
+      },
+      "ai_effects": {
+        "simulator_quality": 98,
+        "strategy_ai_bonus": 18,
+        "consistency_bonus": 12
+      }
+    },
+    {
+      "team_id": "mercedes",
+      "title_sponsor": "Petronas",
+      "country_focus": "Germany / UK",
+      "sponsor_tier": "S",
+      "financials": {
+        "estimated_annual_value_idr": 1264000000000,
+        "estimated_range_idr": "1.1T - 1.5T",
+        "budget_impact_score": 95,
+        "upgrade_funding_multiplier": 1.25
+      },
+      "ecosystem": {
+        "tech": ["Microsoft", "CrowdStrike", "SAP", "AMD"],
+        "luxury": ["IWC", "Adidas"],
+        "energy": ["Petronas"]
+      },
+      "ai_effects": {
+        "data_processing_bonus": 20,
+        "race_strategy_accuracy": 97,
+        "reliability_engineering": 96
+      }
+    },
+    {
+      "team_id": "aston_martin",
+      "title_sponsor": "Aramco",
+      "country_focus": "UK / Middle East",
+      "sponsor_tier": "A",
+      "financials": {
+        "estimated_annual_value_idr": 1106000000000,
+        "estimated_range_idr": "1.0T - 1.3T",
+        "budget_impact_score": 92,
+        "upgrade_funding_multiplier": 1.18
+      },
+      "ecosystem": {
+        "energy": ["Aramco"],
+        "tech": ["IT partners"],
+        "luxury": ["Aston Martin branding ecosystem"]
+      },
+      "ai_effects": {
+        "aero_development_boost": 14,
+        "upgrade_latency_reduction": 10
+      }
+    },
+    {
+      "team_id": "red_bull_junior",
+      "title_sponsor": "Visa Cash App",
+      "country_focus": "UK / USA",
+      "sponsor_tier": "A",
+      "financials": {
+        "estimated_annual_value_idr": 1000000000000,
+        "estimated_range_idr": "0.9T - 1.2T",
+        "budget_impact_score": 90,
+        "upgrade_funding_multiplier": 1.12
+      },
+      "ecosystem": {
+        "finance": ["Visa", "Cash App"],
+        "luxury": ["Tudor"],
+        "energy": ["Red Bull ecosystem"]
+      },
+      "ai_effects": {
+        "driver_development_bonus": 15,
+        "rookie_support": 18
+      }
+    },
+    {
+      "team_id": "williams",
+      "title_sponsor": "Atlassian",
+      "country_focus": "UK / USA",
+      "sponsor_tier": "A",
+      "financials": {
+        "estimated_annual_value_idr": 890000000000,
+        "estimated_range_idr": "0.8T - 1.0T",
+        "budget_impact_score": 88,
+        "upgrade_funding_multiplier": 1.1
+      },
+      "ecosystem": {
+        "tech": ["Atlassian", "AI partners"],
+        "finance": ["sponsor banking partners"]
+      },
+      "ai_effects": {
+        "infrastructure_growth": 20,
+        "long_term_development_bonus": 17
+      }
+    },
+    {
+      "team_id": "haas",
+      "title_sponsor": "Toyota Gazoo Racing",
+      "country_focus": "USA / Japan",
+      "sponsor_tier": "A",
+      "financials": {
+        "estimated_annual_value_idr": 860000000000,
+        "estimated_range_idr": "0.75T - 0.95T",
+        "budget_impact_score": 87,
+        "upgrade_funding_multiplier": 1.08
+      },
+      "ecosystem": {
+        "manufacturing": ["Toyota"],
+        "tech": ["Haas engineering partners"]
+      },
+      "ai_effects": {
+        "reliability_boost": 18,
+        "simulator_upgrade": 14
+      }
+    },
+    {
+      "team_id": "alpine",
+      "title_sponsor": "BWT",
+      "country_focus": "France / Austria",
+      "sponsor_tier": "B",
+      "financials": {
+        "estimated_annual_value_idr": 760000000000,
+        "estimated_range_idr": "0.65T - 0.9T",
+        "budget_impact_score": 84,
+        "upgrade_funding_multiplier": 1.05
+      },
+      "ecosystem": {
+        "consumer": ["BWT", "eToro"]
+      },
+      "ai_effects": {
+        "short_term_performance_boost": 12,
+        "risk_tolerance": 16
+      }
+    },
+    {
+      "team_id": "audi",
+      "title_sponsor": "Revolut",
+      "country_focus": "Germany",
+      "sponsor_tier": "A",
+      "financials": {
+        "estimated_annual_value_idr": 1187000000000,
+        "estimated_range_idr": "1.0T - 1.4T",
+        "budget_impact_score": 91,
+        "upgrade_funding_multiplier": 1.2
+      },
+      "ecosystem": {
+        "finance": ["Revolut"],
+        "tech": ["Audi engineering group"]
+      },
+      "ai_effects": {
+        "hybrid_efficiency_boost": 17,
+        "battery_development": 19
+      }
+    },
+    {
+      "team_id": "cadillac",
+      "title_sponsor": "None (Open Market)",
+      "country_focus": "USA",
+      "sponsor_tier": "C",
+      "financials": {
+        "estimated_annual_value_idr": 450000000000,
+        "estimated_range_idr": "0.35T - 0.6T",
+        "budget_impact_score": 72,
+        "upgrade_funding_multiplier": 0.95
+      },
+      "ecosystem": {
+        "consumer": ["Jim Beam", "Tommy Hilfiger"],
+        "industrial": ["GM ecosystem"]
+      },
+      "ai_effects": {
+        "brand_build_mode": true,
+        "long_term_growth_focus": 25
+      }
+    }
+  ]
+}
