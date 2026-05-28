@@ -63,7 +63,8 @@ const UI = {
     if (!standingsContainer) return;
 
     let html = `
-        <div style="font-weight:bold; color:var(--text-muted); font-size:10px; padding-bottom:10px; border-bottom:1px solid var(--border-dark); margin-bottom:10px; display:grid; grid-template-columns:30px 40px 1fr 50px 50px;">
+        <div class="panel-title">LIVE LEADERBOARD</div>
+        <div class="standing-header">
             <span>POS</span>
             <span>CODE</span>
             <span>DRIVER</span>
@@ -72,12 +73,10 @@ const UI = {
         </div>
     `;
 
-    const leaderTime = grid[0].totalTime;
-
     grid.forEach((racer, index) => {
       const pos = index + 1;
       const isPlayer = racer.isPlayer;
-      const gap = index === 0 ? "LEADER" : "+" + (racer.totalTime - leaderTime).toFixed(2) + "s";
+      const gap = racer.gapText || (index === 0 ? "LEADER" : "+" + (racer.totalTime - grid[0].totalTime).toFixed(1) + "s");
       
       const tireClass = racer.tireWear > 70 ? 'high' : (racer.tireWear > 30 ? 'medium' : 'low');
       const fuelClass = racer.fuel > 70 ? 'high' : (racer.fuel > 20 ? 'medium' : 'low');
@@ -105,8 +104,8 @@ const UI = {
 
     const tireEl = document.getElementById("telemetry-tire");
     const fuelEl = document.getElementById("telemetry-fuel");
-    if (tireEl) tireEl.innerHTML = `TIRES <span>${Math.round(playerCar.tireWear)}%</span>`;
-    if (fuelEl) fuelEl.innerHTML = `FUEL <span>${Math.round(playerCar.fuel)}%</span>`;
+    if (tireEl) tireEl.innerText = `${Math.round(playerCar.tireWear)}%`;
+    if (fuelEl) fuelEl.innerText = `${Math.round(playerCar.fuel)}%`;
 
     document.getElementById("btn-style-fast").classList.toggle("btn-active", playerCar.drivingStyle === "fast");
     document.getElementById("btn-style-stable").classList.toggle("btn-active", playerCar.drivingStyle === "stable");
@@ -285,7 +284,9 @@ const UI = {
       card.className = "selection-card";
       
       const itemId = item.id || item.team_id;
-      const isAlreadySelected = (WizardForm[targetField] === itemId);
+      const isDriverSelection = targetField === "driverId";
+      const driverSlot = WizardForm.driver1Id === itemId ? 1 : (WizardForm.driver2Id === itemId ? 2 : null);
+      const isAlreadySelected = isDriverSelection ? driverSlot !== null : (WizardForm[targetField] === itemId);
       
       if (isAlreadySelected) {
         card.classList.add("selected");
@@ -305,6 +306,12 @@ const UI = {
       if (item.financials && item.financials.estimated_annual_value_idr) {
         statsHtml += `<div class="card-stat-row"><span class="card-stat-label">Dana Sponsor:</span><span class="card-stat-value" style="color:var(--f1-neon)">Rp ${(item.financials.estimated_annual_value_idr / 1000000000).toLocaleString("id-ID")} Miliar</span></div>`;
       }
+      if (item.driver_code) {
+        statsHtml += `<div class="card-stat-row"><span class="card-stat-label">Kode:</span><span class="card-stat-value">${item.driver_code}</span></div>`;
+      }
+      if (item.nationality) {
+        statsHtml += `<div class="card-stat-row"><span class="card-stat-label">Negara:</span><span class="card-stat-value">${item.nationality}</span></div>`;
+      }
       if (item.stats && item.stats.overall) {
         statsHtml += `<div class="card-stat-row"><span class="card-stat-label">Rating:</span><span class="card-stat-value" style="color:var(--neon-blue)">★ ${item.stats.overall}</span></div>`;
       }
@@ -320,7 +327,7 @@ const UI = {
       }
 
       card.innerHTML = `
-            <div class="selected-badge">TERKONTRAK</div>
+            <div class="selected-badge">${isDriverSelection && driverSlot ? `DRIVER ${driverSlot}` : "TERKONTRAK"}</div>
             <div class="card-title">${cardTitle}</div>
             <div class="card-stats-box">${statsHtml}</div>
             <div class="card-price">${costLabel}</div>
@@ -335,15 +342,33 @@ const UI = {
       }
 
       card.addEventListener("click", () => {
-        if (isAlreadySelected) {
-          // Deselect
+        if (isDriverSelection) {
+          if (WizardForm.driver1Id === itemId) {
+            WizardForm.driver1Id = WizardForm.driver2Id;
+            WizardForm.driver2Id = null;
+          } else if (WizardForm.driver2Id === itemId) {
+            WizardForm.driver2Id = null;
+          } else {
+            if (!isAffordable) {
+              alert("Anggaran Tidak memenuhi");
+              return;
+            }
+
+            if (!WizardForm.driver1Id) {
+              WizardForm.driver1Id = itemId;
+            } else if (!WizardForm.driver2Id) {
+              WizardForm.driver2Id = itemId;
+            } else {
+              WizardForm.driver2Id = itemId;
+            }
+          }
+        } else if (isAlreadySelected) {
           WizardForm[targetField] = null;
           if (isSponsorSelection) {
             State.budget = 0;
             UI.updateTopBar();
           }
         } else {
-          // Select
           if (!isAffordable) {
             alert("Anggaran Tidak memenuhi");
             return;
@@ -369,11 +394,12 @@ const UI = {
     this.renderHorizontalCards("container-tech-chief", Data.tech_chiefs, "techChiefId");
     this.renderHorizontalCards("container-pu", Data.power_units, "puId");
     this.renderHorizontalCards("container-chassis", Data.chassis, "chassisId");
-    this.renderHorizontalCards("container-driver1", Data.drivers, "driver1Id");
-    this.renderHorizontalCards("container-driver2", Data.drivers, "driver2Id");
+    this.renderHorizontalCards("container-drivers", Data.drivers, "driverId");
   },
 
   moveWizard(direction) {
+    if (direction > 0 && !this.canLeaveWizardStep(WizardForm.step)) return;
+
     document.getElementById(`step-${WizardForm.step}`).classList.add("hidden");
     WizardForm.step += direction;
     document.getElementById(`step-${WizardForm.step}`).classList.remove("hidden");
@@ -393,6 +419,28 @@ const UI = {
       document.getElementById("btn-wizard-next").classList.remove("hidden");
       document.getElementById("btn-wizard-submit").classList.add("hidden");
     }
+  },
+
+  canLeaveWizardStep(step) {
+    if (step === 1) {
+      const teamName = document.getElementById("input-team-name").value.trim();
+      if (!teamName || !WizardForm.sponsorId) {
+        alert("Isi nama konstruktor dan pilih sponsor utama terlebih dahulu.");
+        return false;
+      }
+    }
+
+    if (step === 2 && (!WizardForm.teamChiefId || !WizardForm.techChiefId)) {
+      alert("Pilih Team Principal dan Technical Director terlebih dahulu.");
+      return false;
+    }
+
+    if (step === 3 && (!WizardForm.puId || !WizardForm.chassisId)) {
+      alert("Pilih Power Unit dan Chassis terlebih dahulu.");
+      return false;
+    }
+
+    return true;
   },
 
   updateTopBar() {

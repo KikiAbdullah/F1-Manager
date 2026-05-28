@@ -128,12 +128,9 @@
 
             <!-- STEP 4: Drivers Lineup -->
             <div class="wizard-step hidden" id="step-4">
-              <h3>KONTRAK PEMBALAP UTAMA (Driver 1)</h3>
-              <div class="horizontal-scroll" id="container-driver1"></div>
-              <h3 style="margin-top: 25px">
-                KONTRAK PEMBALAP KEDUA (Driver 2)
-              </h3>
-              <div class="horizontal-scroll" id="container-driver2"></div>
+              <h3>REKRUT DRIVER LINEUP (Pilih 2 Pembalap)</h3>
+              <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 15px;">Klik pertama untuk Driver 1, klik kedua untuk Driver 2. Klik lagi untuk membatalkan.</p>
+              <div class="horizontal-scroll" id="container-drivers"></div>
             </div>
           </div>
 
@@ -233,15 +230,13 @@
         </section>
         <!-- LAYAR RACE WEEKEND -->
         <section id="screen-race-weekend" class="screen hidden">
-          <h2
-            id="race-title"
-            style="color: var(--f1-red); font-size: 24px; margin-bottom: 5px"
-          >
-            JUDUL BALAPAN
-          </h2>
-          <p style="color: var(--text-muted); margin-bottom: 20px">
-            Lakukan simulasi balapan akhir pekan.
-          </p>
+          <div class="race-weekend-hero">
+            <div>
+              <span class="race-kicker">F1 2026 RACE CONTROL</span>
+              <h2 id="race-title">JUDUL BALAPAN</h2>
+              <p>Lakukan simulasi practice, qualifying, lalu race utama dengan kontrol strategi live.</p>
+            </div>
+          </div>
 
           <!-- Main Race Simulation Area -->
           <div id="sim-area" class="race-sim-layout hidden">
@@ -255,12 +250,12 @@
               </div>
               <canvas id="race-canvas" width="900" height="550"></canvas>
               <div class="telemetry-dashboard">
-                <div id="telemetry-lap" class="telemetry-item">Lap: 1/50</div>
-                <div id="telemetry-speed" class="telemetry-item">Speed: 0 km/h</div>
-                <div id="telemetry-sector" class="telemetry-item">Sector: 1</div>
-                <div id="telemetry-zone" class="telemetry-item">Zone: Main Straight</div>
-                <div id="telemetry-tire" class="telemetry-item">Tire: 100%</div>
-                <div id="telemetry-fuel" class="telemetry-item">Fuel: 100%</div>
+                <div class="telemetry-item"><span class="telemetry-label">Lap</span><strong id="telemetry-lap">1 / 50</strong></div>
+                <div class="telemetry-item"><span class="telemetry-label">Speed</span><strong id="telemetry-speed">0 km/h</strong></div>
+                <div class="telemetry-item"><span class="telemetry-label">Sector</span><strong id="telemetry-sector">Sector 1</strong></div>
+                <div class="telemetry-item"><span class="telemetry-label">Zone</span><strong id="telemetry-zone">Main Straight</strong></div>
+                <div class="telemetry-item"><span class="telemetry-label">Tire</span><strong id="telemetry-tire">100%</strong></div>
+                <div class="telemetry-item"><span class="telemetry-label">Fuel</span><strong id="telemetry-fuel">100%</strong></div>
               </div>
             </div>
 

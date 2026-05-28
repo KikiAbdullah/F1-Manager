@@ -81,15 +81,9 @@ const Main = {
       UI.handleWizardCardSelection
     );
     UI.renderHorizontalCards(
-      "container-driver1",
+      "container-drivers",
       Data.drivers,
-      "driver1Id",
-      UI.handleWizardCardSelection
-    );
-    UI.renderHorizontalCards(
-      "container-driver2",
-      Data.drivers,
-      "driver2Id",
+      "driverId", // Special targetField for shared list
       UI.handleWizardCardSelection
     );
 

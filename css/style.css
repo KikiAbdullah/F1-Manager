@@ -128,6 +128,45 @@ main#game-container {
   overflow-x: hidden; /* Matikan scroll horizontal bocor */
   box-sizing: border-box;
 }
+
+body:has(#screen-loading:not(.hidden)),
+body:has(#screen-new-career:not(.hidden)) {
+  overflow: auto;
+}
+
+body:has(#screen-loading:not(.hidden)) .app-layout,
+body:has(#screen-new-career:not(.hidden)) .app-layout {
+  height: 100vh;
+}
+
+body:has(#screen-loading:not(.hidden)) main#game-container,
+body:has(#screen-new-career:not(.hidden)) main#game-container {
+  min-height: 100vh;
+}
+
+#screen-new-career {
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+#screen-new-career h3 {
+  margin: 0 0 12px;
+  color: var(--text-white);
+  font-size: 14px;
+  letter-spacing: 0.6px;
+}
+
+#wizard-container {
+  display: block;
+}
+
+.wizard-step {
+  background: linear-gradient(180deg, rgba(18, 20, 29, 0.94), rgba(12, 14, 21, 0.94));
+  border: 1px solid var(--border-dark);
+  border-radius: 12px;
+  padding: 22px;
+  box-sizing: border-box;
+}
 .screen {
   animation: fadeIn 0.4s ease-in-out;
   max-width: 100%;
@@ -159,6 +198,7 @@ main#game-container {
   justify-content: space-between;
   position: relative;
   padding: 0 10px;
+  gap: 8px;
 }
 .wiz-dot {
   font-size: 11px;
@@ -168,6 +208,13 @@ main#game-container {
   border-bottom: 3px solid var(--border-dark);
   flex: 1;
   text-align: center;
+  min-width: 0;
+}
+.wiz-dot span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .wiz-dot.active {
   color: var(--text-white);
@@ -211,6 +258,7 @@ main#game-container {
   padding: 10px 5px 20px 5px;
   scroll-snap-type: x mandatory;
   max-width: 100%; /* Cegah kontainer scroll merusak viewport */
+  overscroll-behavior-inline: contain;
 }
 .horizontal-scroll::-webkit-scrollbar {
   height: 8px;
@@ -271,6 +319,7 @@ main#game-container {
   font-weight: bold;
   margin-bottom: 12px;
   color: var(--text-white);
+  padding-right: 72px;
 }
 .card-stat-row {
   display: flex;
@@ -322,6 +371,10 @@ main#game-container {
   margin-top: 30px;
   flex-wrap: wrap;
   gap: 15px;
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  box-shadow: 0 -12px 28px rgba(9, 10, 15, 0.72);
 }
 .live-budget-hud .label {
   font-size: 10px;
@@ -340,6 +393,7 @@ main#game-container {
 .wizard-nav-buttons {
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
 /* Global Button Styles */
 button {
@@ -468,27 +522,75 @@ button:disabled {
   margin-bottom: 15px;
   letter-spacing: 0.5px;
 }
+.race-weekend-hero {
+  background: radial-gradient(circle at top right, rgba(255, 0, 0, 0.28), transparent 38%), linear-gradient(135deg, #151824, #090a0f);
+  border: 1px solid var(--border-dark);
+  border-left: 5px solid var(--f1-red);
+  border-radius: 14px;
+  padding: 24px 28px;
+  margin-bottom: 18px;
+}
+
+.race-kicker {
+  color: var(--f1-neon);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.8px;
+}
+
+.race-weekend-hero h2 {
+  color: var(--text-white);
+  font-size: 28px;
+  margin: 8px 0 6px;
+}
+
+.race-weekend-hero p {
+  color: var(--text-muted);
+  margin: 0;
+  font-size: 13px;
+}
+
+.race-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.race-controls button {
+  background: linear-gradient(180deg, #1d2030, #12141d);
+  border: 1px solid var(--border-dark);
+  min-height: 48px;
+}
+
+.race-controls button:hover {
+  border-color: var(--f1-red);
+  color: var(--f1-neon);
+}
+
 /* Styles untuk Canvas Simulation Sesi Balapan */
 .race-sim-layout {
   display: grid;
-  grid-template-columns: 280px 2fr 280px; /* Standings, Canvas, Controls */
-  gap: 20px;
+  grid-template-columns: minmax(260px, 0.8fr) minmax(460px, 1.8fr) minmax(260px, 0.8fr);
+  gap: 18px;
   margin-top: 20px;
   align-items: start;
 }
 
 .canvas-telemetry-container {
-  background-color: var(--bg-panel);
+  background: linear-gradient(180deg, #12141d, #0d0f17);
+  border: 1px solid var(--border-dark);
   border-radius: 12px;
   padding: 15px;
   display: flex;
   flex-direction: column;
   gap: 15px;
+  min-width: 0;
 }
 
 canvas {
   display: block;
-  background-color: #151824;
+  background: radial-gradient(circle at center, #20263a, #10131d 66%);
   border-radius: 8px;
   width: 100%;
   height: auto;
@@ -498,19 +600,32 @@ canvas {
 
 .telemetry-dashboard {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
 }
 
 .telemetry-item {
   background: rgba(0, 0, 0, 0.2);
-  padding: 8px 12px;
+  padding: 10px 12px;
   border-radius: 6px;
   font-size: 11px;
   color: var(--text-muted);
   text-transform: uppercase;
   font-weight: bold;
   border-left: 3px solid var(--border-dark);
+}
+
+.telemetry-label {
+  display: block;
+  color: var(--text-muted);
+  font-size: 10px;
+  margin-bottom: 4px;
+}
+
+.telemetry-item strong {
+  color: var(--text-white);
+  font-family: monospace;
+  font-size: 14px;
 }
 
 .telemetry-item:nth-child(even) {
@@ -528,20 +643,40 @@ canvas {
 /* Live Standings */
 #live-standings {
   padding: 15px;
-  background-color: var(--bg-panel);
+  background: linear-gradient(180deg, #12141d, #0d0f17);
   border-radius: 12px;
-  max-height: 70vh;
+  max-height: calc(100vh - 180px);
   overflow-y: auto;
+  min-width: 0;
+}
+
+.standing-header {
+  font-weight: bold;
+  color: var(--text-muted);
+  font-size: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-dark);
+  margin-bottom: 10px;
+  display: grid;
+  grid-template-columns: 30px 42px minmax(0, 1fr) 62px 42px;
+  gap: 5px;
 }
 
 .standing-item {
   display: grid;
-  grid-template-columns: 30px 40px 1fr 50px 50px;
+  grid-template-columns: 30px 42px minmax(0, 1fr) 62px 42px;
   gap: 5px;
   align-items: center;
-  padding: 8px 5px;
+  padding: 9px 5px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   font-size: 12px;
+}
+
+.standing-item.player-standing {
+  background: rgba(0, 255, 135, 0.08);
+  border-left: 3px solid var(--f1-neon);
+  border-radius: 6px;
+  padding-left: 7px;
 }
 
 .standing-item:last-child {
@@ -609,12 +744,15 @@ canvas {
 
 /* Player Controls */
 .player-controls {
-  background-color: var(--bg-panel);
+  background: linear-gradient(180deg, #12141d, #0d0f17);
   border-radius: 12px;
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  position: sticky;
+  top: 0;
+  min-width: 0;
 }
 
 .control-group label {
@@ -629,6 +767,10 @@ canvas {
 .style-options, .speed-options {
   display: flex;
   gap: 10px;
+}
+
+.style-options {
+  flex-direction: column;
 }
 
 .player-controls button {
@@ -651,6 +793,27 @@ canvas {
   border-color: var(--f1-red);
   color: white;
   box-shadow: 0 0 8px rgba(255, 0, 0, 0.4);
+}
+
+@media (max-width: 1180px) {
+  .race-sim-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .player-controls {
+    position: static;
+  }
+
+  #live-standings {
+    max-height: 360px;
+  }
+}
+
+@media (max-width: 680px) {
+  .race-controls,
+  .telemetry-dashboard {
+    grid-template-columns: 1fr;
+  }
 }
 
 button#btn-ers.active {
@@ -765,6 +928,40 @@ button#btn-ers.active {
   border-bottom: 1px solid var(--border-dark);
   align-items: center;
   font-size: 13px;
+}
+
+#screen-race-weekend canvas {
+  background: radial-gradient(circle at center, #20263a, #10131d 66%);
+  aspect-ratio: 16 / 9;
+}
+
+#screen-race-weekend .telemetry-dashboard {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+#screen-race-weekend .telemetry-item {
+  padding: 10px 12px;
+  border-left: 3px solid var(--border-dark);
+  border-bottom: none;
+}
+
+#screen-race-weekend .telemetry-label {
+  color: var(--text-muted);
+  font-size: 10px;
+  margin: 0 0 4px;
+}
+
+#screen-race-weekend .telemetry-item strong {
+  display: block;
+  color: var(--text-white);
+  font-family: monospace;
+  font-size: 14px;
+}
+
+@media (max-width: 680px) {
+  #screen-race-weekend .telemetry-dashboard {
+    grid-template-columns: 1fr;
+  }
 }
 @keyframes fadeIn {
   from {

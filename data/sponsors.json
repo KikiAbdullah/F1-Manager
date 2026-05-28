@@ -9,6 +9,7 @@
       "title_sponsor": "Oracle",
       "country_focus": "USA / Austria",
       "sponsor_tier": "S",
+      "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/f/fa/Red_Bull_Racing_Logo_2026.svg/1920px-Red_Bull_Racing_Logo_2026.svg.png",
       "financials": {
         "estimated_annual_value_idr": 1748000000000,
         "estimated_range_idr": "1.6T - 2.0T",
@@ -32,6 +33,7 @@
       "title_sponsor": "HP",
       "country_focus": "Italy / USA",
       "sponsor_tier": "S",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/0/05/HP_logo_2025.svg",
       "financials": {
         "estimated_annual_value_idr": 1580000000000,
         "estimated_range_idr": "1.4T - 1.9T",
@@ -55,6 +57,7 @@
       "title_sponsor": "Mastercard",
       "country_focus": "UK / USA",
       "sponsor_tier": "S",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Mastercard_2019_logo.svg/1920px-Mastercard_2019_logo.svg.png",
       "financials": {
         "estimated_annual_value_idr": 1422000000000,
         "estimated_range_idr": "1.3T - 1.7T",
@@ -77,6 +80,7 @@
       "title_sponsor": "Petronas",
       "country_focus": "Germany / UK",
       "sponsor_tier": "S",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/c/c6/PETRONAS_Logo_%282013%29.png",
       "financials": {
         "estimated_annual_value_idr": 1264000000000,
         "estimated_range_idr": "1.1T - 1.5T",
@@ -99,6 +103,7 @@
       "title_sponsor": "Aramco",
       "country_focus": "UK / Middle East",
       "sponsor_tier": "A",
+      "logo": "https://upload.wikimedia.org/wikipedia/en/1/15/Aston_Martin_Aramco_2024_logo.png",
       "financials": {
         "estimated_annual_value_idr": 1106000000000,
         "estimated_range_idr": "1.0T - 1.3T",
@@ -120,6 +125,7 @@
       "title_sponsor": "Visa Cash App",
       "country_focus": "UK / USA",
       "sponsor_tier": "A",
+      "logo": "https://upload.wikimedia.org/wikipedia/en/2/2b/VCARB_F1_logo.svg",
       "financials": {
         "estimated_annual_value_idr": 1000000000000,
         "estimated_range_idr": "0.9T - 1.2T",
@@ -141,6 +147,7 @@
       "title_sponsor": "Atlassian",
       "country_focus": "UK / USA",
       "sponsor_tier": "A",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/7/72/Atlassian-horizontal-blue-rgb.svg",
       "financials": {
         "estimated_annual_value_idr": 890000000000,
         "estimated_range_idr": "0.8T - 1.0T",
@@ -161,6 +168,7 @@
       "title_sponsor": "Toyota Gazoo Racing",
       "country_focus": "USA / Japan",
       "sponsor_tier": "A",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/1/15/Toyota_Gazoo_Racing_stacked_logo.svg",
       "financials": {
         "estimated_annual_value_idr": 860000000000,
         "estimated_range_idr": "0.75T - 0.95T",
@@ -181,6 +189,7 @@
       "title_sponsor": "BWT",
       "country_focus": "France / Austria",
       "sponsor_tier": "B",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/4/48/BWT_Racing_Point_Logo.svg",
       "financials": {
         "estimated_annual_value_idr": 760000000000,
         "estimated_range_idr": "0.65T - 0.9T",
@@ -200,6 +209,7 @@
       "title_sponsor": "Revolut",
       "country_focus": "Germany",
       "sponsor_tier": "A",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/7/73/Revolut_logo.svg",
       "financials": {
         "estimated_annual_value_idr": 1187000000000,
         "estimated_range_idr": "1.0T - 1.4T",
@@ -217,9 +227,10 @@
     },
     {
       "team_id": "cadillac",
-      "title_sponsor": "None (Open Market)",
+      "title_sponsor": "Tommy Hilfiger",
       "country_focus": "USA",
       "sponsor_tier": "C",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Tommy_hilfig_vectorlogo.svg/1920px-Tommy_hilfig_vectorlogo.svg.png",
       "financials": {
         "estimated_annual_value_idr": 450000000000,
         "estimated_range_idr": "0.35T - 0.6T",
