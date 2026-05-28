@@ -240,7 +240,7 @@ main#game-container {
   overflow: hidden;
   box-sizing: border-box;
 }
-.selection-card:hover {
+.selection-card:hover:not(.unaffordable-card) {
   border-color: var(--text-muted);
   transform: translateY(-3px);
 }
@@ -249,6 +249,23 @@ main#game-container {
   background-color: var(--bg-card-selected);
   box-shadow: 0 0 15px rgba(0, 255, 135, 0.15);
 }
+
+.selection-card.unaffordable-card {
+  /* Soften appearance, but still clickable */
+  opacity: 0.6;
+  border-color: var(--border-dark);
+}
+
+.selection-card.unaffordable-card .card-title,
+.selection-card.unaffordable-card .card-stat-label,
+.selection-card.unaffordable-card .card-stat-value {
+  color: var(--text-muted);
+}
+
+.selection-card.unaffordable-card .card-price {
+  color: var(--f1-red) !important; /* Override with red for unaffordable price */
+}
+
 .card-title {
   font-size: 16px;
   font-weight: bold;

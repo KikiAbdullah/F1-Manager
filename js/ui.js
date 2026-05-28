@@ -19,9 +19,8 @@ const UI = {
       if (activeBtn) activeBtn.classList.add("active");
     }
 
-    // TRIGGER FUNGSI SPESIFIK SAAT MENU DIKLIK
     if (screenId === "race-weekend") this.initRaceWeekend();
-    if (screenId === "calendar") this.renderCalendar(); // Pastikan ada fungsi renderCalendar di ui.js kamu
+    if (screenId === "calendar") this.renderCalendar();
   },
 
   initRaceWeekend() {
@@ -39,17 +38,12 @@ const UI = {
     }
 
     titleEl.innerText = `ROUND ${currentEvent.round}: ${currentEvent.grand_prix.toUpperCase()}`;
-    
-    // Create session buttons
     this.setupRaceSessionButtons();
-
-    // Hide simulation area until a session starts
     document.getElementById("sim-area").classList.add("hidden");
     document.getElementById("session-results").classList.add("hidden");
   },
 
   setupRaceSessionButtons() {
-    // We'll replace the old .race-controls content with new dynamic buttons
     let controlsEl = document.querySelector(".race-controls");
     if (!controlsEl) {
         controlsEl = document.createElement('div');
@@ -62,10 +56,6 @@ const UI = {
         <button id="btn-q" onclick="Engine.startSession('Q')">QUALIFYING</button>
         <button id="btn-race" onclick="Engine.startSession('RACE')">MAIN RACE</button>
     `;
-
-    // Disable buttons based on state or logic if needed (e.g. must do Q before RACE)
-    // For now, let's keep them enabled for testing convenience, 
-    // but typically you'd manage disabled state here.
   },
 
   renderLiveStandings(grid) {
@@ -89,7 +79,6 @@ const UI = {
       const isPlayer = racer.isPlayer;
       const gap = index === 0 ? "LEADER" : "+" + (racer.totalTime - leaderTime).toFixed(2) + "s";
       
-      // Tire/Fuel status indicators
       const tireClass = racer.tireWear > 70 ? 'high' : (racer.tireWear > 30 ? 'medium' : 'low');
       const fuelClass = racer.fuel > 70 ? 'high' : (racer.fuel > 20 ? 'medium' : 'low');
 
@@ -114,25 +103,21 @@ const UI = {
     const playerCar = Engine.currentGrid.find(r => r.isPlayer);
     if (!playerCar) return;
 
-    // Update Telemetry Items specifically for tire/fuel
     const tireEl = document.getElementById("telemetry-tire");
     const fuelEl = document.getElementById("telemetry-fuel");
     if (tireEl) tireEl.innerHTML = `TIRES <span>${Math.round(playerCar.tireWear)}%</span>`;
     if (fuelEl) fuelEl.innerHTML = `FUEL <span>${Math.round(playerCar.fuel)}%</span>`;
 
-    // Update Driving Style Buttons active state
     document.getElementById("btn-style-fast").classList.toggle("btn-active", playerCar.drivingStyle === "fast");
     document.getElementById("btn-style-stable").classList.toggle("btn-active", playerCar.drivingStyle === "stable");
     document.getElementById("btn-style-slow").classList.toggle("btn-active", playerCar.drivingStyle === "slow");
 
-    // ERS Button
     const ersBtn = document.getElementById("btn-ers");
     if (ersBtn) {
         ersBtn.classList.toggle("active", playerCar.ersActive);
         ersBtn.innerText = playerCar.ersActive ? "ERS: ATTACK" : "ERS: OFF (OVERTAKE)";
     }
 
-    // Pit Stop Button
     const pitBtn = document.getElementById("btn-pit-stop");
     if (pitBtn) {
         if (playerCar.isPitting) {
@@ -186,10 +171,96 @@ const UI = {
     resultTable.innerHTML = html;
   },
 
-  // MERENDER KARTU HORIZONTAL DENGAN ATRIBUT BERGAYA F1 MANAGER 24
+  renderCalendar() {
+    const calContainer = document.getElementById("calendar-list");
+    if (!calContainer) return;
+    calContainer.innerHTML = "";
+
+    Data.schedules.forEach((sch) => {
+      if (sch.type !== "race_weekend") return;
+
+      const circuitDetails = Data.circuits.find(c => c.id === sch.circuit_id);
+      const countryCode = circuitDetails ? circuitDetails.country_code : "GB";
+      const circuitName = circuitDetails ? circuitDetails.name : sch.circuit_id;
+
+      const isCurrent = sch.round === State.currentRound;
+      const isFinished = sch.round < State.currentRound;
+      const isNext = sch.round === State.currentRound + 1;
+
+      const startDate = new Date(sch.sessions[0].date);
+      const endDate = new Date(sch.sessions[sch.sessions.length - 1].date);
+      const options = { month: "short", day: "numeric" };
+      const formattedStartDate = startDate.toLocaleDateString("en-US", options);
+      const formattedEndDate = endDate.toLocaleDateString("en-US", options);
+      const dateRange =
+        formattedStartDate === formattedEndDate
+          ? formattedStartDate
+          : `${formattedStartDate} - ${formattedEndDate}`;
+
+      const div = document.createElement("div");
+      div.className = `calendar-item ${isCurrent ? "current-race" : ""} ${
+        isFinished ? "finished-race" : ""
+      } ${isNext ? "next-race" : ""}`;
+
+      div.innerHTML = `
+            <div class="calendar-round">ROUND ${sch.round}</div>
+            <div class="calendar-flag">
+              <img src="https://flagsapi.com/${countryCode}/flat/64.png" alt="${sch.country}" />
+            </div>
+            <div class="calendar-details">
+              <div class="calendar-grand-prix">${sch.grand_prix}</div>
+              <div class="calendar-circuit">${circuitName}</div>
+              <div class="calendar-date">${dateRange}</div>
+            </div>
+            <div class="calendar-status">
+              ${isCurrent ? "<span>LIVE</span>" : ""}
+              ${isNext ? "<span>NEXT RACE</span>" : ""}
+              ${isFinished ? "<span>FINISHED</span>" : ""}
+            </div>
+        `;
+      div.addEventListener('click', () => {
+        UI.showRaceDetailsModal(sch, circuitName, dateRange);
+      });
+
+      calContainer.appendChild(div);
+    });
+  },
+
+  showRaceDetailsModal(scheduleItem, circuitName, dateRange) {
+    const modal = document.getElementById("race-detail-modal");
+    if (!modal) return;
+
+    document.getElementById("modal-grand-prix-name").innerText = scheduleItem.grand_prix;
+    document.getElementById("modal-circuit-name").innerText = circuitName;
+    document.getElementById("modal-date-range").innerText = dateRange;
+
+    const sessionsList = document.getElementById("modal-sessions-list");
+    sessionsList.innerHTML = '';
+
+    scheduleItem.sessions.forEach(session => {
+      const sessionDiv = document.createElement('div');
+      sessionDiv.className = 'modal-session-item';
+      const sessionDate = new Date(session.date);
+      const sessionTime = session.time_utc.substring(0, 5);
+      sessionDiv.innerHTML = `
+        <span>${session.session}</span>
+        <span>${sessionDate.toLocaleDateString("en-US", {month: "short", day: "numeric"})} - ${sessionTime} UTC</span>
+      `;
+      sessionsList.appendChild(sessionDiv);
+    });
+
+    modal.classList.remove("hidden");
+  },
+
+  hideRaceDetailsModal() {
+    const modal = document.getElementById("race-detail-modal");
+    if (modal) {
+      modal.classList.add("hidden");
+    }
+  },
+
   renderHorizontalCards(containerId, itemsList, targetField, callbackEvent) {
     const container = document.getElementById(containerId);
-
     if (!container) return;
     container.innerHTML = "";
 
@@ -198,34 +269,41 @@ const UI = {
       return;
     }
 
-    // Trik agar bisa scroll ke samping pakai scroll-wheel mouse
+    const sortedItems = [...itemsList].sort((a, b) => {
+      const priceA = a.price_idr || (a.financials && a.financials.estimated_annual_value_idr) || 0;
+      const priceB = b.price_idr || (b.financials && b.financials.estimated_annual_value_idr) || 0;
+      return priceA - priceB;
+    });
+
     container.addEventListener("wheel", (evt) => {
       evt.preventDefault();
       container.scrollLeft += evt.deltaY;
     });
 
-    itemsList.forEach((item) => {
+    sortedItems.forEach((item) => {
       const card = document.createElement("div");
       card.className = "selection-card";
-
-      // Penyesuaian ID: Khusus sponsor JSON kamu pakai 'team_id', sisanya pakai 'id'
+      
       const itemId = item.id || item.team_id;
+      const isAlreadySelected = (WizardForm[targetField] === itemId);
+      
+      if (isAlreadySelected) {
+        card.classList.add("selected");
+      }
+
+      const itemPrice = item.price_idr || (item.financials && item.financials.estimated_annual_value_idr) || 0;
+      const isSponsorSelection = (containerId === "container-sponsor");
+      
+      const currentAvailableBudget = Finance.currentWizardBudget;
+      // Affordable if it's a sponsor, OR if it's already selected, OR if the remaining budget covers it
+      const isAffordable = isSponsorSelection || isAlreadySelected || (currentAvailableBudget >= itemPrice);
+
       card.dataset.id = itemId;
+      const cardTitle = item.full_name || item.title_sponsor || item.name || item.manufacturer || "Tidak Diketahui";
 
-      // Penyesuaian Nama: Cek berbagai variasi nama properti di JSON kamu
-      const cardTitle =
-        item.full_name ||
-        item.title_sponsor ||
-        item.name ||
-        item.manufacturer ||
-        "Tidak Diketahui";
-
-      // Membangun detail stats
       let statsHtml = "";
       if (item.financials && item.financials.estimated_annual_value_idr) {
-        statsHtml += `<div class="card-stat-row"><span class="card-stat-label">Dana Sponsor:</span><span class="card-stat-value" style="color:var(--f1-neon)">Rp ${(
-          item.financials.estimated_annual_value_idr / 1000000000
-        ).toLocaleString("id-ID")} Miliar</span></div>`;
+        statsHtml += `<div class="card-stat-row"><span class="card-stat-label">Dana Sponsor:</span><span class="card-stat-value" style="color:var(--f1-neon)">Rp ${(item.financials.estimated_annual_value_idr / 1000000000).toLocaleString("id-ID")} Miliar</span></div>`;
       }
       if (item.stats && item.stats.overall) {
         statsHtml += `<div class="card-stat-row"><span class="card-stat-label">Rating:</span><span class="card-stat-value" style="color:var(--neon-blue)">★ ${item.stats.overall}</span></div>`;
@@ -234,12 +312,9 @@ const UI = {
         statsHtml += `<div class="card-stat-row"><span class="card-stat-label">Performa:</span><span class="card-stat-value">★ ${item.stats.overall_performance}</span></div>`;
       }
 
-      // Penyesuaian Harga: Mencari 'price_idr' (karena di JSON tidak pakai 'cost')
       let costLabel = "GRATIS";
       if (item.price_idr) {
-        costLabel = `Rp ${(item.price_idr / 1000000000).toLocaleString(
-          "id-ID"
-        )} Miliar`;
+        costLabel = `Rp ${(item.price_idr / 1000000000).toLocaleString("id-ID")} Miliar`;
       } else if (item.financials) {
         costLabel = "NILAI KONTRAK";
       }
@@ -249,42 +324,66 @@ const UI = {
             <div class="card-title">${cardTitle}</div>
             <div class="card-stats-box">${statsHtml}</div>
             <div class="card-price">${costLabel}</div>
-        `;
+      `;
 
-      // Event Klik
+      if (!isAffordable) {
+        card.classList.add("unaffordable-card");
+        if (!isSponsorSelection) {
+          const priceEl = card.querySelector(".card-price");
+          if (priceEl) priceEl.innerText = "Anggaran Tidak memenuhi";
+        }
+      }
+
       card.addEventListener("click", () => {
-        container
-          .querySelectorAll(".selection-card")
-          .forEach((c) => c.classList.remove("selected"));
-        card.classList.add("selected");
-        WizardForm[targetField] = itemId;
-        callbackEvent(itemId);
+        if (isAlreadySelected) {
+          // Deselect
+          WizardForm[targetField] = null;
+          if (isSponsorSelection) {
+            State.budget = 0;
+            UI.updateTopBar();
+          }
+        } else {
+          // Select
+          if (!isAffordable) {
+            alert("Anggaran Tidak memenuhi");
+            return;
+          }
+          WizardForm[targetField] = itemId;
+          if (isSponsorSelection && item.financials) {
+            State.budget = item.financials.estimated_annual_value_idr;
+            UI.updateTopBar();
+          }
+        }
+        
+        Finance.calculateWizardBudget();
+        UI.refreshWizardCards();
       });
 
       container.appendChild(card);
     });
   },
-  // KONTROL GERAK LANGKAH WIZARD FORM (Next / Back)
+
+  refreshWizardCards() {
+    this.renderHorizontalCards("container-sponsor", Data.sponsors, "sponsorId");
+    this.renderHorizontalCards("container-team-chief", Data.team_chiefs, "teamChiefId");
+    this.renderHorizontalCards("container-tech-chief", Data.tech_chiefs, "techChiefId");
+    this.renderHorizontalCards("container-pu", Data.power_units, "puId");
+    this.renderHorizontalCards("container-chassis", Data.chassis, "chassisId");
+    this.renderHorizontalCards("container-driver1", Data.drivers, "driver1Id");
+    this.renderHorizontalCards("container-driver2", Data.drivers, "driver2Id");
+  },
+
   moveWizard(direction) {
-    // Sembunyikan step lama
     document.getElementById(`step-${WizardForm.step}`).classList.add("hidden");
-
-    // Ubah indeks langkah
     WizardForm.step += direction;
+    document.getElementById(`step-${WizardForm.step}`).classList.remove("hidden");
 
-    // Tampilkan step baru
-    document
-      .getElementById(`step-${WizardForm.step}`)
-      .classList.remove("hidden");
-
-    // Update indikator barisan progress dot di bagian atas
     document.querySelectorAll(".wiz-dot").forEach((dot) => {
       const stepNum = parseInt(dot.getAttribute("data-step"));
       if (stepNum <= WizardForm.step) dot.classList.add("active");
       else dot.classList.remove("active");
     });
 
-    // Kontrol visibilitas tombol kendali bawah
     document.getElementById("btn-wizard-prev").disabled = WizardForm.step === 1;
 
     if (WizardForm.step === 4) {
@@ -297,42 +396,25 @@ const UI = {
   },
 
   updateTopBar() {
-    document.getElementById("top-team-name").innerText =
-      State.teamName.toUpperCase();
-    document.getElementById("top-budget").innerText =
-      State.budget.toLocaleString("id-ID");
+    document.getElementById("top-team-name").innerText = State.teamName.toUpperCase();
+    document.getElementById("top-budget").innerText = State.budget.toLocaleString("id-ID");
   },
 
   setupHQ() {
-    // Fallback fallback teks "-" jika data kosong agar tidak membuat error
     document.getElementById("hq-team").innerText = State.teamName || "TBA";
-
-    // Sponsor JSON menggunakan "title_sponsor"
     document.getElementById("hq-sponsor").innerText = State.sponsor
       ? State.sponsor.title_sponsor || State.sponsor.name || "TBA"
       : "TBA";
+    document.getElementById("hq-tchief").innerText = State.teamChief ? State.teamChief.full_name : "TBA";
+    document.getElementById("hq-tech").innerText = State.techChief ? State.techChief.full_name : "TBA";
 
-    document.getElementById("hq-tchief").innerText = State.teamChief
-      ? State.teamChief.full_name
-      : "TBA";
-    document.getElementById("hq-tech").innerText = State.techChief
-      ? State.techChief.full_name
-      : "TBA";
-
-    // Power Unit JSON menggunakan "manufacturer"
     let puText = "TBA";
     if (State.pu) {
-      puText = State.pu.manufacturer
-        ? `${State.pu.manufacturer} ${State.pu.architecture || ""}`
-        : State.pu.name;
+      puText = State.pu.manufacturer ? `${State.pu.manufacturer} ${State.pu.architecture || ""}` : State.pu.name;
     }
     document.getElementById("hq-pu").innerText = puText;
-
-    document.getElementById("hq-chassis").innerText = State.chassis
-      ? State.chassis.name || "TBA"
-      : "TBA";
-    document.getElementById("hq-drv1").innerText =
-      State.drivers && State.drivers[0] ? State.drivers[0].full_name : "TBA";
+    document.getElementById("hq-chassis").innerText = State.chassis ? State.chassis.name || "TBA" : "TBA";
+    document.getElementById("hq-drv1").innerText = State.drivers && State.drivers[0] ? State.drivers[0].full_name : "TBA";
     document.getElementById("hq-drv2").innerText = State.drivers && State.drivers[1] ? State.drivers[1].full_name : "TBA";
   },
 };

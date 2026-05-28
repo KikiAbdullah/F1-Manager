@@ -59,40 +59,38 @@ const Main = {
       "container-sponsor",
       Data.sponsors,
       "sponsorId",
-      () => Finance.calculateWizardBudget()
+      UI.handleWizardCardSelection
     );
     UI.renderHorizontalCards(
       "container-team-chief",
       Data.team_chiefs,
       "teamChiefId",
-      () => Finance.calculateWizardBudget()
+      UI.handleWizardCardSelection
     );
     UI.renderHorizontalCards(
       "container-tech-chief",
       Data.tech_chiefs,
       "techChiefId",
-      () => Finance.calculateWizardBudget()
+      UI.handleWizardCardSelection
     );
-    UI.renderHorizontalCards("container-pu", Data.power_units, "puId", () =>
-      Finance.calculateWizardBudget()
-    );
+    UI.renderHorizontalCards("container-pu", Data.power_units, "puId", UI.handleWizardCardSelection);
     UI.renderHorizontalCards(
       "container-chassis",
       Data.chassis,
       "chassisId",
-      () => Finance.calculateWizardBudget()
+      UI.handleWizardCardSelection
     );
     UI.renderHorizontalCards(
       "container-driver1",
       Data.drivers,
       "driver1Id",
-      () => Finance.calculateWizardBudget()
+      UI.handleWizardCardSelection
     );
     UI.renderHorizontalCards(
       "container-driver2",
       Data.drivers,
       "driver2Id",
-      () => Finance.calculateWizardBudget()
+      UI.handleWizardCardSelection
     );
 
     Finance.calculateWizardBudget();
