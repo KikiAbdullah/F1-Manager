@@ -568,11 +568,96 @@ button:disabled {
   color: var(--f1-neon);
 }
 
+.race-session-setup {
+  background: linear-gradient(180deg, rgba(18, 20, 29, 0.95), rgba(9, 10, 15, 0.95));
+  border: 1px solid var(--border-dark);
+  border-radius: 12px;
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+}
+
+.schedule-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.schedule-detail-grid span {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-dark);
+  border-radius: 8px;
+  padding: 10px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.schedule-detail-grid strong {
+  color: var(--text-white);
+}
+
+.weekend-reward-box {
+  margin-top: 15px;
+  background: rgba(0, 255, 135, 0.08);
+  border: 1px solid rgba(0, 255, 135, 0.28);
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.weekend-reward-box strong,
+.weekend-reward-box span {
+  color: var(--text-white);
+  font-weight: bold;
+}
+
+.session-next-action {
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.race-setup-label,
+.race-setup-note {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.race-setup-input {
+  background: var(--bg-main);
+  border: 1px solid var(--border-dark);
+  color: var(--text-white);
+  border-radius: 6px;
+  padding: 12px;
+  max-width: 160px;
+}
+
+.race-status-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.race-status-grid span {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-dark);
+  border-radius: 8px;
+  padding: 10px;
+  color: var(--text-white);
+  font-size: 12px;
+  font-weight: bold;
+}
+
 /* Styles untuk Canvas Simulation Sesi Balapan */
 .race-sim-layout {
   display: grid;
-  grid-template-columns: minmax(260px, 0.8fr) minmax(460px, 1.8fr) minmax(260px, 0.8fr);
-  gap: 18px;
+  grid-template-columns: minmax(230px, 0.7fr) minmax(520px, 1.8fr) minmax(180px, 0.45fr);
+  gap: 12px;
   margin-top: 20px;
   align-items: start;
 }
@@ -586,6 +671,38 @@ button:disabled {
   flex-direction: column;
   gap: 15px;
   min-width: 0;
+}
+
+.strategy-under-track {
+  grid-column: 2;
+  display: grid;
+  gap: 8px;
+}
+
+.driver-strategy-row {
+  display: grid;
+  grid-template-columns: 46px repeat(3, minmax(74px, 1fr)) repeat(5, auto);
+  gap: 6px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-dark);
+  border-radius: 10px;
+  padding: 8px;
+  font-size: 11px;
+}
+
+.driver-strategy-row strong {
+  color: var(--f1-neon);
+}
+
+.driver-strategy-row span {
+  color: var(--text-muted);
+  font-family: monospace;
+}
+
+.driver-strategy-row button {
+  padding: 7px 9px;
+  font-size: 10px;
 }
 
 canvas {
@@ -602,6 +719,19 @@ canvas {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
+}
+
+.race-commentary {
+  min-height: 24px;
+  background: rgba(0, 0, 0, 0.68);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: var(--text-white);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  padding: 10px 14px;
+  letter-spacing: 0.2px;
 }
 
 .telemetry-item {
@@ -746,13 +876,22 @@ canvas {
 .player-controls {
   background: linear-gradient(180deg, #12141d, #0d0f17);
   border-radius: 12px;
-  padding: 20px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
   position: sticky;
   top: 0;
   min-width: 0;
+}
+
+.compact-controls .panel-title,
+.compact-controls label {
+  font-size: 10px;
+}
+
+.compact-controls button {
+  padding: 8px 10px;
 }
 
 .control-group label {
@@ -762,6 +901,22 @@ canvas {
   margin-bottom: 8px;
   text-transform: uppercase;
   font-weight: bold;
+}
+
+.driver-strategy-card {
+  border: 1px solid var(--border-dark);
+  border-radius: 10px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  display: grid;
+  gap: 10px;
+}
+
+.driver-strategy-card label {
+  color: var(--f1-neon);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
 }
 
 .style-options, .speed-options {
@@ -800,6 +955,10 @@ canvas {
     grid-template-columns: 1fr;
   }
 
+  .strategy-under-track {
+    grid-column: 1;
+  }
+
   .player-controls {
     position: static;
   }
@@ -811,7 +970,9 @@ canvas {
 
 @media (max-width: 680px) {
   .race-controls,
-  .telemetry-dashboard {
+  .telemetry-dashboard,
+  .schedule-detail-grid,
+  .race-status-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -1172,6 +1333,35 @@ button#btn-ers.active {
 .modal-session-item span:last-child {
   color: var(--text-white);
   font-family: monospace;
+}
+
+.modal-results-history {
+  margin-top: 18px;
+  padding-top: 15px;
+  border-top: 1px solid var(--border-dark);
+}
+
+.modal-results-history h4 {
+  margin: 0 0 12px;
+  color: var(--f1-neon);
+  font-size: 13px;
+}
+
+.modal-result-block {
+  margin-bottom: 12px;
+}
+
+.modal-result-block strong {
+  color: var(--text-white);
+  font-size: 12px;
+}
+
+.modal-result-block ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  color: var(--text-muted);
+  font-family: monospace;
+  font-size: 12px;
 }
 
 .close-button {

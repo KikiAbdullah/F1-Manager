@@ -33,29 +33,30 @@
     <!-- Sidebar Navigation Menu -->
     <div class="app-layout">
       <nav id="main-nav" class="hidden">
+        <button id="btn-nav-toggle" class="nav-toggle" onclick="UI.toggleSidebar()">☰</button>
         <button
           onclick="UI.showScreen('hq')"
           class="nav-item active"
           id="nav-hq"
         >
-          <span class="nav-icon">🏢</span> HEADQUARTERS
+          <span class="nav-icon">🏢</span> <span class="nav-label">HEADQUARTERS</span>
         </button>
         <button
           onclick="UI.showScreen('calendar')"
           class="nav-item"
           id="nav-calendar"
         >
-          <span class="nav-icon">📅</span> RACE CALENDAR
+          <span class="nav-icon">📅</span> <span class="nav-label">RACE CALENDAR</span>
         </button>
         <button onclick="UI.showScreen('rnd')" class="nav-item" id="nav-rnd">
-          <span class="nav-icon">🧪</span> RESEARCH & DEV
+          <span class="nav-icon">🧪</span> <span class="nav-label">RESEARCH & DEV</span>
         </button>
         <button
           onclick="UI.showScreen('race-weekend')"
           class="nav-item special-race"
           id="nav-race"
         >
-          <span class="nav-icon">🏁</span> ENTER RACE WEEKEND
+          <span class="nav-icon">🏁</span> <span class="nav-label">ENTER RACE WEEKEND</span>
         </button>
       </nav>
 
@@ -217,6 +218,22 @@
                 <strong id="hq-drv2" style="color: var(--f1-neon)"></strong>
               </div>
             </div>
+
+            <div class="hq-section card">
+              <div class="card-header-f1">SEASON PROGRESS</div>
+              <div class="hq-info-row">
+                <span class="muted-label">Next Round:</span>
+                <strong id="hq-next-round" style="color: var(--f1-neon)"></strong>
+              </div>
+              <div class="hq-info-row">
+                <span class="muted-label">Completed:</span>
+                <span id="hq-completed-rounds"></span>
+              </div>
+              <div class="hq-info-row">
+                <span class="muted-label">Driver Points:</span>
+                <span id="hq-driver-points"></span>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -246,38 +263,18 @@
             <!-- Canvas Sirkuit & Telemetri (Tengah) -->
             <div class="canvas-telemetry-container">
               <div id="live-race-hud" class="hidden">
-                LAP <span id="hud-lap">1</span> / <span id="hud-total-laps">50</span>
+                <span id="hud-session-mode">SESSION</span> | LAP <span id="hud-lap">1</span> / <span id="hud-total-laps">50</span> | <span id="hud-weather">Cerah</span>
               </div>
               <canvas id="race-canvas" width="900" height="550"></canvas>
+              <div id="race-commentary" class="race-commentary">Race Control: menunggu sesi dimulai...</div>
               <div class="telemetry-dashboard">
                 <div class="telemetry-item"><span class="telemetry-label">Lap</span><strong id="telemetry-lap">1 / 50</strong></div>
-                <div class="telemetry-item"><span class="telemetry-label">Speed</span><strong id="telemetry-speed">0 km/h</strong></div>
                 <div class="telemetry-item"><span class="telemetry-label">Sector</span><strong id="telemetry-sector">Sector 1</strong></div>
                 <div class="telemetry-item"><span class="telemetry-label">Zone</span><strong id="telemetry-zone">Main Straight</strong></div>
-                <div class="telemetry-item"><span class="telemetry-label">Tire</span><strong id="telemetry-tire">100%</strong></div>
-                <div class="telemetry-item"><span class="telemetry-label">Fuel</span><strong id="telemetry-fuel">100%</strong></div>
               </div>
             </div>
 
-            <!-- Player Controls (Kanan) -->
-            <div class="player-controls panel">
-              <div class="panel-title">PLAYER STRATEGY</div>
-              <div class="control-group">
-                <label>DRIVING STYLE</label>
-                <div class="style-options">
-                  <button id="btn-style-fast" onclick="Engine.setDrivingStyle('fast', this)">FAST</button>
-                  <button id="btn-style-stable" onclick="Engine.setDrivingStyle('stable', this)" class="btn-active">STABLE</button>
-                  <button id="btn-style-slow" onclick="Engine.setDrivingStyle('slow', this)">SLOW</button>
-                </div>
-              </div>
-              <div class="control-group">
-                <label>PIT STRATEGY</label>
-                <button id="btn-pit-stop" onclick="Engine.pitStop()">PIT STOP</button>
-              </div>
-              <div class="control-group">
-                <label>ERS DEPLOYMENT</label>
-                <button id="btn-ers" onclick="Engine.toggleERS()">OVERTAKE MODE (ERS)</button>
-              </div>
+            <div class="player-controls panel compact-controls">
               <div class="control-group">
                 <label>SIMULATION SPEED</label>
                 <div class="speed-options">
@@ -289,6 +286,7 @@
               </div>
               <button id="btn-play" onclick="Engine.toggleSim()" class="btn-active">PAUSE SIMULATION</button>
             </div>
+            <div id="strategy-under-track" class="strategy-under-track"></div>
           </div>
 
           <!-- Area Hasil Sesi (Klasemen) -->

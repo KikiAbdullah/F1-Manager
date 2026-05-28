@@ -40,7 +40,7 @@ const UI = {
     titleEl.innerText = `ROUND ${currentEvent.round}: ${currentEvent.grand_prix.toUpperCase()}`;
     this.setupRaceSessionButtons();
     document.getElementById("sim-area").classList.add("hidden");
-    document.getElementById("session-results").classList.add("hidden");
+    this.showRaceWeekendSummary();
   },
 
   setupRaceSessionButtons() {
@@ -51,11 +51,106 @@ const UI = {
         document.getElementById('screen-race-weekend').insertBefore(controlsEl, document.getElementById('sim-area'));
     }
     
-    controlsEl.innerHTML = `
-        <button id="btn-fp" onclick="Engine.startSession('FP')">FREE PRACTICE</button>
-        <button id="btn-q" onclick="Engine.startSession('Q')">QUALIFYING</button>
-        <button id="btn-race" onclick="Engine.startSession('RACE')">MAIN RACE</button>
+    controlsEl.innerHTML = "";
+  },
+
+  openSessionPanel(mode) {
+    const data = Engine.getWeekendData(State.currentRound);
+    document.getElementById("sim-area").classList.add("hidden");
+
+    if (mode === "FP") {
+      if (data.fp) {
+        this.renderSessionResults(data.fp.results, `FP RESULTS - ${data.fp.laps} LAPS`);
+        return;
+      }
+      this.renderSessionSetup("FREE PRACTICE", `
+        <label class="race-setup-label">Jumlah Lap FP</label>
+        <input id="input-fp-laps" class="race-setup-input" type="number" min="1" max="5" value="2" />
+        <button onclick="Engine.startConfiguredSession('FP')">MULAI FP</button>
+      `);
+      return;
+    }
+
+    if (mode === "Q") {
+      if (data.qualifyingComplete) {
+        this.renderSessionResults(data.qualifyingGrid, "QUALIFYING FINAL RESULTS");
+        return;
+      }
+      const nextQ = data.q1 ? "Q2" : "Q1";
+      this.renderSessionSetup("QUALIFYING", `
+        <p class="race-setup-note">${nextQ === "Q1" ? "Mulai Q1. Top 10 akan lolos ke Q2." : "Q1 selesai. Mulai Q2 untuk menentukan grid race."}</p>
+        <button onclick="Engine.startConfiguredSession('${nextQ}')">MULAI ${nextQ}</button>
+      `);
+      return;
+    }
+
+    if (mode === "RACE") {
+      if (data.race) {
+        this.renderSessionResults(data.race.results, "RACE RESULTS");
+        return;
+      }
+      if (!data.qualifyingComplete) {
+        this.renderSessionSetup("RACE LOCKED", `<p class="race-setup-note">Selesaikan Q1 dan Q2 terlebih dahulu untuk menentukan starting grid.</p>`);
+        return;
+      }
+      this.renderSessionSetup("MAIN RACE", `
+        <p class="race-setup-note">Starting grid memakai hasil Qualifying. Race hanya bisa dijalankan sekali.</p>
+        <button onclick="Engine.startConfiguredSession('RACE')">MULAI RACE</button>
+      `);
+    }
+  },
+
+  renderSessionSetup(title, bodyHtml) {
+    const resultsArea = document.getElementById("session-results");
+    const resultTitle = document.getElementById("result-title");
+    const resultTable = document.getElementById("result-table");
+    resultsArea.classList.remove("hidden");
+    resultTitle.innerText = title;
+    resultTable.innerHTML = `<div class="race-session-setup">${bodyHtml}</div>`;
+  },
+
+  showRaceWeekendSummary() {
+    const simArea = document.getElementById("sim-area");
+    if (simArea) simArea.classList.add("hidden");
+    const data = Engine.getWeekendData(State.currentRound);
+    const event = Data.schedules.find((s) => s.round === State.currentRound && s.type === "race_weekend");
+    const circuit = event ? Data.circuits.find((c) => c.id === event.circuit_id) : null;
+    const next = !data.fp ? "FP" : !data.q1 ? "Q1" : !data.q2 ? "Q2" : !data.race ? "RACE" : "DONE";
+    const resultsArea = document.getElementById("session-results");
+    const resultTitle = document.getElementById("result-title");
+    const resultTable = document.getElementById("result-table");
+    resultsArea.classList.remove("hidden");
+    resultTitle.innerText = next === "DONE" ? "RACE WEEKEND COMPLETE" : "RACE WEEKEND SCHEDULE";
+    resultTable.innerHTML = `
+      <div class="race-session-setup">
+        <div class="schedule-detail-grid">
+          <span>Grand Prix: <strong>${event ? event.grand_prix : "-"}</strong></span>
+          <span>Circuit: <strong>${circuit ? circuit.name : "-"}</strong></span>
+          <span>Type: <strong>${circuit ? circuit.type : "-"}</strong></span>
+          <span>Race Laps: <strong>${circuit ? circuit.laps : "-"}</strong></span>
+          <span>DRS Zones: <strong>${circuit ? circuit.drs_zones : "-"}</strong></span>
+          <span>Rain Chance: <strong>${circuit && circuit.game_stats ? circuit.game_stats.rain_chance : "-"}%</strong></span>
+        </div>
+        <div class="race-status-grid">
+          <span>FP: ${data.fp ? "SELESAI" : "BELUM"}</span>
+          <span>Q1: ${data.q1 ? "SELESAI" : "BELUM"}</span>
+          <span>Q2: ${data.q2 ? "SELESAI" : "BELUM"}</span>
+          <span>Race: ${data.race ? "SELESAI" : "BELUM"}</span>
+        </div>
+        ${this.renderNextScheduleAction(next, data)}
+      </div>
     `;
+  },
+
+  renderNextScheduleAction(next, data) {
+    if (next === "FP") {
+      return `<label class="race-setup-label">Jumlah Lap FP</label><input id="input-fp-laps" class="race-setup-input" type="number" min="1" max="5" value="3" /><button onclick="Engine.startConfiguredSession('FP')">MULAI FP</button>`;
+    }
+    if (next === "Q1") return `<button onclick="Engine.startConfiguredSession('Q1')">MULAI Q1</button>`;
+    if (next === "Q2") return `<p class="race-setup-note">Top 10 Q1 lolos ke Q2.</p><button onclick="Engine.startConfiguredSession('Q2')">MULAI Q2</button>`;
+    if (next === "RACE") return `<p class="race-setup-note">Grid race memakai hasil Qualifying.</p><button onclick="Engine.startConfiguredSession('RACE')">MULAI RACE</button>`;
+    const rewards = data.race && data.race.rewards;
+    return `<div class="weekend-reward-box"><strong>Didapatkan:</strong><span>Poin: ${rewards ? rewards.points : 0}</span><span>Hadiah: Rp ${rewards ? rewards.money.toLocaleString("id-ID") : 0}</span></div><button onclick="UI.initRaceWeekend()">NEXT SCHEDULE</button>`;
   },
 
   renderLiveStandings(grid) {
@@ -99,7 +194,8 @@ const UI = {
   },
 
   updatePlayerControlsHUD() {
-    const playerCar = Engine.currentGrid.find(r => r.isPlayer);
+    const playerCars = Engine.currentGrid.filter(r => r.isPlayer);
+    const playerCar = playerCars[0];
     if (!playerCar) return;
 
     const tireEl = document.getElementById("telemetry-tire");
@@ -107,26 +203,25 @@ const UI = {
     if (tireEl) tireEl.innerText = `${Math.round(playerCar.tireWear)}%`;
     if (fuelEl) fuelEl.innerText = `${Math.round(playerCar.fuel)}%`;
 
-    document.getElementById("btn-style-fast").classList.toggle("btn-active", playerCar.drivingStyle === "fast");
-    document.getElementById("btn-style-stable").classList.toggle("btn-active", playerCar.drivingStyle === "stable");
-    document.getElementById("btn-style-slow").classList.toggle("btn-active", playerCar.drivingStyle === "slow");
+    this.renderStrategyUnderTrack(playerCars);
+  },
 
-    const ersBtn = document.getElementById("btn-ers");
-    if (ersBtn) {
-        ersBtn.classList.toggle("active", playerCar.ersActive);
-        ersBtn.innerText = playerCar.ersActive ? "ERS: ATTACK" : "ERS: OFF (OVERTAKE)";
-    }
-
-    const pitBtn = document.getElementById("btn-pit-stop");
-    if (pitBtn) {
-        if (playerCar.isPitting) {
-            pitBtn.innerText = `PITTING (${Math.round((playerCar.pitStopProgress / playerCar.pitStopDuration) * 100)}%)`;
-            pitBtn.disabled = true;
-        } else {
-            pitBtn.innerText = "PIT STOP";
-            pitBtn.disabled = false;
-        }
-    }
+  renderStrategyUnderTrack(playerCars) {
+    const container = document.getElementById("strategy-under-track");
+    if (!container) return;
+    container.innerHTML = playerCars.map((car, index) => `
+      <div class="driver-strategy-row">
+        <strong>${car.code}</strong>
+        <span>SPD ${Math.round(car.currentSpeed)} km/h</span>
+        <span>TIRE ${Math.round(car.tireWear)}%</span>
+        <span>FUEL ${Math.round(car.fuel)}%</span>
+        <button class="${car.drivingStyle === "fast" ? "btn-active" : ""}" onclick="Engine.setDrivingStyle('fast', this, ${index})">FAST</button>
+        <button class="${car.drivingStyle === "stable" ? "btn-active" : ""}" onclick="Engine.setDrivingStyle('stable', this, ${index})">STABLE</button>
+        <button class="${car.drivingStyle === "slow" ? "btn-active" : ""}" onclick="Engine.setDrivingStyle('slow', this, ${index})">SLOW</button>
+        <button ${car.isPitting || car.pitRequested ? "disabled" : ""} onclick="Engine.pitStop(${index})">${car.isPitting ? "PITTING" : "PIT"}</button>
+        <button class="${car.ersActive ? "active" : ""}" onclick="Engine.toggleERS(${index})">ERS</button>
+      </div>
+    `).join("");
   },
 
   renderSessionResults(results, title) {
@@ -248,7 +343,30 @@ const UI = {
       sessionsList.appendChild(sessionDiv);
     });
 
+    const weekend = State.raceWeekends && State.raceWeekends[scheduleItem.round];
+    if (weekend && (weekend.fp || weekend.q1 || weekend.qualifyingGrid || weekend.race)) {
+      const historyDiv = document.createElement("div");
+      historyDiv.className = "modal-results-history";
+      historyDiv.innerHTML = `<h4>HASIL WEEKEND</h4>${this.renderWeekendHistoryHtml(weekend)}`;
+      sessionsList.appendChild(historyDiv);
+    }
+
     modal.classList.remove("hidden");
+  },
+
+  renderWeekendHistoryHtml(weekend) {
+    const renderTop = (title, sessionData) => {
+      if (!sessionData || !sessionData.results) return "";
+      const rows = sessionData.results.slice(0, 5).map((r) => `<li>#${r.pos} ${r.code} - ${r.time}</li>`).join("");
+      return `<div class="modal-result-block"><strong>${title}</strong><ul>${rows}</ul></div>`;
+    };
+
+    return [
+      renderTop("FP", weekend.fp),
+      renderTop("Q1", weekend.q1),
+      weekend.qualifyingGrid ? renderTop("QUALIFYING FINAL", { results: weekend.qualifyingGrid }) : "",
+      renderTop("RACE", weekend.race),
+    ].join("");
   },
 
   hideRaceDetailsModal() {
@@ -464,5 +582,17 @@ const UI = {
     document.getElementById("hq-chassis").innerText = State.chassis ? State.chassis.name || "TBA" : "TBA";
     document.getElementById("hq-drv1").innerText = State.drivers && State.drivers[0] ? State.drivers[0].full_name : "TBA";
     document.getElementById("hq-drv2").innerText = State.drivers && State.drivers[1] ? State.drivers[1].full_name : "TBA";
+    const nextEvent = Data.schedules.find((s) => s.round === State.currentRound && s.type === "race_weekend");
+    const completed = State.raceWeekends ? Object.values(State.raceWeekends).filter((w) => w.race).length : 0;
+    const points = State.driverPoints || {};
+    const pointText = State.drivers && State.drivers.length
+      ? State.drivers.map((d) => `${d.driver_code || d.last_name}: ${points[d.id] || 0}`).join(" | ")
+      : "0";
+    const nextRoundEl = document.getElementById("hq-next-round");
+    const completedEl = document.getElementById("hq-completed-rounds");
+    const pointsEl = document.getElementById("hq-driver-points");
+    if (nextRoundEl) nextRoundEl.innerText = nextEvent ? `R${nextEvent.round} - ${nextEvent.grand_prix}` : "Season Complete";
+    if (completedEl) completedEl.innerText = `${completed} race weekend`;
+    if (pointsEl) pointsEl.innerText = pointText;
   },
 };

@@ -9,6 +9,8 @@ let State = {
   chassis: null,
   drivers: [],
   currentRound: 1,
+  raceWeekends: {},
+  driverPoints: {},
 };
 
 // Form Wizard Selection Memory
@@ -39,6 +41,8 @@ const Main = {
     if (rawJsonFile) {
       try {
         State = JSON.parse(rawJsonFile);
+        if (!State.raceWeekends) State.raceWeekends = {};
+        if (!State.driverPoints) State.driverPoints = {};
         UI.updateTopBar();
         UI.setupHQ();
         setTimeout(() => {
@@ -137,6 +141,8 @@ const Main = {
       Data.drivers.find((d) => d.id === WizardForm.driver2Id),
     ];
     State.currentRound = 1;
+    State.raceWeekends = {};
+    State.driverPoints = {};
 
     // Validasi keselamatan: Jangan sampai ada yang undefined yang lolos
     if (!State.sponsor || !State.pu) {
