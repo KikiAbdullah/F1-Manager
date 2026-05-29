@@ -1,6 +1,6 @@
-# F1 Manager - Dokumentasi Perhitungan
+# F1 Manager - Dokumentasi Arsitektur Simulasi & Perhitungan
 
-Dokumen ini menguraikan berbagai metodologi perhitungan yang digunakan dalam proyek F1 Manager untuk berbagai fase, termasuk skenario pra-balapan, selama balapan, dan pasca-balapan, serta modifikasi statistik umum dan pengaruh acak.
+Dokumen ini menguraikan arsitektur simulasi, hubungan antar sistem, serta berbagai metodologi perhitungan yang digunakan dalam proyek F1 Manager untuk berbagai fase (pra-balapan, selama balapan, dan pasca-balapan), modifikasi statistik umum, dan pengaruh acak, serta sistem manajerial lainnya.
 
 ---
 
@@ -26,6 +26,8 @@ Statistik ini menggambarkan kemampuan seorang pembalap di berbagai aspek balapan
 *   **Fokus (Focus):** `driver.focus` - Konsentrasi pembalap, memengaruhi tingkat kesalahan dan waktu reaksi.
 *   **Agresi (Aggression):** `driver.aggression` - Kemauan pembalap untuk mengambil risiko, memengaruhi upaya menyalip dan mengemudi defensif.
 *   **Pengalaman (Experience):** `driver.experience` - Pengetahuan balapan yang terakumulasi oleh pembalap, mengurangi kesalahan pemula dan meningkatkan panggilan strategi.
+*   **Preferensi Setup (Setup Preferences):** `driver.setup_preferences` - Preferensi pembalap untuk setup mobil (Front Wing, Rear Wing, Brake Bias, Suspension).
+*   **Traits (Sifat):** `driver.traits` - Karakteristik perilaku unik pembalap (misalnya, "tyre_whisperer", "rain_master", "aggressive_defender").
 
 ### 1.2. Statistik Tim (dari `data/teams.json`)
 
@@ -65,7 +67,7 @@ Statistik ini mencakup berbagai aspek operasional dan performa tim.
 *   **Filosofi (Philosophy):** `team.development_model.philosophy` - Filosofi desain tim (misalnya, `lightweight_agility`).
 *   **Agresivitas Peningkatan (Upgrade Aggressiveness):** `team.development_model.upgrade_aggressiveness` - Seberapa agresif tim dalam melakukan peningkatan mobil.
 *   **Tingkat Inovasi (Innovation Rate):** `team.development_model.innovation_rate` - Tingkat inovasi tim dalam pengembangan mobil.
-*   **Adaptasi Regulasi (Regulation Adaptation):** `team.development_model.regulation_adaptation` - Kemampuan tim beradaptasi dengan perubahan regulasi.
+*   **Adaptasi Regulasi (Regulation Adaptability):** `team.development_model.regulation_adaptation` - Kemampuan tim beradaptasi dengan perubahan regulasi.
 *   **Toleransi Risiko (Risk Appetite):** `team.development_model.risk_appetite` - Tingkat toleransi risiko tim dalam pengembangan.
 
 #### Profil Olahraga Tim:
@@ -169,29 +171,49 @@ function calculateInitialTireWear(teamMechanicSkill, chassis) {
 
 Ini adalah perhitungan dinamis yang memengaruhi performa, strategi, dan insiden selama balapan.
 
-### 3.1. Perhitungan Waktu Putaran
+### 3.1. Model Trek Dinamis, Setup Mobil & Pengaruh Cuaca
 
-**Deskripsi:** Menghitung waktu yang dibutuhkan untuk menyelesaikan satu putaran.
-**Function/File:** `calculateLapTime` di `src/calculations/raceCalculations.js` (contoh)
+**Deskripsi:** Performa mobil dan pembalap sangat dipengaruhi oleh karakteristik trek, kesesuaian setup mobil dengan preferensi pembalap dan kebutuhan sirkuit, serta kondisi cuaca. Sistem ini menggabungkan `track_characteristics` dari `schedules.json`, `sector_weights` untuk detail mikro-sektor, `driver.setup_preferences` dari `drivers.json`, dan kondisi cuaca dinamis (`this.weather`, `this.sim.weatherGrip`, `this.sim.trackEvolution`) untuk menghasilkan `currentPaceIndex` yang lebih akurat.
+
+**Variabel Utama:**
+*   `currentPoint.sector`: Sektor trek saat ini (1, 2, atau 3).
+*   `trackCharacteristics`: Objek yang berisi karakteristik detail sirkuit (misal: `top_speed_importance`, `traction_importance`, `low_speed_cornering`, `tyre_degradation`, `fuel_consumption`, `wet_weather_variability`, dll.).
+*   `sectorWeights`: Menentukan karakteristik utama yang paling relevan untuk performa di setiap sektor (misal: `top_speed`, `traction`, `braking`, `high_speed_cornering`).
+*   `driverSetupPreferences`: Preferensi setup pembalap (`front_wing`, `rear_wing`, `brake_bias`, `suspension`).
+*   `chassis.game_stats.setup`: Setup ideal sirkuit (misal: `downforce`, `top_speed`, `traction`, `kerb_riding`).
+*   `this.sim.weatherGrip`: Multiplier grip berdasarkan kondisi cuaca.
+*   `this.sim.trackEvolution`: Multiplier performa trek berdasarkan evolusi lintasan.
+
+**Alur Perhitungan `currentPaceIndex` (di `gameLoop`):**
+
+1.  **Ekstraksi Data:** Ambil `trackCharacteristics`, `sectorWeights`, `driverSetupPreferences` dari objek `currentCircuit` dan `racer.driver`.
+2.  **Identifikasi Kebutuhan Sektor (`primarySectorWeight`):** Berdasarkan `currentPoint.sector` dan `sectorWeights`, tentukan karakteristik performa apa yang paling dibutuhkan pada mikro-sektor tersebut (misal: "top_speed", "traction").
+3.  **Hitung `carMatchValue`:** Rata-rata statistik sasis/PU yang relevan dengan `primarySectorWeight` (misal: untuk "top_speed", ambil `perf.top_speed`, `puStats.internal_combustion.horsepower`, dll.).
+4.  **Hitung `trackNeedValue`:** Rata-rata karakteristik trek dari `trackCharacteristics` yang relevan dengan `primarySectorWeight`.
+5.  **Hitung `setupMatchFactor`:** Bandingkan `driverSetupPreferences` dengan nilai setup ideal dari `currentCircuit.game_stats.setup`. Selisih kecil antara preferensi pembalap dan setup ideal sirkuit menghasilkan `setupMatchFactor` yang lebih tinggi. `setupMatchFactor` diklem antara 0.8 (setup buruk) dan 1.1 (setup optimal).
+6.  **Inisialisasi `paceFactor`:** Mulai dengan `racer.paceStat` dasar.
+7.  **Aplikasi `setupCompatibility`:** `paceFactor` disesuaikan berdasarkan `setupMatchFactor`. Setup yang pas memberikan bonus, yang buruk memberikan penalti.
+8.  **Penalti Ketidaksesuaian Trek-Mobil:** Hitung `trackCarMatchDifference` antara `trackNeedValue` dan `carMatchValue`. Perbedaan besar akan mengurangi `paceFactor`.
+9.  **Bonus Karakteristik Trek Langsung (`characteristicSpeedBoost`):** Tambahkan bonus ke `paceFactor` berdasarkan seberapa baik kombinasi sasis-pembalap memanfaatkan karakteristik penting trek (misal: `trackCharacteristics.top_speed_importance` dikali `perf.top_speed`).
+10. **Final `currentPaceIndex`:** Gabungkan `paceFactor` yang sudah dimodifikasi dengan `driverSkill`, `raceCraft`, `tyreManagement`, `ersQuality`, `carPace`, `chassis.car_behavior` (qualifying/race bias), `staffBoost`, `reliabilityScore`, dan faktor acak.
+
+**Fungsi/File:** `gameLoop` di `js/engine.js`
+
+### 3.2. Perhitungan Waktu Putaran
+
+**Deskripsi:** Menghitung waktu yang dibutuhkan untuk menyelesaikan satu putaran, kini didasarkan pada `currentPaceIndex` yang lebih kompleks serta faktor cuaca (`this.sim.weatherGrip`) dan evolusi lintasan (`this.sim.trackEvolution`).
+**Fungsi/File:** `gameLoop` di `js/engine.js`
 ```javascript
-function calculateLapTime(baseTrackTime, car, driver, currentTireWear, trackConditionsModifier, fuelLoadPenalty, randomFactor) {
-    return baseTrackTime 
-           - (car.aerodynamics.aero_efficiency * 0.08) 
-           - (car.performance.top_speed * 0.07) 
-           - (car.mechanical.ride_stability * 0.05) 
-           - (driver.skill * 0.1) 
-           - (driver.focus * 0.03) 
-           + (currentTireWear * 0.02) 
-           + trackConditionsModifier 
-           + fuelLoadPenalty 
-           + randomFactor.medium;
-}
+// Di dalam gameLoop, baseSpeed dihitung sebagai berikut:
+let baseSpeed = currentPoint.speed * this.sim.weatherGrip * this.sim.trackEvolution;
+baseSpeed *= this.clamp(0.78 + currentPaceIndex / 410, 0.86, 1.18);
 ```
+*Catatan:* `currentPoint.speed` merepresentasikan target kecepatan ideal untuk titik trek tersebut.
 
-### 3.2. Probabilitas Keberhasilan Menyalip
+### 3.3. Probabilitas Keberhasilan Menyalip
 
 **Deskripsi:** Menentukan peluang keberhasilan manuver menyalip.
-**Function/File:** `calculateOvertakeSuccessChance` di `src/calculations/raceCalculations.js` (contoh)
+**Fungsi/File:** `calculateOvertakeSuccessChance` di `src/calculations/raceCalculations.js` (contoh)
 ```javascript
 function calculateOvertakeSuccessChance(attackerDriver, attackerCar, defenderDriver, defenderCar, gapToCarAhead, drsAdvantage, randomFactor) {
     return (attackerDriver.aggression * 0.1) 
@@ -204,54 +226,39 @@ function calculateOvertakeSuccessChance(attackerDriver, attackerCar, defenderDri
 }
 ```
 
-### 3.3. Degradasi Ban
+### 3.4. Degradasi Ban
 
-**Deskripsi:** Menghitung tingkat degradasi ban per putaran.
-**Function/File:** `calculateTireDegradation` di `src/calculations/raceCalculations.js` (contoh)
+**Deskripsi:** Menghitung tingkat degradasi ban per putaran, kini menggunakan `trackCharacteristics.tyre_degradation` dari data sirkuit dinamis.
+**Fungsi/File:** `gameLoop` di `js/engine.js`
 ```javascript
-function calculateTireDegradation(baseDegradation, driverAggressionSetting, car, trackSurfaceRoughness, driverAdaptability, randomFactor) {
-    return baseDegradation 
-           + (driverAggressionSetting * 0.05) 
-           - (car.mechanical.suspension_quality * 0.02) 
-           + (trackSurfaceRoughness * 0.03) // Asumsi ada stat track.surface_roughness
-           + (driverAdaptability * 0.01) 
-           + randomFactor.small;
-}
+// Di dalam gameLoop, tireConsumptionRate dihitung sebagai berikut:
+let tireConsumptionRate = 0.0055 * (1 + ((trackCharacteristics.tyre_degradation || 70) - 60) / 95);
+tireConsumptionRate *= 1 - this.clamp((racer.tyreManagement - 72) / 240, -0.08, 0.12);
 ```
 
-### 3.4. Konsumsi Bahan Bakar
+### 3.5. Konsumsi Bahan Bakar
 
-**Deskripsi:** Menghitung jumlah bahan bakar yang dikonsumsi per putaran.
-**Function/File:** `calculateFuelConsumption` di `src/calculations/raceCalculations.js` (contoh)
+**Deskripsi:** Menghitung jumlah bahan bakar yang dikonsumsi per putaran, kini menggunakan `trackCharacteristics.fuel_consumption` dari data sirkuit dinamis.
+**Fungsi/File:** `gameLoop` di `js/engine.js`
 ```javascript
-function calculateFuelConsumption(baseConsumption, engineModeSetting, carPowerUnitPerformance, driverAggressionSetting) {
-    // Menggunakan chassis.performance.fuel_efficiency dan team.power_unit.performance
-    return baseConsumption 
-           + (engineModeSetting * 0.05) 
-           - (carPowerUnitPerformance * 0.01) // chassis.performance.fuel_efficiency atau team.power_unit.performance
-           + (driverAggressionSetting * 0.02);
-}
+// Di dalam gameLoop, fuelConsumptionRate dihitung sebagai berikut:
+let fuelConsumptionRate = 0.0042 * (1 + ((trackCharacteristics.fuel_consumption || 65) - 60) / 100);
+fuelConsumptionRate *= 1 - this.clamp((racer.fuelEfficiency - 72) / 260, -0.07, 0.12);
 ```
 
-### 3.5. Insiden/Kegagalan
+### 3.6. Insiden/Kegagalan
 
-**Deskripsi:** Menentukan probabilitas terjadinya insiden atau kegagalan mekanis.
-**Function/File:** `calculateIncidentProbability` di `src/calculations/raceCalculations.js` (contoh)
+**Deskripsi:** Menentukan probabilitas terjadinya insiden atau kegagalan mekanis. `reliabilityRisk` kini dipengaruhi oleh `trackCharacteristics.engine_stress` dan `trackCharacteristics.braking_importance`.
+**Fungsi/File:** `gameLoop` di `js/engine.js`
 ```javascript
-function calculateIncidentProbability(baseIncidentRate, driverFocus, driverAggression, carDurability, carReliability, randomFactor) {
-    return baseIncidentRate 
-           - (driverFocus * 0.02) 
-           + (driverAggression * 0.03) 
-           + (carDurability * 0.01) // chassis.reliability.failure_resistance
-           - (carReliability * 0.04) // team.power_unit.reliability atau chassis.reliability.failure_resistance
-           + randomFactor.v_large;
-}
+// Di dalam gameLoop, reliabilityRisk dihitung sebagai berikut:
+const reliabilityRisk = (100 - racer.reliabilityScore + (trackCharacteristics.engine_stress || 60) * 0.28 + (trackCharacteristics.braking_importance || 60) * 0.22) / 280000;
 ```
 
-### 3.6. Waktu Pit Stop
+### 3.7. Waktu Pit Stop
 
 **Deskripsi:** Menghitung total waktu yang dihabiskan untuk pit stop.
-**Function/File:** `calculatePitStopTime` di `src/calculations/raceCalculations.js` (contoh)
+**Fungsi/File:** `calculatePitStopTime` di `src/calculations/raceCalculations.js` (contoh)
 ```javascript
 function calculatePitStopTime(basePitTime, teamPitCrewSkill, pitStopIssueProbability, randomFactor) {
     // Asumsi team.infrastructure.staff_quality bisa digunakan sebagai teamPitCrewSkill
@@ -326,16 +333,312 @@ function calculateResourceGain(baseIncome, prizeMoney, sponsorBonuses, carRepair
 
 ---
 
-## 5. Faktor Acak
+## 5. Model Ban Lanjutan
 
-Keacakan sangat penting untuk mensimulasikan sifat F1 yang tidak dapat diprediksi. Tingkat keacakan yang berbeda diterapkan berdasarkan dampak peristiwa tersebut.
+**Deskripsi:** Model ban yang lebih realistis, tidak hanya `wear %`. Memisahkan aspek-aspek kunci yang memengaruhi performa ban.
 
-*   `randomFactor.small`: Fluktuasi minor (misalnya, degradasi ban, variasi kecil dalam waktu putaran). Biasanya nilai antara -0.05 dan +0.05.
-*   `randomFactor.medium`: Fluktuasi moderat (misalnya, variabilitas waktu putaran, hasil menyalip minor). Biasanya nilai antara -0.1 dan +0.1.
-*   `randomFactor.large`: Fluktuasi signifikan (misalnya, keberhasilan menyalip kunci, peluang insiden minor). Biasanya nilai antara -0.5 dan +0.5.
-*   `randomFactor.v_large`: Fluktuasi yang sangat besar dan berdampak (misalnya, insiden besar, peluang pengerahan safety car). Biasanya hasil biner atau nilai antara -1.0 dan +1.0.
+```js
+tyre = {
+  compound,
+  wear,
+  temperature,
+  pressure,
+  overheating,
+  grip,
+  cliffPoint,
+};
+```
 
-**Catatan Implementasi:** Faktor acak umumnya harus dihasilkan dalam rentang yang ditentukan (misalnya, menggunakan distribusi Gaussian untuk varians alami atau distribusi seragam untuk peluang peristiwa yang berbeda). Fungsi untuk menghasilkan faktor acak ini mungkin berada di `src/utils/random.js` atau serupa.
+**Pengaruh:**
+*   **Nonlinearitas:** Performa ban tidak linear; penurunan grip drastis setelah `cliffPoint` tertentu.
+*   **Overheating:** `dirty_air` dapat menyebabkan ban `overheating`, yang mengurangi grip sementara.
+*   **Strategi:** Memungkinkan strategi ban yang lebih dalam dan bervariasi.
+
+---
+
+## 6. Sistem ERS
+
+**Deskripsi:** Sistem pemulihan energi (ERS) adalah aspek krusial F1 modern. Simulasi harus mencakup mode deployment dan manajemen energi.
+
+```js
+ers = {
+  deploymentMode, // Mode penggunaan (Harvest, Assist, Overtake, Defend)
+  batteryCharge,  // Persentase daya baterai ERS
+  harvestRate,    // Tingkat pemulihan energi
+  overtakeMode,   // Mode khusus untuk menyalip
+};
+```
+
+**Pengaruh:**
+*   **Menyalip & Bertahan:** ERS memberikan dorongan daya sementara untuk manuver.
+*   **Kualifikasi:** Penggunaan ERS yang optimal sangat penting untuk lap kualifikasi.
+*   **Efisiensi Bahan Bakar:** Manajemen ERS yang baik dapat menghemat bahan bakar.
+
+---
+
+## 7. Sistem Karakteristik Pembalap
+
+**Deskripsi:** Selain statistik numerik, pembalap memiliki `traits` (sifat) unik yang memengaruhi performa mereka dalam kondisi spesifik. Ini memberikan kedalaman dan identitas pada setiap pembalap.
+
+```js
+traits: [
+  "late_braker",          // Ahli pengereman telat
+  "tyre_whisperer",       // Pandai menjaga ban
+  "rain_master",          // Unggul dalam kondisi hujan
+  "aggressive_defender",  // Agresif dalam bertahan
+  "inconsistent",         // Performa tidak konsisten
+  "qualifying_specialist" // Spesialis kualifikasi
+];
+```
+
+**Pengaruh:**
+*   **Variasi Performa:** Membuat setiap pembalap terasa unik, bukan hanya kumpulan angka.
+*   **Emergent Gameplay:** `traits` dapat memicu event atau bonus/penalti situasional.
+
+---
+
+## 8. Engine AI & Strategi Balapan
+
+**Deskripsi:** Sistem AI yang komprehensif untuk membuat keputusan strategis dan adaptif selama balapan.
+
+**AI Decision Layer:**
+*   **Strategi Pit:** `undercut`, `overcut`, `safety car pit`.
+*   **Manajemen Sumber Daya:** `fuel save`, manajemen `tyre` dan `ERS`.
+*   **Mode Balapan:** `push mode`, `defend mode`.
+*   **Team Order:** Keputusan tim untuk memprioritaskan pembalap.
+
+**Contoh Struktur `strategyState`:**
+```js
+strategyState = {
+  aggression,    // Tingkat agresivitas balapan
+  pitWindow,     // Jendela pit stop optimal
+  tyreTarget,    // Target keausan ban
+  fuelTarget,    // Target level bahan bakar
+  riskTolerance, // Toleransi risiko dalam keputusan
+};
+```
+
+---
+
+## 9. Sistem Safety Car / VSC / Red Flag
+
+**Deskripsi:** Implementasi penuh insiden balap yang memicu Safety Car (SC), Virtual Safety Car (VSC), atau Red Flag.
+
+**Pengaruh:**
+*   **Generator Kekacauan:** Mengubah dinamika dan hasil balapan secara drastis.
+*   **Penyama Strategi:** Memberikan peluang strategis tak terduga (misal: pit stop murah di bawah SC).
+*   **Realisme:** Menambah lapisan realisme pada simulasi.
+
+```js
+incidentSeverity -> {
+   yellow,    // Bendera kuning lokal
+   vsc,       // Virtual Safety Car
+   safetyCar, // Safety Car
+   redFlag    // Bendera Merah (balapan dihentikan)
+}
+```
+
+---
+
+## 10. Simulasi Gap yang Realistis
+
+**Deskripsi:** Simulasi jarak antar mobil yang lebih dinamis dan realistis, mempertimbangkan faktor-faktor kompleks di trek.
+
+**Faktor-faktor yang Diperlukan:**
+*   **Dirty Air:** Pengaruh kehilangan downforce saat mengikuti mobil lain.
+*   **DRS Train:** Efek domino penggunaan DRS oleh beberapa mobil berurutan.
+*   **Traffic:** Dampak keberadaan mobil lain pada kecepatan lap.
+*   **Turbulent Wake:** Udara kotor di belakang mobil.
+
+---
+
+## 11. Engine Sesi Kualifikasi
+
+**Deskripsi:** Simulasi sesi kualifikasi yang mendalam dengan format Q1/Q2/Q3, mempertimbangkan taktik dan kondisi trek.
+
+**Fitur Kualifikasi:**
+*   **Q1/Q2/Q3:** Struktur sesi yang berbeda dengan eliminasi.
+*   **Traffic:** Pengaruh mobil lain di lintasan.
+*   **Cooldown:** Strategi untuk mendinginkan ban dan mobil antar lap cepat.
+*   **Track Evolution:** Peningkatan grip seiring berjalannya sesi.
+*   **Tow/Slipstream:** Manfaat mengikuti mobil lain.
+*   **Red Flag:** Insiden yang menghentikan sesi.
+
+---
+
+## 12. Sistem Pengembangan
+
+**Deskripsi:** Sistem inti untuk pengembangan komponen mobil, esensial dalam game manajer F1.
+
+**Elemen Kunci:**
+*   **Alokasi ATR:** Alokasi waktu pengujian aerodinamika (Aero Test Restriction).
+*   **Jam CFD & Terowongan Angin:** Sumber daya vital untuk desain aerodinamika.
+*   **Desain Komponen:** Proses merancang dan memproduksi bagian mobil baru.
+*   **Risiko & Reward:** Keseimbangan antara potensi keuntungan performa dan risiko keandalan/biaya.
+
+**Contoh `partDevelopment`:**
+```js
+partDevelopment = {
+  expectedGain,         // Peningkatan performa yang diharapkan
+  reliabilityRisk,      // Risiko keandalan komponen baru
+  innovationRisk,       // Risiko kegagalan inovasi
+  manufacturingTime,    // Waktu yang dibutuhkan untuk produksi
+};
+```
+
+---
+
+## 13. Sistem Keandalan Lanjutan
+
+**Deskripsi:** Model keandalan yang lebih detail, melampaui sekadar `wear %` tunggal.
+
+**Faktor-faktor Keandalan:**
+*   **Engine Mileage:** Jarak tempuh mesin.
+*   **Gearbox Mileage:** Jarak tempuh gearbox.
+*   **Heat Cycles:** Jumlah siklus pemanasan/pendinginan komponen.
+*   **Cumulative Wear:** Keausan kumulatif komponen individual.
+
+**Contoh:**
+```js
+componentWear += engineStress * ambientTemperature * pushMode;
+```
+
+---
+
+## 14. Sistem Human Error
+
+**Deskripsi:** Memasukkan elemen kesalahan manusia untuk menambah dinamika tak terduga dan emergent storytelling.
+
+**Contoh Kesalahan:**
+*   `lockup`: Pembalap mengunci roda saat pengereman.
+*   `snap_oversteer`: Kehilangan kendali belakang mendadak.
+*   `pit_entry_error`: Kesalahan saat masuk jalur pit.
+*   `unsafe_release`: Pelepasan mobil yang tidak aman dari pit.
+*   `missed_apex`: Kesalahan menabrak apex tikungan.
+
+---
+
+## 15. Operasi Tim
+
+**Deskripsi:** Pengembangan aspek operasional tim, khususnya kinerja pit crew.
+
+**Aspek Pit Crew:**
+*   **Training:** Peningkatan skill pit crew melalui pelatihan.
+*   **Fatigue:** Kelelahan pit crew yang memengaruhi performa.
+*   **Consistency:** Konsistensi pit stop.
+*   **Mistake Chance:** Probabilitas kesalahan pit stop.
+
+---
+
+## 16. Arsitektur Simulasi (Simulation Layering)
+
+**Deskripsi:** Pentingnya merancang simulasi dengan struktur berlapis yang jelas untuk mengelola interaksi antar sistem. Ini adalah fondasi engineering untuk game yang kompleks.
+
+**Pipeline Ideal:**
+```text
+TRACK
+ -> WEATHER
+   -> CAR
+     -> DRIVER
+       -> TYRE
+         -> STRATEGY
+           -> INCIDENTS
+             -> LAP TIME
+```
+**Manfaat:**
+*   **Balancing:** Mempermudah penyesuaian dan keseimbangan game.
+*   **Modularitas:** Mengurangi tumpang tindih modifier dan memastikan hasil konsisten.
+
+---
+
+## 17. Standardisasi Skala Formula
+
+**Deskripsi:** Menetapkan skala yang konsisten untuk semua formula dan statistik untuk memastikan balancing yang terprediksi.
+
+**Contoh Standar:**
+```text
+1 stat point = X milliseconds
+```
+
+**Tabel Konversi Contoh:**
+
+| Area         | 1 Point |
+| ------------ | ------- |
+| Aero         | 0.012s  |
+| Driver Skill | 0.008s  |
+| Setup        | 0.004s  |
+| Tyre Temp    | 0.020s  |
+
+**Manfaat:**
+*   **Konsistensi:** Mencegah inflasi statistik yang kacau.
+*   **Tuning:** Memungkinkan penyesuaian yang lebih akurat.
+
+---
+
+## 18. Target Meta Balancing
+
+**Deskripsi:** Mendefinisikan Key Performance Indicators (KPI) dan target performa untuk memastikan simulasi menghasilkan balapan yang menarik dan realistis.
+
+**Contoh Metrik Target:**
+
+| Metric             | Target   |
+| ------------------ | -------- |
+| Average gap P1-P20 | 1.8s     |
+| Overtakes per race | 25-45    |
+| SC probability     | 30%      |
+| DNFs per race      | 1-3      |
+| Tyre cliff impact  | 0.8s/lap |
+
+**Manfaat:**
+*   **Tuning Terarah:** Memandu proses balancing.
+*   **Kualitas Gameplay:** Memastikan balapan sesuai ekspektasi.
+
+---
+
+## 19. Loop Gameplay yang Hilang
+
+**Deskripsi:** Selain simulasi balapan, game manajer F1 memerlukan loop gameplay yang lebih luas untuk manajemen tim di luar trek.
+
+**Alur Gameplay Manajer:**
+```text
+Race
+-> Income
+-> R&D
+-> Staff
+-> Facilities
+-> Driver market
+-> Politics
+-> Next race
+```
+
+---
+
+## 20. Alat Telemetri / Debug
+
+**Deskripsi:** Alat internal yang penting untuk pengembangan dan balancing game, memungkinkan visualisasi data simulasi secara real-time.
+
+**Contoh Fitur:**
+*   `lap delta breakdown`: Analisis perbedaan waktu per lap.
+*   `tyre graph`: Grafik keausan dan suhu ban.
+*   `fuel graph`: Grafik konsumsi bahan bakar.
+*   `balance heatmap`: Visualisasi keseimbangan mobil.
+
+---
+
+## 21. Filosofi Simulasi
+
+**Deskripsi:** Keputusan fundamental antara `realism-first` atau `fun-first` yang akan memandu semua keputusan desain dan balancing simulasi.
+
+**Pilihan Filosofi:**
+
+| Philosophy          | Result                                     |
+| ------------------- | ------------------------------------------ |
+| Hardcore Sim        | Balapan lebih realistis, sedikit overtake  |
+| Netflix F1          | Lebih banyak drama, aksi, dan overtake     |
+| Motorsport Manager  | Chaos yang disederhanakan, fokus pada manajerial |
+| F1 Manager Frontier | Semi-realistis, keseimbangan antara sim dan aksesibilitas |
+
+**Pengaruh:** Memastikan konsistensi sistem dan menghindari kontradiksi desain.
 
 ---
 

@@ -1448,3 +1448,388 @@ button#btn-ers.active {
   from { transform: translateY(-30px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+
+
+/* =========================================
+   F1 OVERHAUL - MODULE STYLES
+   ========================================= */
+
+/* Tyre Badges */
+.tyre-badge {
+  color: #000;
+  font-weight: 900;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 10px;
+  display: inline-block;
+}
+.tyre-badge-sm {
+  color: #000;
+  font-weight: 900;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  display: inline-block;
+}
+
+/* Tyre Compound Buttons */
+.compound-selector {
+  display: flex;
+  gap: 8px;
+}
+.btn-compound {
+  background: transparent;
+  color: var(--text-white);
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 6px;
+  width: 45px;
+  height: 45px;
+  font-weight: 900;
+  font-size: 14px;
+  padding: 0;
+}
+.btn-compound.active {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);
+}
+.btn-compound-sm {
+  background: transparent;
+  color: var(--text-white);
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 4px;
+  width: 26px;
+  height: 26px;
+  font-weight: bold;
+  font-size: 11px;
+  padding: 0;
+  text-align: center;
+  transition: 0.15s;
+}
+.btn-compound-sm:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Strategy Under Track */
+.strat-driver-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.strat-telemetry {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.mini-stat {
+  background: rgba(0,0,0,0.3);
+  border-radius: 4px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.mini-label {
+  font-size: 9px;
+  font-weight: bold;
+  color: var(--text-muted);
+}
+.mini-bar {
+  width: 100%;
+  height: 4px;
+  background: #222;
+  border-radius: 2px;
+  margin: 3px 0;
+}
+.mini-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+}
+.mini-val {
+  font-size: 10px;
+  font-family: monospace;
+}
+.strat-controls {
+  display: flex;
+  gap: 15px;
+}
+.control-group-inline {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  background: rgba(0,0,0,0.2);
+  padding: 4px 6px;
+  border-radius: 6px;
+}
+.ctrl-label {
+  font-size: 9px;
+  color: var(--text-muted);
+  font-weight: bold;
+  margin-right: 4px;
+}
+.btn-ctrl {
+  background: #111;
+  border: 1px solid #333;
+  color: #888;
+  padding: 4px 6px;
+  font-size: 9px;
+  font-weight: bold;
+  border-radius: 3px;
+}
+.btn-ctrl:hover {
+  background: #333;
+  color: #fff;
+}
+.active-red { background: #520000 !important; border-color: #ff0000 !important; color: #ff0000 !important; }
+.active-green { background: #00331a !important; border-color: #00ff87 !important; color: #00ff87 !important; }
+.active-blue { background: #002b4d !important; border-color: #00bfff !important; color: #00bfff !important; }
+.pit-status {
+  color: #ff6600;
+  font-weight: bold;
+  font-size: 10px;
+  margin-left: 5px;
+  animation: blink 1s infinite;
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+/* Results Table */
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+.results-table th {
+  text-align: left;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.4);
+  color: var(--text-muted);
+  font-size: 12px;
+  border-bottom: 2px solid var(--border-dark);
+}
+.results-table td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 14px;
+}
+.player-row td {
+  background: rgba(0, 255, 135, 0.05);
+}
+.dnf-row td {
+  color: var(--text-muted);
+  background: rgba(255,0,0,0.03);
+}
+.pos-cell {
+  font-weight: bold;
+  font-size: 16px;
+}
+.pos-cell.podium {
+  color: var(--f1-neon);
+}
+.driver-cell {
+  font-weight: bold;
+}
+.time-cell {
+  font-family: monospace;
+}
+.results-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Debrief */
+.debrief-header {
+  background: radial-gradient(circle at left, rgba(0, 255, 135, 0.1), transparent);
+  border: 1px solid var(--border-dark);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 25px;
+}
+.debrief-rewards {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.debrief-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.debrief-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+.debrief-value {
+  font-size: 24px;
+  font-weight: 900;
+  font-family: monospace;
+}
+.debrief-points-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.debrief-point {
+  background: rgba(0,0,0,0.4);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+.debrief-point strong {
+  color: #ffaa00;
+  font-size: 14px;
+}
+
+/* Standings */
+.standings-tabs {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+.standings-tab {
+  background: none;
+  border: none;
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--text-muted);
+  padding: 10px 20px;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+}
+.standings-tab.active {
+  color: var(--f1-neon);
+  border-bottom-color: var(--f1-neon);
+}
+.standings-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
+  border-radius: 12px;
+  padding: 20px;
+}
+.standings-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.standings-table th {
+  text-align: left;
+  padding: 15px;
+  color: var(--text-muted);
+  border-bottom: 2px solid var(--border-dark);
+}
+.standings-table td {
+  padding: 15px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 16px;
+}
+.pts-cell {
+  font-family: monospace;
+  font-size: 18px;
+  color: #ffaa00;
+}
+.empty-standings {
+  text-align: center;
+  padding: 50px;
+  color: var(--text-muted);
+  background: var(--bg-panel);
+  border-radius: 12px;
+}
+
+/* R&D */
+.rnd-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 25px;
+  margin-top: 20px;
+}
+.rnd-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
+  border-radius: 12px;
+  padding: 25px;
+}
+.rnd-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.rnd-stat-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.rnd-stat-label {
+  width: 130px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.rnd-bar {
+  flex-grow: 1;
+  background: rgba(0,0,0,0.5);
+  height: 8px;
+  border-radius: 4px;
+}
+.rnd-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+}
+.rnd-stat-val {
+  width: 30px;
+  font-family: monospace;
+  font-weight: bold;
+  text-align: right;
+}
+.rnd-budget {
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--f1-neon);
+  font-family: monospace;
+  margin: 10px 0;
+}
+.rnd-note {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-style: italic;
+}
+
+/* Track Stat Grid */
+.track-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.track-stat {
+  background: rgba(0,0,0,0.2);
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+}
+.track-stat-label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 5px;
+}
+.stat-bar {
+  height: 4px;
+  background: #333;
+  margin: 5px 0;
+  border-radius: 2px;
+}
+.stat-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+}
+.track-stat-val {
+  font-size: 13px;
+  font-family: monospace;
+  font-weight: bold;
+}
+

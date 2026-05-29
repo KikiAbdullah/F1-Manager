@@ -4,10 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>F1 Manager 2026 - Premium Edition</title>
+    <meta name="description" content="F1 Manager 2026 - Build your team, manage strategy, and dominate the championship." />
     <link rel="stylesheet" href="css/style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   </head>
   <body>
-    <!-- Top HUD Bar ala F1 Manager 24 -->
+    <!-- Top HUD Bar -->
     <header id="main-header" class="hidden">
       <div class="header-brand">
         <span class="f1-logo">F1</span>
@@ -20,48 +22,35 @@
         </div>
         <div class="hud-item">
           <span class="hud-label">ANGGARAN</span>
-          <span class="hud-value neon-blue"
-            >Rp <span id="top-budget">0</span></span
-          >
+          <span class="hud-value neon-blue">Rp <span id="top-budget">0</span></span>
         </div>
-        <button class="btn-reset-save" onclick="Main.deleteSaveState()">
-          Hapus Save Data
-        </button>
+        <button class="btn-reset-save" onclick="Main.deleteSaveState()">🗑️ Reset</button>
       </div>
     </header>
 
-    <!-- Sidebar Navigation Menu -->
+    <!-- Sidebar Navigation -->
     <div class="app-layout">
       <nav id="main-nav" class="hidden">
         <button id="btn-nav-toggle" class="nav-toggle" onclick="UI.toggleSidebar()">☰</button>
-        <button
-          onclick="UI.showScreen('hq')"
-          class="nav-item active"
-          id="nav-hq"
-        >
-          <span class="nav-icon">🏢</span> <span class="nav-label">HEADQUARTERS</span>
+        <button onclick="UI.showScreen('hq')" class="nav-item active" id="nav-hq">
+          <span class="nav-icon">🏢</span><span class="nav-label">HQ</span>
         </button>
-        <button
-          onclick="UI.showScreen('calendar')"
-          class="nav-item"
-          id="nav-calendar"
-        >
-          <span class="nav-icon">📅</span> <span class="nav-label">RACE CALENDAR</span>
+        <button onclick="UI.showScreen('calendar')" class="nav-item" id="nav-calendar">
+          <span class="nav-icon">📅</span><span class="nav-label">CALENDAR</span>
+        </button>
+        <button onclick="UI.showScreen('standings')" class="nav-item" id="nav-standings">
+          <span class="nav-icon">🏆</span><span class="nav-label">STANDINGS</span>
         </button>
         <button onclick="UI.showScreen('rnd')" class="nav-item" id="nav-rnd">
-          <span class="nav-icon">🧪</span> <span class="nav-label">RESEARCH & DEV</span>
+          <span class="nav-icon">🧪</span><span class="nav-label">R&D</span>
         </button>
-        <button
-          onclick="UI.showScreen('race-weekend')"
-          class="nav-item special-race"
-          id="nav-race"
-        >
-          <span class="nav-icon">🏁</span> <span class="nav-label">ENTER RACE WEEKEND</span>
+        <button onclick="UI.showScreen('race-weekend')" class="nav-item special-race" id="nav-race">
+          <span class="nav-icon">🏁</span><span class="nav-label">RACE</span>
         </button>
       </nav>
 
       <main id="game-container">
-        <!-- 1. Sesi Pemuatan Awal -->
+        <!-- Loading Screen -->
         <section id="screen-loading" class="screen">
           <div class="loader-box">
             <div class="f1-spin"></div>
@@ -70,257 +59,187 @@
           </div>
         </section>
 
-        <!-- 2. Screen Karir Baru: THE WIZARD SYSTEM -->
+        <!-- Create Team Wizard -->
         <section id="screen-new-career" class="screen hidden">
           <div class="wizard-header">
             <h2>PENDIRIAN TIM BARU F1 2026</h2>
-            <p>Lengkapi modul pendaftaran lisensi konstruktor di bawah ini</p>
+            <p>Lengkapi modul pendaftaran lisensi konstruktor</p>
             <div class="wizard-progress-bar">
-              <div class="wiz-dot active" data-step="1">
-                <span>1. Profil & Sponsor</span>
-              </div>
-              <div class="wiz-dot" data-step="2">
-                <span>2. Manajemen Staff</span>
-              </div>
-              <div class="wiz-dot" data-step="3">
-                <span>3. Paket Regulasi Mobil</span>
-              </div>
-              <div class="wiz-dot" data-step="4">
-                <span>4. Susunan Driver</span>
-              </div>
+              <div class="wiz-dot active" data-step="1"><span>1. Profil & Sponsor</span></div>
+              <div class="wiz-dot" data-step="2"><span>2. Staff</span></div>
+              <div class="wiz-dot" data-step="3"><span>3. Mobil</span></div>
+              <div class="wiz-dot" data-step="4"><span>4. Drivers</span></div>
             </div>
           </div>
 
           <div id="wizard-container">
-            <!-- STEP 1: Profil & Sponsor -->
             <div class="wizard-step" id="step-1">
               <div class="wizard-input-group">
-                <label>NAMA KONSTRUKTOR TIM KAMU:</label>
-                <input
-                  type="text"
-                  id="input-team-name"
-                  placeholder="Contoh: Garuda Racing Team..."
-                  autocomplete="off"
-                />
+                <label>NAMA KONSTRUKTOR TIM:</label>
+                <input type="text" id="input-team-name" placeholder="Contoh: Garuda Racing..." autocomplete="off" />
               </div>
-              <h3>PILIH SPONSOR UTAMA (Sumber Pendanaan)</h3>
+              <h3>PILIH SPONSOR UTAMA</h3>
               <div class="horizontal-scroll" id="container-sponsor"></div>
             </div>
-
-            <!-- STEP 2: Management Staff -->
             <div class="wizard-step hidden" id="step-2">
-              <h3>REKRUT TEAM PRINCIPAL (Chief Executive)</h3>
+              <h3>REKRUT TEAM PRINCIPAL</h3>
               <div class="horizontal-scroll" id="container-team-chief"></div>
-              <h3 style="margin-top: 25px">
-                REKRUT TECHNICAL DIRECTOR (Kepala Aero)
-              </h3>
+              <h3 style="margin-top:20px">REKRUT TECHNICAL DIRECTOR</h3>
               <div class="horizontal-scroll" id="container-tech-chief"></div>
             </div>
-
-            <!-- STEP 3: Power Unit & Chassis -->
             <div class="wizard-step hidden" id="step-3">
-              <h3>KONTRAK PENYUPLAI POWER UNIT (Mesin V6 Turbo 2026)</h3>
+              <h3>KONTRAK POWER UNIT (V6 Turbo 2026)</h3>
               <div class="horizontal-scroll" id="container-pu"></div>
-              <h3 style="margin-top: 25px">
-                SPESIFIKASI PENGEMBANGAN CHASSIS AWAL
-              </h3>
+              <h3 style="margin-top:20px">PILIH CHASSIS</h3>
               <div class="horizontal-scroll" id="container-chassis"></div>
             </div>
-
-            <!-- STEP 4: Drivers Lineup -->
             <div class="wizard-step hidden" id="step-4">
               <h3>REKRUT DRIVER LINEUP (Pilih 2 Pembalap)</h3>
-              <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 15px;">Klik pertama untuk Driver 1, klik kedua untuk Driver 2. Klik lagi untuk membatalkan.</p>
+              <p style="color:var(--text-muted); font-size:12px; margin-bottom:15px">Klik untuk memilih Driver 1, klik lagi untuk Driver 2.</p>
               <div class="horizontal-scroll" id="container-drivers"></div>
             </div>
           </div>
 
-          <!-- Footer Wizard Panel -->
           <div class="wizard-footer-panel">
             <div class="live-budget-hud">
-              <span class="label">SISA PROYEKSI ANGGARAN:</span>
-              <span id="preview-budget-text" class="value text-neon-green"
-                >Rp 0</span
-              >
+              <span class="label">SISA ANGGARAN:</span>
+              <span id="preview-budget-text" class="value text-neon-green">Rp 0</span>
             </div>
             <div class="wizard-nav-buttons">
-              <button id="btn-wizard-prev" onclick="UI.moveWizard(-1)" disabled>
-                KEMBALI
-              </button>
-              <button id="btn-wizard-next" onclick="UI.moveWizard(1)">
-                SELANJUTNYA
-              </button>
-              <button
-                id="btn-wizard-submit"
-                onclick="Main.finalizeCareer(event)"
-                class="btn-submit-gold hidden"
-              >
-                LUNCURKAN TIM
-              </button>
+              <button id="btn-wizard-prev" onclick="UI.moveWizard(-1)" disabled>KEMBALI</button>
+              <button id="btn-wizard-next" onclick="UI.moveWizard(1)">SELANJUTNYA</button>
+              <button id="btn-wizard-submit" onclick="Main.finalizeCareer(event)" class="btn-submit-gold hidden">🚀 LUNCURKAN TIM</button>
             </div>
           </div>
         </section>
 
+        <!-- HQ Screen -->
         <section id="screen-hq" class="screen hidden">
           <div class="hq-banner">
-            <h1>WELCOME TO THE TEAM HEADQUARTERS</h1>
-            <p>
-              Manage your team, staff, and assets to dominate the 2026 F1
-              season!
-            </p>
+            <h1>TEAM HEADQUARTERS</h1>
+            <p>Kelola tim, staff, dan aset untuk mendominasi musim 2026!</p>
           </div>
-
           <div class="hq-content-grid">
             <div class="hq-section card">
-              <div class="card-header-f1">INFORMASI TIM LISENSI</div>
-              <div class="hq-info-row">
-                <span class="muted-label">Konstruktor:</span>
-                <strong id="hq-team" class="text-neon-blue"></strong>
-              </div>
-              <div class="hq-info-row">
-                <span class="muted-label">Mitra Finansial:</span>
-                <span id="hq-sponsor"></span>
-              </div>
+              <div class="card-header-f1">INFORMASI TIM</div>
+              <div class="hq-info-row"><span class="muted-label">Konstruktor:</span><strong id="hq-team" class="text-neon-blue"></strong></div>
+              <div class="hq-info-row"><span class="muted-label">Sponsor:</span><span id="hq-sponsor"></span></div>
             </div>
-
             <div class="hq-section card">
-              <div class="card-header-f1">MANAGEMENT STAFF</div>
-              <div class="hq-info-row">
-                <span class="muted-label">Team Principal:</span>
-                <span id="hq-tchief"></span>
-              </div>
-              <div class="hq-info-row">
-                <span class="muted-label">Tech Director:</span>
-                <span id="hq-tech"></span>
-              </div>
+              <div class="card-header-f1">MANAGEMENT</div>
+              <div class="hq-info-row"><span class="muted-label">Team Principal:</span><span id="hq-tchief"></span></div>
+              <div class="hq-info-row"><span class="muted-label">Tech Director:</span><span id="hq-tech"></span></div>
             </div>
-
             <div class="hq-section card">
-              <div class="card-header-f1">ALOKASI ASSET</div>
-              <div class="hq-info-row">
-                <span class="muted-label">Dapur Pacu:</span>
-                <span id="hq-pu"></span>
-              </div>
-              <div class="hq-info-row">
-                <span class="muted-label">Struktur Aero:</span>
-                <span id="hq-chassis"></span>
-              </div>
+              <div class="card-header-f1">ASET</div>
+              <div class="hq-info-row"><span class="muted-label">Power Unit:</span><span id="hq-pu"></span></div>
+              <div class="hq-info-row"><span class="muted-label">Chassis:</span><span id="hq-chassis"></span></div>
             </div>
-
             <div class="hq-section card">
               <div class="card-header-f1">DRIVER LINEUP</div>
-              <div class="hq-info-row">
-                <span class="muted-label">Pembalap 1:</span>
-                <strong id="hq-drv1" style="color: var(--f1-neon)"></strong>
-              </div>
-              <div class="hq-info-row">
-                <span class="muted-label">Pembalap 2:</span>
-                <strong id="hq-drv2" style="color: var(--f1-neon)"></strong>
-              </div>
+              <div class="hq-info-row"><span class="muted-label">Driver 1:</span><strong id="hq-drv1" style="color:var(--f1-neon)"></strong></div>
+              <div class="hq-info-row"><span class="muted-label">Driver 2:</span><strong id="hq-drv2" style="color:var(--f1-neon)"></strong></div>
             </div>
-
             <div class="hq-section card">
               <div class="card-header-f1">SEASON PROGRESS</div>
-              <div class="hq-info-row">
-                <span class="muted-label">Next Round:</span>
-                <strong id="hq-next-round" style="color: var(--f1-neon)"></strong>
-              </div>
-              <div class="hq-info-row">
-                <span class="muted-label">Completed:</span>
-                <span id="hq-completed-rounds"></span>
-              </div>
-              <div class="hq-info-row">
-                <span class="muted-label">Driver Points:</span>
-                <span id="hq-driver-points"></span>
-              </div>
+              <div class="hq-info-row"><span class="muted-label">Next Round:</span><strong id="hq-next-round" style="color:var(--f1-neon)"></strong></div>
+              <div class="hq-info-row"><span class="muted-label">Completed:</span><span id="hq-completed-rounds"></span></div>
+              <div class="hq-info-row"><span class="muted-label">Points:</span><span id="hq-driver-points"></span></div>
             </div>
           </div>
         </section>
 
-        <!-- Screen Lainnya (Calendar, R&D, Race Weekend) Terintegrasi Otomatis -->
+        <!-- Calendar Screen -->
         <section id="screen-calendar" class="screen hidden">
-          <h2>📅 KALENDER BALAPAN</h2>
+          <h2>📅 KALENDER BALAPAN 2026</h2>
           <div id="calendar-list"></div>
         </section>
+
+        <!-- Standings Screen -->
+        <section id="screen-standings" class="screen hidden">
+          <h2>🏆 CHAMPIONSHIP STANDINGS</h2>
+          <div id="standings-content"></div>
+        </section>
+
+        <!-- R&D Screen -->
         <section id="screen-rnd" class="screen hidden">
           <h2>🧪 RESEARCH & DEVELOPMENT</h2>
+          <div id="rnd-content"></div>
         </section>
-        <!-- LAYAR RACE WEEKEND -->
+
+        <!-- Race Weekend Screen -->
         <section id="screen-race-weekend" class="screen hidden">
           <div class="race-weekend-hero">
             <div>
               <span class="race-kicker">F1 2026 RACE CONTROL</span>
-              <h2 id="race-title">JUDUL BALAPAN</h2>
-              <p>Lakukan simulasi practice, qualifying, lalu race utama dengan kontrol strategi live.</p>
+              <h2 id="race-title">RACE TITLE</h2>
             </div>
           </div>
 
-          <!-- Main Race Simulation Area -->
           <div id="sim-area" class="race-sim-layout hidden">
-            <!-- Live Standings (Kiri) -->
             <div id="live-standings" class="panel"></div>
-
-            <!-- Canvas Sirkuit & Telemetri (Tengah) -->
             <div class="canvas-telemetry-container">
               <div id="live-race-hud" class="hidden">
-                <span id="hud-session-mode">SESSION</span> | LAP <span id="hud-lap">1</span> / <span id="hud-total-laps">50</span> | <span id="hud-weather">Cerah</span>
+                <span id="hud-session-mode">SESSION</span> | LAP
+                <span id="hud-lap">1</span> / <span id="hud-total-laps">50</span> |
+                <span id="hud-weather">Cerah</span>
               </div>
               <canvas id="race-canvas" width="900" height="550"></canvas>
               <div id="race-commentary" class="race-commentary">Race Control: menunggu sesi dimulai...</div>
               <div class="telemetry-dashboard">
                 <div class="telemetry-item"><span class="telemetry-label">Lap</span><strong id="telemetry-lap">1 / 50</strong></div>
-                <div class="telemetry-item"><span class="telemetry-label">Sector</span><strong id="telemetry-sector">Sector 1</strong></div>
+                <div class="telemetry-item"><span class="telemetry-label">Sector</span><strong id="telemetry-sector">S1</strong></div>
                 <div class="telemetry-item"><span class="telemetry-label">Zone</span><strong id="telemetry-zone">Main Straight</strong></div>
+                <div class="telemetry-item"><span class="telemetry-label">ERS</span><strong id="telemetry-ers">100%</strong></div>
+                <div class="telemetry-item"><span class="telemetry-label">Speed</span><strong id="telemetry-speed">0 km/h</strong></div>
               </div>
               <div id="strategy-under-track" class="strategy-under-track"></div>
             </div>
-
-            <div class="controls-column" style="display: flex; flex-direction: column; gap: 15px;">
+            <div class="controls-column" style="display:flex; flex-direction:column; gap:15px">
               <div class="player-controls panel compact-controls">
                 <div class="control-group">
-                  <label>SIMULATION SPEED</label>
+                  <label>SIM SPEED</label>
                   <div class="speed-options">
                     <button class="btn-speed btn-active" onclick="Engine.setSimSpeed(1, this)">1x</button>
                     <button class="btn-speed" onclick="Engine.setSimSpeed(2, this)">2x</button>
                     <button class="btn-speed" onclick="Engine.setSimSpeed(4, this)">4x</button>
                     <button class="btn-speed" onclick="Engine.setSimSpeed(8, this)">8x</button>
+                    <button class="btn-speed" onclick="Engine.setSimSpeed(16, this)">16x</button>
                   </div>
                 </div>
-                <button id="btn-play" onclick="Engine.toggleSim()" class="btn-active">PAUSE SIMULATION</button>
+                <button id="btn-play" onclick="Engine.toggleSim()" class="btn-active">PAUSE</button>
               </div>
               <div id="session-next-action-container"></div>
             </div>
           </div>
 
-          <!-- Area Hasil Sesi (Klasemen) -->
           <div id="session-results" class="hidden">
-            <h3 id="result-title">Hasil Sesi</h3>
+            <h3 id="result-title">Session Results</h3>
             <div id="result-table"></div>
           </div>
         </section>
       </main>
     </div>
 
-    <!-- Integrasi Scripts Game Core -->
+    <!-- Scripts -->
     <script src="js/data.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/track_layouts.js"></script>
+    <script src="js/weather.js"></script>
     <script src="js/finance.js"></script>
     <script src="js/engine.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/main.js"></script>
 
-        <!-- Race Detail Modal -->
+    <!-- Race Detail Modal -->
     <div id="race-detail-modal" class="modal hidden">
       <div class="modal-content">
-        <button class="close-button" onclick="UI.hideRaceDetailsModal()">
-          ❌
-        </button>
+        <button class="close-button" onclick="UI.hideRaceDetailsModal()">✕</button>
         <h3 id="modal-grand-prix-name"></h3>
         <p id="modal-circuit-name"></p>
         <p id="modal-date-range"></p>
         <div class="modal-body-split">
-          <div id="modal-sessions-list">
-            <!-- Session details will be populated here -->
-          </div>
+          <div id="modal-sessions-list"></div>
           <div id="modal-history-list"></div>
         </div>
       </div>

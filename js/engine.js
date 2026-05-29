@@ -1,43 +1,99 @@
+// =====================================================================
+// F1 MANAGER 2026 - CORE SIMULATION ENGINE
+// Complete rewrite implementing all 20 points from update_290526.md
+// Simulation Pipeline: TRACK → WEATHER → CAR → DRIVER → TYRE → STRATEGY → INCIDENTS → LAP TIME
+// =====================================================================
 const Engine = {
   currentGrid: [],
-  weather: "Cerah",
   currentCircuit: null,
   activeRound: null,
+  weatherState: null,
+  scState: Utils.SC_STATES.NONE,
+  scLapsRemaining: 0,
+  incidentLog: [],
 
-  // Konfigurasi Utama Simulasi Engine
   sim: {
     ctx: null,
     isRunning: false,
     simSpeed: 1,
-    currentLap: 0, // Start from 0, increment on first lap start
-    targetLaps: 1, // Default, will be set per session
+    currentLap: 0,
+    targetLaps: 1,
     mode: "FP", // FP, Q, RACE
+    stage: null, // FP, Q1, Q2, Q3, RACE
     trackPoints: [],
     animationId: null,
-    playerDrivingStyle: "stable", // Default for player
     trackEvolution: 1,
-    weatherGrip: 1,
-    weatherLabel: "Cerah",
-    stage: null,
+    trackPointsCircuitId: null,
+    domCache: {},
+    raceDistancePercent: 25, // % of real laps (adjustable)
+    fastestLapId: null,
+    fastestLapTime: Infinity,
+    fastestSectors: { 1: Infinity, 2: Infinity, 3: Infinity },
+    particles: [],
+    leaderFinished: false,
+    teamEvents: [],
   },
 
-  clamp(value, min, max) {
-    return Math.max(min, Math.min(max, value));
+  // === SETUP STATE (for player) ===
+  playerSetup: {
+    front_wing: 50,
+    rear_wing: 50,
+    suspension: 50,
+    brake_bias: 55,
   },
 
-  rand(min, max) {
-    return min + Math.random() * (max - min);
+  // =============================================
+  // DATA LOOKUP HELPERS
+  // =============================================
+  getCircuitData(circuitId) {
+    const circuitBase = Data.circuits.find((c) => c.id === circuitId);
+    const scheduleEntry = Data.schedules.find(
+      (s) => s.circuit_id === circuitId && s.type === "race_weekend"
+    );
+    if (!scheduleEntry) return circuitBase;
+    return {
+      ...circuitBase,
+      ...scheduleEntry,
+      track_characteristics: scheduleEntry.track_characteristics || {},
+    };
   },
 
-  avg(values) {
-    const filtered = values.filter((value) => typeof value === "number" && !Number.isNaN(value));
-    return filtered.length ? filtered.reduce((sum, value) => sum + value, 0) / filtered.length : 75;
+  getTeamForDriver(driver) {
+    return Data.teams ? Data.teams.find((t) => t.id === driver.team_id) : null;
+  },
+
+  getChassisForTeam(teamId) {
+    return Data.chassis
+      ? Data.chassis.find((c) => c.team_id === teamId)
+      : Data.chassis[0];
+  },
+
+  getPUForTeam(team) {
+    if (!team || !Data.power_units) return Data.power_units[0];
+    const puSupplier = team.power_unit?.supplier;
+    // Find PU by manufacturer matching supplier
+    return (
+      Data.power_units.find(
+        (p) =>
+          p.manufacturer?.toLowerCase().includes(puSupplier) ||
+          p.id?.includes(puSupplier)
+      ) || Data.power_units[0]
+    );
   },
 
   getWeekendData(round = State.currentRound) {
     if (!State.raceWeekends) State.raceWeekends = {};
     if (!State.raceWeekends[round]) {
-      State.raceWeekends[round] = { round, fp: null, q1: null, q2: null, qualifyingGrid: null, qualifyingComplete: false, race: null };
+      State.raceWeekends[round] = {
+        round,
+        fp: null,
+        q1: null,
+        q2: null,
+        q3: null,
+        qualifyingGrid: null,
+        qualifyingComplete: false,
+        race: null,
+      };
     }
     return State.raceWeekends[round];
   },
@@ -47,161 +103,21 @@ const Engine = {
   },
 
   addCommentary(text) {
-    const el = document.getElementById("race-commentary");
+    const el =
+      this.sim.domCache.commentary ||
+      document.getElementById("race-commentary");
     if (el) el.innerText = text;
   },
 
-  // Koordinat Sirkuit Sakhir Bahrain
-  keyPoints: [
-    {
-      x: 650,
-      y: 500,
-      type: "straight",
-      zone: "Main Straight",
-      sector: 3,
-      targetSpeed: 310,
-    }, // Start-Finish
-    {
-      x: 350,
-      y: 500,
-      type: "straight",
-      zone: "Main Straight",
-      sector: 3,
-      targetSpeed: 330,
-    },
-    {
-      x: 140,
-      y: 500,
-      type: "corner",
-      zone: "Turn 1 (Hairpin)",
-      sector: 1,
-      targetSpeed: 82,
-    },
-    {
-      x: 175,
-      y: 440,
-      type: "corner",
-      zone: "Turn 2-3",
-      sector: 1,
-      targetSpeed: 135,
-    },
-    {
-      x: 155,
-      y: 390,
-      type: "straight",
-      zone: "Sector 1 Straight",
-      sector: 1,
-      targetSpeed: 295,
-    },
-    {
-      x: 185,
-      y: 70,
-      type: "corner",
-      zone: "Turn 4",
-      sector: 1,
-      targetSpeed: 110,
-    },
-    {
-      x: 320,
-      y: 150,
-      type: "corner",
-      zone: "Turn 5-6",
-      sector: 2,
-      targetSpeed: 175,
-    },
-    {
-      x: 370,
-      y: 175,
-      type: "corner",
-      zone: "Turn 7",
-      sector: 2,
-      targetSpeed: 155,
-    },
-    {
-      x: 345,
-      y: 220,
-      type: "straight",
-      zone: "Downhill Straight",
-      sector: 2,
-      targetSpeed: 245,
-    },
-    {
-      x: 480,
-      y: 340,
-      type: "corner",
-      zone: "Turn 8 (Hairpin)",
-      sector: 2,
-      targetSpeed: 88,
-    },
-    {
-      x: 270,
-      y: 315,
-      type: "corner",
-      zone: "Turn 9",
-      sector: 2,
-      targetSpeed: 125,
-    },
-    {
-      x: 215,
-      y: 375,
-      type: "straight",
-      zone: "Sector 2 Straight",
-      sector: 2,
-      targetSpeed: 295,
-    },
-    {
-      x: 630,
-      y: 395,
-      type: "corner",
-      zone: "Turn 11",
-      sector: 2,
-      targetSpeed: 165,
-    },
-    {
-      x: 540,
-      y: 220,
-      type: "corner",
-      zone: "Turn 12",
-      sector: 3,
-      targetSpeed: 205,
-    },
-    {
-      x: 600,
-      y: 70,
-      type: "corner",
-      zone: "Turn 13",
-      sector: 3,
-      targetSpeed: 135,
-    },
-    {
-      x: 830,
-      y: 460,
-      type: "corner",
-      zone: "Turn 14",
-      sector: 3,
-      targetSpeed: 115,
-    },
-    {
-      x: 800,
-      y: 500,
-      type: "straight",
-      zone: "Main Straight",
-      sector: 3,
-      targetSpeed: 265,
-    },
-  ],
-
-  // MENINGKATKAN RESOLUSI TREK: Membuat titik koordinat jauh lebih padat agar lap time terasa realistis
-  initTrack() {
-    if (this.sim.trackPoints.length > 0) return;
+  // =============================================
+  // TRACK RENDERING
+  // =============================================
+  generateTrackPoints(keyPoints) {
     let points = [];
-    for (let i = 0; i < this.keyPoints.length; i++) {
-      let p1 = this.keyPoints[i];
-      let p2 = this.keyPoints[(i + 1) % this.keyPoints.length];
-
-      // Ditambah 5x lipat dari versi sebelumnya agar mobil tidak melesat instan
+    for (let i = 0; i < keyPoints.length; i++) {
+      let p1 = keyPoints[i];
+      let p2 = keyPoints[(i + 1) % keyPoints.length];
       let steps = p1.type === "corner" ? 250 : 450;
-
       for (let s = 0; s < steps; s++) {
         let t = s / steps;
         points.push({
@@ -213,248 +129,233 @@ const Engine = {
         });
       }
     }
-    this.sim.trackPoints = points;
+    return points;
   },
 
-  // Membangun seluruh susunan 20 pembalap F1
-  generateGrid() {
-    let grid = [];
-    const playerCar = { pu: State.pu, chassis: State.chassis };
-    const playerStaff = { teamChief: State.teamChief, techChief: State.techChief };
-    // Masukkan Driver Player 1 & 2
-    grid.push(
-      this.buildRacer(
-        State.drivers[0],
-        playerCar,
-        playerStaff,
-        true,
-        State.teamColor || "#e10600"
-      )
-    );
-    grid.push(
-      this.buildRacer(
-        State.drivers[1],
-        playerCar,
-        playerStaff,
-        true,
-        State.teamColor || "#e10600"
-      )
-    );
-
-    // Saring dan masukkan AI Driver dari database master
-    const aiDrivers = Data.drivers
-      .filter(
-        (d) => d.id !== State.drivers[0].id && d.id !== State.drivers[1].id
-      )
-      .slice(0, 18);
-    aiDrivers.forEach((d) => {
-      const aiTeam = Data.teams.find((t) => t.id === d.team_id);
-      const aiPU =
-        Data.power_units.find((p) =>
-          p.manufacturer.toLowerCase().includes(aiTeam.power_unit.supplier)
-        ) || Data.power_units[0];
-      const aiChassis =
-        Data.chassis.find((c) => c.team_id === aiTeam.id) || Data.chassis[0];
-      const aiStaff = {
-        teamChief: Data.team_chiefs.find((chief) => chief.team_id === aiTeam.id),
-        techChief: Data.tech_chiefs.find((chief) => chief.team_id === aiTeam.id),
-        team: aiTeam,
-      };
-
-      grid.push(
-        this.buildRacer(
-          d,
-          { pu: aiPU, chassis: aiChassis },
-          aiStaff,
-          false,
-          aiTeam.color || "#8b92b3"
-        )
-      );
-    });
-    return grid;
+  initTrack() {
+    if (
+      this.sim.trackPoints.length > 0 &&
+      this.sim.trackPointsCircuitId === this.currentCircuit?.id
+    )
+      return;
+    const circuitId = this.currentCircuit ? this.currentCircuit.id : "bahrain";
+    const trackKeyPoints = TrackLayouts.get(circuitId);
+    this.sim.trackPoints = this.generateTrackPoints(trackKeyPoints);
+    this.sim.trackPointsCircuitId = circuitId;
   },
 
-  buildRacer(driver, car, staff, isPlayer, color) {
+  // =============================================
+  // RACER BUILDER - Team-Specific Assignment (Bug Fix)
+  // =============================================
+  buildRacer(driver, team, chassis, pu, isPlayer, color) {
     const d = driver.stats || {};
-    const pu = car.pu || Data.power_units[0];
-    const chassis = car.chassis || Data.chassis[0];
-    const puStats = pu.stats || {};
-    const chassisStats = chassis.stats || {};
+    const puStats = pu?.stats || {};
+    const chassisStats = chassis?.stats || {};
     const aero = chassisStats.aerodynamics || {};
     const mechanical = chassisStats.mechanical || {};
     const perf = chassisStats.performance || {};
     const reliability = chassisStats.reliability || {};
-    const teamChiefStats = (staff && staff.teamChief && staff.teamChief.stats) || {};
-    const techChiefStats = (staff && staff.techChief && staff.techChief.stats) || {};
-    const team = (staff && staff.team) || null;
-    const teamSporting = (team && team.sporting_profile) || {};
-    const teamInfra = (team && team.infrastructure) || {};
-    const teamForm = (team && team.performance_state) || {};
+    const teamSporting = team?.sporting_profile || {};
+    const teamInfra = team?.infrastructure || {};
+    const teamPerf = team?.performance_state || {};
 
-    const driverSkill = this.avg([d.overall, d.cornering, d.braking, d.reactiveness, d.control, d.accuracy]);
-    const raceCraft = this.avg([d.overtaking, d.defending, d.smoothness, d.adaptability]);
-    const carPace = this.avg([
-      chassisStats.overall_performance,
-      puStats.overall_performance,
-      aero.aero_efficiency,
-      aero.high_speed_cornering,
-      mechanical.traction,
-      perf.top_speed,
-      perf.acceleration,
+    // Driver skill composite
+    const driverSkill = Utils.weightedAvg(
+      [
+        d.overall,
+        d.cornering,
+        d.braking,
+        d.reactiveness,
+        d.control,
+        d.accuracy,
+      ],
+      [2, 1.5, 1, 1, 1, 1.5]
+    );
+    const raceCraft = Utils.avg([
+      d.overtaking,
+      d.defending,
+      d.smoothness,
+      d.adaptability,
     ]);
-    const tyreManagement = this.avg([d.smoothness, perf.tyre_preservation, techChiefStats.tyre_management_design, teamSporting.tyre_management]);
-    const fuelEfficiency = this.avg([perf.fuel_efficiency, puStats.internal_combustion && puStats.internal_combustion.fuel_efficiency]);
-    const ersQuality = this.avg([
-      perf.ers_integration,
-      puStats.hybrid_system && puStats.hybrid_system.ers_output,
-      puStats.hybrid_system && puStats.hybrid_system.energy_recovery,
-      puStats.hybrid_system && puStats.hybrid_system.deployment_efficiency,
-    ]);
-    const reliabilityScore = this.avg([
-      reliability.failure_resistance,
-      reliability.component_wear,
-      puStats.reliability && puStats.reliability.failure_resistance,
-      puStats.reliability && puStats.reliability.engine_wear,
-      techChiefStats.reliability_focus,
-    ]);
-    const staffBoost = this.avg([
-      teamChiefStats.strategy,
-      teamChiefStats.pressure_management,
-      teamChiefStats.driver_management,
-      techChiefStats.setup_understanding,
-      techChiefStats.simulator_correlation,
-      techChiefStats.aerodynamics,
-      teamInfra.staff_quality,
-      teamInfra.simulator_level,
-      teamForm.form_rating_last_5_races,
-    ]);
-    const totalPace = driverSkill * 0.34 + carPace * 0.38 + raceCraft * 0.12 + staffBoost * 0.1 + reliabilityScore * 0.06;
+    const carPace = Utils.weightedAvg(
+      [
+        chassisStats.overall_performance,
+        puStats.overall_performance,
+        aero.aero_efficiency,
+        mechanical.traction,
+        perf.top_speed,
+        perf.acceleration,
+      ],
+      [2, 2, 1.5, 1, 1, 1]
+    );
+
+    // Total pace using STD scale
+    const totalPace =
+      driverSkill * 0.3 +
+      carPace * 0.4 +
+      raceCraft * 0.1 +
+      Utils.avg([teamInfra.staff_quality, teamPerf.momentum]) * 0.12 +
+      Utils.avg([reliability.failure_resistance]) * 0.08;
+
+    // Driver traits
+    const traits = Utils.getDriverTraits(d);
+
+    // Setup compatibility (player uses their setup, AI uses their preferences)
+    const setupMatch = isPlayer
+      ? Utils.calculateSetupMatch(
+          this.playerSetup,
+          driver.setup_preferences,
+          {}
+        )
+      : 0.75 + Math.random() * 0.15; // AI gets 75-90% setup match
+
     return {
       id: driver.id,
       name: driver.full_name,
       code:
         driver.driver_code || driver.last_name.substring(0, 3).toUpperCase(),
-      isPlayer: isPlayer,
-      color: color,
+      teamId: driver.team_id,
+      teamName: team?.name || "Independent",
+      isPlayer,
+      color,
+
+      // Pace stats
       paceStat: totalPace,
       driverSkill,
       raceCraft,
       carPace,
-      tyreManagement,
-      fuelEfficiency,
-      ersQuality,
-      reliabilityScore,
-      staffBoost,
-      car,
-      tireWear: 100, // Percentage
-      fuel: 100, // Percentage
+      setupMatch,
+
+      // Tyre management
+      tyreManagement: Utils.avg([
+        d.smoothness,
+        perf.tyre_preservation,
+        teamSporting.tyre_management,
+      ]),
+      fuelEfficiency: Utils.avg([
+        perf.fuel_efficiency,
+        puStats.internal_combustion?.fuel_efficiency,
+      ]),
+      ersQuality: Utils.avg([
+        perf.ers_integration,
+        puStats.hybrid_system?.ers_output,
+      ]),
+      reliabilityScore: Utils.avg([
+        reliability.failure_resistance,
+        puStats.reliability?.failure_resistance,
+      ]),
+      staffBoost: Utils.avg([
+        teamInfra.staff_quality,
+        teamPerf.form_rating_last_5_races,
+      ]),
+      wetSkill: Utils.avg([
+        d.adaptability,
+        d.control,
+        chassis?.car_behavior?.wet_weather_performance,
+      ]),
+
+      // Flat stats for track matching
+      topSpeed: perf.top_speed || 70,
+      horsepower: puStats.internal_combustion?.horsepower || 70,
+      drsEfficiency: aero.drs_efficiency || 70,
+      aeroEfficiency: aero.aero_efficiency || 70,
+      traction: mechanical.traction || 70,
+      braking: d.braking || 70,
+      highSpeedCornering: aero.high_speed_cornering || 70,
+      mediumSpeedCornering: aero.medium_speed_cornering || 70,
+      lowSpeedCornering: aero.low_speed_cornering || 70,
+      qualifyingBias: chassis?.car_behavior?.qualifying_bias || 70,
+      racePaceBias: chassis?.car_behavior?.race_pace_bias || 70,
+      wetWeatherPerf: chassis?.car_behavior?.wet_weather_performance || 70,
+
+      // Personality
+      traits,
+      driverStats: d,
+
+      // === LIVE RACE STATE ===
+      // Tyre compound system
+      tyreCompound: "medium",
+      tyreWear: 0, // 0 = fresh, 100 = destroyed
+      tyreTemp: 80, // Operating temp
+      tyreGrip: 1.0, // Current effective grip
+
+      fuel: 100,
       ersCharge: 100,
-      ersActive: false,
-      drivingStyle: isPlayer ? "stable" : "fast", // AI defaults to fast
+      ersMode: "balanced",
+
+      drivingStyle: isPlayer ? "stable" : "stable",
       isPitting: false,
       pitRequested: false,
       pitStopProgress: 0,
-      pitStopDuration: 300, // frames for pit stop
-      // Properti fisik untuk render kanvas mandiri
+      pitStopDuration: 250,
+      pitCount: 0,
+      pitTargetCompound: null,
+
       progress: 0,
       currentSpeed: 0,
       currentLap: 0,
       totalTime: 0,
       gapText: "-",
       finished: false,
+      eliminated: false,
       lastLapTime: 0,
+      bestLapTime: Infinity,
+      lapStartTime: 0,
+      dnf: false,
+      dnfReason: "",
+      currentSector: 1,
+      sectorEntryTime: 0,
+      lastSectorTimes: { 1: 0, 2: 0, 3: 0 },
+      bestSectorTimes: { 1: Infinity, 2: Infinity, 3: Infinity },
+      drsOpen: false,
+      overlapIndex: 0,
+      prevPosition: 0,
     };
   },
 
-  startSession(mode) {
-    if (this.sim.animationId) cancelAnimationFrame(this.sim.animationId);
-    const sessionMode = mode === "Q1" || mode === "Q2" ? "Q" : mode;
-    this.sim.stage = mode;
-    this.sim.mode = sessionMode;
-    this.sim.isRunning = true;
-    this.sim.currentLap = 0;
+  // =============================================
+  // GRID GENERATION - FIX: Team-specific cars
+  // =============================================
+  generateGrid() {
+    const grid = [];
+    if (!Data.drivers) return grid;
 
-    const nextContainer = document.getElementById("session-next-action-container");
-    if (nextContainer) nextContainer.innerHTML = "";
+    Data.drivers.forEach((driver) => {
+      const team = this.getTeamForDriver(driver);
+      const chassis = this.getChassisForTeam(driver.team_id);
+      const pu = this.getPUForTeam(team);
+      const isPlayer =
+        State.drivers && State.drivers.some((d) => d.id === driver.id);
+      const color = isPlayer ? "#00ff87" : team ? team.color : "#ffffff";
 
-    this.setupSessionContext();
+      grid.push(this.buildRacer(driver, team, chassis, pu, isPlayer, color));
+    });
 
-    // Lap dibuat sedikit, tetapi progress per frame lebih lambat agar 1 lap terasa panjang.
-    if (mode === "FP") this.sim.targetLaps = this.sim.targetLaps || 2;
-    else if (mode === "Q1" || mode === "Q2") this.sim.targetLaps = 2;
-    else if (mode === "RACE") this.sim.targetLaps = 4;
-
-    // 1. TAMPILKAN PANEL SIMULASI
-    const simArea = document.getElementById("sim-area");
-    if (simArea) simArea.classList.remove("hidden");
-
-    // 2. PERBAIKAN: Ambil canvas dengan toleransi ID (strip atau underscore)
-    const canvas = document.getElementById("race-canvas");
-
-    if (!canvas) {
-      console.error(
-        "[F1 Manager] Elemen <canvas> tidak ditemukan di index.html!"
-      );
-      alert(
-        "Error: Kanvas simulasi balap tidak ditemukan. Periksa index.html Anda."
-      );
-      this.sim.isRunning = false;
-      return;
-    }
-
-    // Ambil context 2D setelah dipastikan elemen canvas-nya ada
-    this.sim.ctx = canvas.getContext("2d");
-
-    // Initialize track points if not already done
-    this.initTrack();
-
-    // 3. JALANKAN LOGIKA GRID & SIMULASI LANJUTAN
-    this.setupSessionGrid();
-
-    // Update HUD for total laps
-    const totalLapsHud = document.getElementById("hud-total-laps");
-    if (totalLapsHud) totalLapsHud.innerText = this.sim.targetLaps;
-    const lapHud = document.getElementById("hud-lap");
-    if (lapHud) lapHud.innerText = 1;
-    const sessionHud = document.getElementById("hud-session-mode");
-    if (sessionHud) sessionHud.innerText = mode;
-    const weatherHud = document.getElementById("hud-weather");
-    if (weatherHud) weatherHud.innerText = `${this.weather} - ${this.currentCircuit ? this.currentCircuit.name : "Track"}`;
-    const liveHud = document.getElementById("live-race-hud");
-    if (liveHud) liveHud.classList.remove("hidden");
-    const playBtn = document.getElementById("btn-play");
-    if (playBtn) {
-      playBtn.innerText = "PAUSE SIMULATION";
-      playBtn.classList.add("btn-active");
-    }
-
-    // Setup player controls
-    UI.updatePlayerControlsHUD();
-
-    this.gameLoop(); // Memulai animation frame
+    return grid;
   },
 
-  startConfiguredSession(mode) {
-    const data = this.getWeekendData(State.currentRound);
-    if (mode === "FP") {
-      if (data.fp) {
-        UI.renderSessionResults(data.fp.results, `FP RESULTS - ${data.fp.laps} LAPS`);
-        return;
-      }
-      const lapsInput = document.getElementById("input-fp-laps");
-      this.sim.targetLaps = this.clamp(parseInt(lapsInput && lapsInput.value, 10) || 2, 1, 5);
-    }
-
-    if (mode === "Q1" && data.q1) return UI.openSessionPanel("Q");
-    if (mode === "Q2" && (!data.q1 || data.q2)) return UI.openSessionPanel("Q");
-    if (mode === "RACE") {
-      if (data.race) return UI.renderSessionResults(data.race.results, "RACE RESULTS");
-      if (!data.qualifyingComplete) return UI.openSessionPanel("RACE");
-    }
-
-    document.getElementById("session-results").classList.add("hidden");
-    this.activeRound = State.currentRound;
-    this.startSession(mode);
+  // =============================================
+  // SESSION MANAGEMENT
+  // =============================================
+  cacheDOMElements() {
+    this.sim.domCache = {
+      simArea: document.getElementById("sim-area"),
+      canvas: document.getElementById("race-canvas"),
+      totalLapsHud: document.getElementById("hud-total-laps"),
+      lapHud: document.getElementById("hud-lap"),
+      sessionHud: document.getElementById("hud-session-mode"),
+      weatherHud: document.getElementById("hud-weather"),
+      liveHud: document.getElementById("live-race-hud"),
+      playBtn: document.getElementById("btn-play"),
+      commentary: document.getElementById("race-commentary"),
+      telemetryLap: document.getElementById("telemetry-lap"),
+      telemetrySpeed: document.getElementById("telemetry-speed"),
+      telemetrySector: document.getElementById("telemetry-sector"),
+      telemetryZone: document.getElementById("telemetry-zone"),
+      telemetryTire: document.getElementById("telemetry-tire"),
+      telemetryFuel: document.getElementById("telemetry-fuel"),
+      telemetryErs: document.getElementById("telemetry-ers"),
+    };
   },
 
   setupSessionContext() {
@@ -462,73 +363,101 @@ const Engine = {
       (s) => s.round === State.currentRound && s.type === "race_weekend"
     );
     this.currentCircuit = currentEvent
-      ? Data.circuits.find((circuit) => circuit.id === currentEvent.circuit_id)
-      : Data.circuits.find((circuit) => circuit.id === "bahrain") || Data.circuits[0];
+      ? this.getCircuitData(currentEvent.circuit_id)
+      : this.getCircuitData("bahrain") || Data.circuits[0];
 
-    const stats = (this.currentCircuit && this.currentCircuit.game_stats) || {};
-    const rainRoll = Math.random() * 100;
-    const rainChance = stats.rain_chance || 10;
-    let weatherLabel = "Cerah";
-    let weatherGrip = 1;
+    const trackChars = this.currentCircuit?.track_characteristics || {};
 
-    if (rainRoll < rainChance * 0.28) {
-      weatherLabel = "Hujan Lebat";
-      weatherGrip = 0.78;
-    } else if (rainRoll < rainChance) {
-      weatherLabel = "Lintasan Basah";
-      weatherGrip = 0.88;
-    } else if (rainRoll < rainChance + 14) {
-      weatherLabel = "Berawan";
-      weatherGrip = 0.97;
+    // Calculate real lap count
+    const realLaps = this.currentCircuit?.laps || 56;
+    if (this.sim.stage === "FP") {
+      this.sim.targetLaps = this.sim.targetLaps || 3;
+    } else if (["Q1", "Q2", "Q3"].includes(this.sim.stage)) {
+      this.sim.targetLaps = 2;
+    } else {
+      // RACE: use percentage of real laps
+      this.sim.targetLaps = Math.max(
+        5,
+        Math.round((realLaps * this.sim.raceDistancePercent) / 100)
+      );
     }
 
-    const modeEvolution = this.sim.mode === "FP" ? 0.94 : this.sim.mode === "Q" ? 1.04 : 1;
-    this.weather = weatherLabel;
-    this.sim.weatherLabel = weatherLabel;
-    this.sim.weatherGrip = weatherGrip;
-    this.sim.trackEvolution = this.clamp(((stats.track_evolution || 75) / 100) * modeEvolution, 0.82, 1.08);
+    // Initialize weather
+    this.weatherState = Weather.createForRace(trackChars, this.sim.targetLaps);
+
+    // Reset safety car
+    this.scState = Utils.SC_STATES.NONE;
+    this.scLapsRemaining = 0;
+    this.incidentLog = [];
+    this.sim.fastestLapId = null;
+    this.sim.fastestLapTime = Infinity;
+    this.sim.fastestSectors = { 1: Infinity, 2: Infinity, 3: Infinity };
+    this.sim.particles = [];
+    this.sim.leaderFinished = false;
+    this.sim.teamEvents = [];
   },
 
-  // FUNGSI BARU: Menyiapkan daftar pembalap di lintasan berdasarkan Sesi
   setupSessionGrid() {
     if (this.currentGrid.length === 0) {
       this.currentGrid = this.generateGrid();
     }
 
-    // Reset stats for all racers at the start of a session
-    this.currentGrid.forEach((driver, index) => {
+    // Reset all racers for session
+    this.currentGrid.forEach((driver) => {
       driver.progress = 0;
       driver.currentSpeed = 0;
-      driver.currentLap = 0; // Start at lap 0, increment on first finish line pass
+      driver.currentLap = 0;
       driver.totalTime = 0;
       driver.gapText = "-";
       driver.finished = false;
       driver.eliminated = false;
-      driver.tireWear = 100;
+      driver.dnf = false;
+      driver.dnfReason = "";
       driver.fuel = 100;
       driver.ersCharge = 100;
-      driver.ersActive = false;
+      driver.ersMode = "balanced";
       driver.isPitting = false;
       driver.pitRequested = false;
       driver.pitStopProgress = 0;
-      if (driver.isPlayer) {
-        driver.drivingStyle = this.sim.playerDrivingStyle; // Use global player setting
+      driver.pitCount = 0;
+      driver.lastLapTime = 0;
+      driver.bestLapTime = Infinity;
+      driver.lapStartTime = 0;
+      driver.currentSector = 1;
+      driver.sectorEntryTime = 0;
+      driver.lastSectorTimes = { 1: 0, 2: 0, 3: 0 };
+      driver.bestSectorTimes = { 1: Infinity, 2: Infinity, 3: Infinity };
+      driver.drsOpen = false;
+
+      // Tyre assignment
+      if (this.sim.mode === "RACE") {
+        driver.tyreCompound = driver.isPlayer
+          ? State.raceStartCompound || "medium"
+          : this.aiChooseStartCompound(driver);
       } else {
-        driver.drivingStyle = this.sim.stage === "Q1" || this.sim.stage === "Q2" ? "fast" : (this.sim.stage === "FP" ? "slow" : "stable");
+        driver.tyreCompound = ["Q1", "Q2", "Q3"].includes(this.sim.stage)
+          ? "soft"
+          : "medium";
+      }
+      driver.tyreWear = 0;
+      driver.tyreTemp = 70;
+      driver.tyreGrip = Utils.TYRE_COMPOUNDS[driver.tyreCompound]?.grip || 1.0;
+
+      if (driver.isPlayer) {
+        driver.drivingStyle = "stable";
+      } else {
+        driver.drivingStyle = ["Q1", "Q2", "Q3"].includes(this.sim.stage)
+          ? "fast"
+          : this.sim.stage === "FP"
+          ? "slow"
+          : "stable";
       }
     });
 
+    // Grid order based on session
     const weekend = this.getWeekendData(State.currentRound);
     if (this.sim.stage === "Q2" && weekend.q1) {
-      const q1Ids = weekend.q1.results.slice(0, 10).map((r) => r.id);
-      this.currentGrid.sort((a, b) => {
-        const indexA = q1Ids.indexOf(a.id);
-        const indexB = q1Ids.indexOf(b.id);
-        if (indexA === -1 && indexB === -1) return 0;
-        if (indexA === -1) return 1;
-        if (indexB === -1) return -1;
-        return indexA - indexB;
-      });
+      const q1Ids = weekend.q1.results.slice(0, 15).map((r) => r.id);
       this.currentGrid.forEach((racer) => {
         if (!q1Ids.includes(racer.id)) {
           racer.eliminated = true;
@@ -536,252 +465,481 @@ const Engine = {
           racer.totalTime = 99999;
         }
       });
+    } else if (this.sim.stage === "Q3" && weekend.q2) {
+      const q2Ids = weekend.q2.results.slice(0, 10).map((r) => r.id);
+      this.currentGrid.forEach((racer) => {
+        if (!q2Ids.includes(racer.id)) {
+          racer.eliminated = true;
+          racer.finished = true;
+          racer.totalTime = 99999;
+        }
+      });
     } else if (this.sim.mode === "RACE" && weekend.qualifyingGrid) {
-      const qualifiedDriverIds = weekend.qualifyingGrid.map((r) => r.id);
+      const qIds = weekend.qualifyingGrid.map((r) => r.id);
       this.currentGrid.sort((a, b) => {
-        const indexA = qualifiedDriverIds.indexOf(a.id);
-        const indexB = qualifiedDriverIds.indexOf(b.id);
-        return indexA - indexB;
+        const iA = qIds.indexOf(a.id),
+          iB = qIds.indexOf(b.id);
+        return iA - iB;
       });
     } else {
-      // For FP/Q or if no qualification results, shuffle for varied starting positions
       this.currentGrid.sort(() => Math.random() - 0.5);
     }
 
     this.addCommentary(this.getSessionIntroCommentary());
   },
 
+  aiChooseStartCompound(racer) {
+    // AI pick based on tyre management and track deg
+    const trackDeg =
+      this.currentCircuit?.track_characteristics?.tyre_degradation || 60;
+    if (racer.tyreManagement > 85 && trackDeg < 50) return "hard";
+    if (trackDeg > 75) return "medium";
+    return Math.random() > 0.4 ? "medium" : "soft";
+  },
+
   getSessionIntroCommentary() {
-    if (this.sim.stage === "FP") return "FP dimulai: tim fokus mengumpulkan data setup, long run, dan tyre behaviour.";
-    if (this.sim.stage === "Q1") return "Q1 dimulai: semua pembalap mengejar banker lap, hanya 10 tercepat lolos ke Q2.";
-    if (this.sim.stage === "Q2") return "Q2 dimulai: top 10 bertarung menentukan pole position dan starting grid.";
-    return "Race dimulai: strategi, tyre wear, pit stop, dan ERS akan menentukan hasil akhir.";
+    if (this.sim.stage === "FP")
+      return "📡 Free Practice dimulai — tim mengumpulkan data setup dan tyre behavior.";
+    if (this.sim.stage === "Q1")
+      return "🔴 Q1 dimulai — hanya 15 tercepat lolos ke Q2!";
+    if (this.sim.stage === "Q2")
+      return "🟡 Q2 dimulai — top 15 bertarung, 10 tercepat ke Q3!";
+    if (this.sim.stage === "Q3")
+      return "🟢 Q3 dimulai — final shootout untuk pole position!";
+    return `🏁 RACE ${this.sim.targetLaps} laps — ${Weather.getLabel(
+      this.weatherState
+    )} — Strategy is key!`;
   },
 
-  // ENGINE GAME LOOP: Mengatur Pergerakan & Render Grafis Mobil F1
-  loop() {
-    // Jika simulasi dihentikan, keluar dari loop
-    if (!this.sim.isRunning) return;
+  startSession(mode) {
+    if (this.sim.animationId) cancelAnimationFrame(this.sim.animationId);
+    this.sim.stage = mode;
+    this.sim.mode = ["Q1", "Q2", "Q3"].includes(mode) ? "Q" : mode;
+    this.sim.isRunning = true;
+    this.sim.currentLap = 0;
 
-    const canvas = this.ctx.canvas;
-    // Bersihkan kanvas untuk frame baru (anti bayangan mengekor)
-    this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+    this.setupSessionContext();
+    this.cacheDOMElements();
+    this.setupSessionGrid();
 
-    // Tentukan batas total lap berdasarkan jenis sesi
-    const maxLaps = this.sim.mode === "RACE" ? 5 : 1;
-    let sessionFinished = false;
-
-    // Ambil multiplier kecepatan (jaka ada fitur 1x, 2x, 3x speed, default ke 1)
-    const speedMultiplier = this.sim.speed || 1;
-
-    // 1. UPDATE LOGIC: Hitung Pergerakan Mobil
-    this.currentGrid.forEach((driver) => {
-      // Jika pembalap sudah finish, jangan gerakkan lagi
-      if (driver.lap > maxLaps) return;
-
-      // Rumus kecepatan berbasis rating pembalap + faktor keberuntungan acak
-      const baseSpeed = driver.rating / 18 + Math.random() * 1.5;
-      driver.x += baseSpeed * speedMultiplier;
-
-      // Akumulasi waktu balap (makin tinggi rating, waktu tambahannya makin kecil/cepat)
-      driver.totalTime += (100 - driver.rating) * 0.001 + Math.random() * 0.02;
-
-      // Cek jika mobil melewati garis finish di ujung kanan kanvas
-      if (driver.x > canvas.width - 60) {
-        driver.x = 50; // Kembalikan ke garis start di sebelah kiri
-        driver.lap++;
-
-        // Jika mobil player yang lewat, perbarui teks Lap di HUD HTML
-        if (driver.isPlayer) {
-          const lapHud = document.getElementById("hud-lap");
-          if (lapHud) lapHud.innerText = Math.min(driver.lap, maxLaps);
-        }
-
-        // Jika ada satu pembalap yang menyelesaikan lap maksimum, tandai sesi selesai
-        if (driver.lap > maxLaps) {
-          sessionFinished = true;
-        }
-      }
-    });
-
-    // 2. RENDER LOGIC: Menggambar Lintasan dan Mobil di Kanvas
-    this.currentGrid.forEach((driver, index) => {
-      // Menggambar garis lintasan abu-abu tipis untuk tiap mobil
-      this.ctx.strokeStyle = "#222533";
-      this.ctx.lineWidth = 1;
-      this.ctx.beginPath();
-      this.ctx.moveTo(40, driver.y + 4);
-      this.ctx.lineTo(canvas.width - 40, driver.y + 4);
-      this.ctx.stroke();
-
-      // Menggambar Mobil (Kotak Berwarna sesuai Tim)
-      this.ctx.fillStyle = driver.color;
-      this.ctx.fillRect(driver.x, driver.y, 16, 9); // Ukuran kotak mobil f1
-
-      // Menggambar Text Singkatan Nama Pembalap (Driver Code) di atas mobil
-      this.ctx.fillStyle = driver.isPlayer ? "var(--f1-neon)" : "#ffffff";
-      this.ctx.font = "bold 10px monospace";
-      this.ctx.fillText(driver.code, driver.x, driver.y - 4);
-    });
-
-    // 3. KONDISI SELESAI BALAPAN
-    if (sessionFinished) {
-      this.finishSession();
-      return; // Hentikan loop animasi
+    if (this.sim.domCache.simArea)
+      this.sim.domCache.simArea.classList.remove("hidden");
+    if (!this.sim.domCache.canvas) {
+      console.error("[F1] Canvas not found!");
+      return;
     }
 
-    // Perintahkan browser untuk memanggil fungsi loop ini lagi di frame berikutnya
-    this.sim.animationId = requestAnimationFrame(() => this.loop());
-  },
+    this.sim.ctx = this.sim.domCache.canvas.getContext("2d");
+    this.initTrack();
 
-  setDrivingStyle(style, btnElement, driverIndex = 0) {
-    this.sim.playerDrivingStyle = style;
-    const playerCars = this.currentGrid.filter((racer) => racer.isPlayer);
-    if (playerCars[driverIndex]) playerCars[driverIndex].drivingStyle = style;
-    UI.updatePlayerControlsHUD();
-  },
+    // Update HUD
+    if (this.sim.domCache.totalLapsHud)
+      this.sim.domCache.totalLapsHud.innerText = this.sim.targetLaps;
+    if (this.sim.domCache.lapHud) this.sim.domCache.lapHud.innerText = 1;
+    if (this.sim.domCache.sessionHud)
+      this.sim.domCache.sessionHud.innerText = mode;
+    if (this.sim.domCache.weatherHud)
+      this.sim.domCache.weatherHud.innerText = `${Weather.getLabel(
+        this.weatherState
+      )} — ${this.currentCircuit?.name || "Track"}`;
+    if (this.sim.domCache.liveHud)
+      this.sim.domCache.liveHud.classList.remove("hidden");
+    if (this.sim.domCache.playBtn) {
+      this.sim.domCache.playBtn.innerText = "PAUSE SIMULATION";
+      this.sim.domCache.playBtn.classList.add("btn-active");
+    }
 
-  pitStop(driverIndex = 0) {
-    const playerCar = this.currentGrid.filter((r) => r.isPlayer)[driverIndex];
-    if (playerCar && !playerCar.isPitting && !playerCar.pitRequested) {
-      playerCar.pitRequested = true;
-      this.addCommentary(`${playerCar.code} dipanggil masuk pit. Menunggu masuk pit lane.`);
+    if (typeof UI !== "undefined" && UI.updatePlayerControlsHUD)
       UI.updatePlayerControlsHUD();
-    }
+    this.gameLoop();
   },
 
+  startConfiguredSession(mode) {
+    const data = this.getWeekendData(State.currentRound);
+
+    if (mode === "FP") {
+      if (data.fp) {
+        UI.renderSessionResults(
+          data.fp.results,
+          `FP RESULTS - ${data.fp.laps} LAPS`
+        );
+        return;
+      }
+      const lapsInput = document.getElementById("input-fp-laps");
+      this.sim.targetLaps = Utils.clamp(
+        parseInt(lapsInput?.value, 10) || 3,
+        1,
+        10
+      );
+    }
+
+    if (mode === "Q1" && data.q1) return UI.openSessionPanel("Q");
+    if (mode === "Q2" && (!data.q1 || data.q2)) return UI.openSessionPanel("Q");
+    if (mode === "Q3" && (!data.q2 || data.q3)) return UI.openSessionPanel("Q");
+
+    if (mode === "RACE") {
+      if (data.race)
+        return UI.renderSessionResults(data.race.results, "RACE RESULTS");
+      if (!data.qualifyingComplete) return UI.openSessionPanel("RACE");
+      const pctInput = document.getElementById("input-race-pct");
+      this.sim.raceDistancePercent = Utils.clamp(
+        parseInt(pctInput?.value, 10) || 25,
+        10,
+        100
+      );
+    }
+
+    document.getElementById("session-results")?.classList.add("hidden");
+    this.activeRound = State.currentRound;
+    this.startSession(mode);
+  },
+
+  // =============================================
+  // CONTROLS
+  // =============================================
   toggleSim() {
     this.sim.isRunning = !this.sim.isRunning;
-    const btn = document.getElementById("btn-play");
-    btn.innerText = this.sim.isRunning
-      ? "PAUSE SIMULATION"
-      : "RESUME SIMULATION";
-    btn.classList.toggle("btn-active", this.sim.isRunning); // Set active class based on isRunning
-    if (this.sim.isRunning) this.gameLoop();
-  },
-
-  toggleERS(driverIndex = 0) {
-    // Player mengaktifkan ERS untuk mobil pembalap utamanya (indeks 0)
-    const playerCar = this.currentGrid.filter((r) => r.isPlayer)[driverIndex];
-    if (playerCar && playerCar.ersCharge > 0) {
-      playerCar.ersActive = !playerCar.ersActive;
-      this.addCommentary(`${playerCar.code} ${playerCar.ersActive ? "mengaktifkan" : "mematikan"} ERS.`);
-      UI.updatePlayerControlsHUD();
+    const btn =
+      this.sim.domCache.playBtn || document.getElementById("btn-play");
+    if (btn) {
+      btn.innerText = this.sim.isRunning
+        ? "PAUSE SIMULATION"
+        : "RESUME SIMULATION";
+      btn.classList.toggle("btn-active", this.sim.isRunning);
+      if (this.sim.isRunning) this.gameLoop();
     }
   },
 
-  setSimSpeed(multiplier, btnElement) {
-    this.sim.simSpeed = multiplier;
+  setSimSpeed(speed, btnElement) {
+    this.sim.simSpeed = speed;
     document
       .querySelectorAll(".btn-speed")
       .forEach((b) => b.classList.remove("btn-active"));
-    btnElement.classList.add("btn-active");
+    if (btnElement) btnElement.classList.add("btn-active");
   },
 
-  drawTrack() {
-    const ctx = this.sim.ctx;
-    const kp = this.keyPoints;
-
-    // Aspal Sirkuit Gelap
-    ctx.beginPath();
-    ctx.lineWidth = 26;
-    ctx.strokeStyle = "#1e213a";
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.moveTo(kp[0].x, kp[0].y);
-    for (let i = 1; i < kp.length; i++) ctx.lineTo(kp[i].x, kp[i].y);
-    ctx.closePath();
-    ctx.stroke();
-
-    // Garis Kerb Putih-Merah F1 di Sisi Dalam Lintasan
-    ctx.beginPath();
-    ctx.lineWidth = 22;
-    ctx.strokeStyle = "#2d324d";
-    ctx.moveTo(kp[0].x, kp[0].y);
-    for (let i = 1; i < kp.length; i++) ctx.lineTo(kp[i].x, kp[i].y);
-    ctx.closePath();
-    ctx.stroke();
-
-    // Garis Tengah Putih (Dotted)
-    ctx.beginPath();
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = "rgba(255,255,255,0.25)";
-    ctx.setLineDash([6, 12]);
-    ctx.moveTo(kp[0].x, kp[0].y);
-    for (let i = 1; i < kp.length; i++) ctx.lineTo(kp[i].x, kp[i].y);
-    ctx.closePath();
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // Garis Start/Finish Kotak-Kotak
-    ctx.save();
-    ctx.translate(650, 500);
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(-2, -13, 4, 26);
-    ctx.fillStyle = "#000";
-    ctx.fillRect(-2, -13, 2, 6);
-    ctx.fillRect(0, -7, 2, 6);
-    ctx.fillRect(-2, 0, 2, 6);
-    ctx.fillRect(0, 7, 2, 6);
-    ctx.restore();
-
-    // Teks Penanda Sektor Telemetri
-    ctx.fillStyle = "rgba(255,255,255,0.4)";
-    ctx.font = "bold 11px monospace";
-    ctx.fillText("SECTOR 1", 110, 240);
-    ctx.fillText("SECTOR 2", 400, 435);
-    ctx.fillText("SECTOR 3", 750, 260);
-
-    ctx.fillStyle = "rgba(0,255,135,0.16)";
-    ctx.fillRect(350, 490, 300, 18);
-    ctx.fillStyle = "rgba(255,255,255,0.12)";
-    ctx.fillRect(350, 456, 300, 10);
-    ctx.fillStyle = "rgba(255,255,255,0.72)";
-    ctx.font = "bold 10px monospace";
-    ctx.fillText("DRS / ERS DEPLOYMENT", 430, 485);
-    ctx.fillText("PIT LANE", 470, 452);
+  setDrivingStyle(style, btn, index) {
+    const playerCars = this.currentGrid.filter((r) => r.isPlayer);
+    if (playerCars[index]) playerCars[index].drivingStyle = style;
+    if (typeof UI !== "undefined" && UI.updatePlayerControlsHUD)
+      UI.updatePlayerControlsHUD();
   },
 
-  // MERENDER SELURUH 20 PION PEMBALAP DI KANVAS
-  drawCars() {
-    const ctx = this.sim.ctx;
+  pitStop(index, compound) {
+    const playerCars = this.currentGrid.filter((r) => r.isPlayer);
+    if (playerCars[index] && !playerCars[index].isPitting) {
+      playerCars[index].pitRequested = true;
+      playerCars[index].pitTargetCompound = compound || "medium";
+      this.sim.teamEvents.push({
+        lap: playerCars[index].currentLap,
+        text: `📻 BOX BOX BOX! Ganti ke ban ${compound.toUpperCase()}`,
+      });
+    }
+    if (typeof UI !== "undefined" && UI.updatePlayerControlsHUD)
+      UI.updatePlayerControlsHUD();
+  },
 
-    // Render dari posisi paling belakang agar pemimpin balapan selalu bertumpuk di paling atas luar
-    for (let i = this.currentGrid.length - 1; i >= 0; i--) {
-      const racer = this.currentGrid[i];
-      if (racer.finished) continue;
+  setERSMode(mode, index) {
+    const playerCars = this.currentGrid.filter((r) => r.isPlayer);
+    if (playerCars[index]) playerCars[index].ersMode = mode;
+    if (typeof UI !== "undefined" && UI.updatePlayerControlsHUD)
+      UI.updatePlayerControlsHUD();
+  },
 
-      const point = this.sim.trackPoints[racer.progress];
-      if (!point) continue;
-      const drawX = point.x;
-      const drawY = racer.isPitting ? point.y - 34 : point.y;
+  // =============================================
+  // TYRE PHYSICS (Point #4)
+  // =============================================
+  updateTyre(racer, trackChars) {
+    const compound = Utils.TYRE_COMPOUNDS[racer.tyreCompound];
+    if (!compound) return;
 
-      // Efek Aura Cahaya Glow (Pembalap Player dibuat bercahaya lebih besar)
-      ctx.beginPath();
-      ctx.arc(drawX, drawY, racer.isPlayer ? 11 : 7, 0, Math.PI * 2);
-      ctx.fillStyle = racer.ersActive
-        ? "rgba(0, 255, 135, 0.4)"
-        : `${racer.color}55`;
-      ctx.fill();
+    // Wear rate based on compound durability, track, driving style, dirty air
+    const trackDeg = (trackChars.tyre_degradation || 60) / 100;
+    const mgmtFactor = 1 - (racer.tyreManagement - 70) / 200; // Better management = less wear
+    const styleFactor =
+      racer.drivingStyle === "fast"
+        ? 1.35
+        : racer.drivingStyle === "slow"
+        ? 0.65
+        : 1.0;
+    const scFactor = this.scState !== Utils.SC_STATES.NONE ? 0.3 : 1.0;
 
-      // Inti Lingkaran Pion Mobil
-      ctx.beginPath();
-      ctx.arc(drawX, drawY, racer.isPlayer ? 7 : 5, 0, Math.PI * 2);
-      ctx.fillStyle = racer.ersActive ? "#00ff87" : racer.color;
-      ctx.strokeStyle = "#ffffff";
-      ctx.lineWidth = racer.isPlayer ? 2 : 1;
-      ctx.fill();
-      ctx.stroke();
+    const wearRate =
+      (0.15 / compound.durability) *
+      trackDeg *
+      mgmtFactor *
+      styleFactor *
+      scFactor;
+    racer.tyreWear = Utils.clamp(racer.tyreWear + wearRate, 0, 100);
 
-      // Berikan Teks Kode Driver (misal: VER, HAM, RUS) di dekat pion jika diinginkan
-      if (this.sim.simSpeed <= 2) {
-        ctx.fillStyle = "#ffffff";
-        ctx.font = racer.isPlayer ? "bold 9px Arial" : "8px Arial";
-        ctx.fillText(racer.code, drawX + 8, drawY + 3);
-      }
+    // Temperature model
+    const ambientTemp = this.weatherState?.trackTemp || 30;
+    const pushHeat =
+      racer.drivingStyle === "fast"
+        ? 3
+        : racer.drivingStyle === "slow"
+        ? -2
+        : 0;
+    const targetTemp =
+      compound.optimal_temp + pushHeat + (ambientTemp - 25) * 0.3;
+    racer.tyreTemp += (targetTemp - racer.tyreTemp) * 0.08;
+
+    // Grip calculation - nonlinear cliff!
+    let wearGrip;
+    if (racer.tyreWear < compound.cliff_point) {
+      wearGrip = 1.0 - racer.tyreWear * 0.002; // Gradual loss before cliff
+    } else {
+      // CLIFF! Sharp performance drop
+      const overCliff = racer.tyreWear - compound.cliff_point;
+      wearGrip = 1.0 - compound.cliff_point * 0.002 - overCliff * 0.012;
+    }
+
+    // Temperature grip - best near optimal
+    const tempDiff = Math.abs(racer.tyreTemp - compound.optimal_temp);
+    const tempGrip = 1.0 - tempDiff * 0.004;
+
+    // Weather grip
+    const weatherGrip = this.weatherState
+      ? Weather.getEffectiveGrip(this.weatherState, racer.tyreCompound)
+      : compound.grip;
+
+    racer.tyreGrip = Utils.clamp(weatherGrip * wearGrip * tempGrip, 0.4, 1.15);
+  },
+
+  // =============================================
+  // ERS PHYSICS (Point #5) - For ALL drivers
+  // =============================================
+  updateERS(racer, currentPoint) {
+    const ersMode = Utils.ERS_MODES[racer.ersMode] || Utils.ERS_MODES.balanced;
+    const isStraight = currentPoint?.zone?.includes("Straight");
+
+    if (isStraight && racer.ersCharge > 0) {
+      racer.ersCharge = Utils.clamp(
+        racer.ersCharge - ersMode.drain_rate,
+        0,
+        100
+      );
+    }
+
+    // Harvest in braking zones / corners
+    if (!isStraight) {
+      const harvestRate = ersMode.harvest * (racer.ersQuality / 100);
+      racer.ersCharge = Utils.clamp(racer.ersCharge + harvestRate, 0, 100);
+    }
+
+    // Auto-switch to harvest if battery empty
+    if (racer.ersCharge <= 1 && racer.ersMode === "deploy") {
+      racer.ersMode = "harvest";
     }
   },
 
+  // =============================================
+  // SAFETY CAR SYSTEM (Point #8)
+  // =============================================
+  checkIncidents(lap) {
+    if (this.sim.mode !== "RACE") return;
+    if (this.scState !== Utils.SC_STATES.NONE) {
+      this.scLapsRemaining--;
+      if (this.scLapsRemaining <= 0) {
+        this.scState = Utils.SC_STATES.NONE;
+        this.addCommentary("🟢 GREEN FLAG! SC in, race resumes!");
+      }
+      return;
+    }
+
+    const trackChars = this.currentCircuit?.track_characteristics || {};
+    const scProb = (trackChars.safety_car_probability || 30) / 100;
+    const vscProb = (trackChars.virtual_safety_car_probability || 35) / 100;
+    const rfProb = (trackChars.red_flag_probability || 5) / 100;
+
+    const roll = Math.random();
+    const lapFactor = 0.012; // Chance per lap
+
+    if (roll < rfProb * lapFactor * 0.3) {
+      this.scState = Utils.SC_STATES.RED_FLAG;
+      this.scLapsRemaining = Utils.randInt(2, 4);
+      this.addCommentary(
+        "🔴 RED FLAG! Insiden serius, balapan dihentikan sementara!"
+      );
+      this.incidentLog.push({ lap, type: "RED_FLAG" });
+    } else if (roll < scProb * lapFactor) {
+      this.scState = Utils.SC_STATES.SC;
+      this.scLapsRemaining = Utils.randInt(2, 5);
+      this.addCommentary(
+        "🟡 SAFETY CAR DEPLOYED! Semua mobil di belakang safety car!"
+      );
+      this.incidentLog.push({ lap, type: "SC" });
+    } else if (roll < vscProb * lapFactor) {
+      this.scState = Utils.SC_STATES.VSC;
+      this.scLapsRemaining = Utils.randInt(1, 3);
+      this.addCommentary("🟡 VIRTUAL SAFETY CAR! Semua harus perlambat!");
+      this.incidentLog.push({ lap, type: "VSC" });
+    }
+  },
+
+  // =============================================
+  // HUMAN ERROR SYSTEM (Point #13)
+  // =============================================
+  checkDriverError(racer) {
+    if (this.sim.mode !== "RACE" && this.sim.mode !== "Q") return 0;
+
+    const errorChance =
+      (100 - racer.driverStats.control) * 0.0003 +
+      (100 - racer.driverStats.accuracy) * 0.0002;
+    const pushFactor = racer.drivingStyle === "fast" ? 1.8 : 1.0;
+    const wearFactor = racer.tyreWear > 70 ? 1.5 : 1.0;
+
+    if (Math.random() < errorChance * pushFactor * wearFactor) {
+      const severity = Math.random();
+      if (severity < 0.6) {
+        // Lockup - small time loss
+        return 0.15;
+      } else if (severity < 0.85) {
+        // Missed apex - medium time loss
+        this.addCommentary(
+          `⚠️ ${racer.code} melewatkan apex! Kehilangan waktu!`
+        );
+        return 0.4;
+      } else if (severity < 0.97) {
+        // Snap oversteer - big time loss
+        this.addCommentary(
+          `⚠️ ${racer.code} oversteer! Hampir kehilangan kendali!`
+        );
+        return 1.0;
+      } else {
+        // DNF!
+        if (Math.random() < 0.3 && this.sim.mode === "RACE") {
+          racer.dnf = true;
+          racer.dnfReason = "Crash";
+          racer.finished = true;
+          racer.totalTime = 999999;
+          this.addCommentary(`💥 ${racer.code} OFF! Tabrakan - DNF!`);
+          if (racer.isPlayer)
+            this.sim.teamEvents.push({
+              lap: racer.currentLap,
+              text: "📻 KECELAKAAN! DNF. Mobil hancur!",
+            });
+          return 99;
+        }
+        if (racer.isPlayer)
+          this.sim.teamEvents.push({
+            lap: racer.currentLap,
+            text: "📻 Mobil keluar lintasan! Kita kehilangan waktu banyak!",
+          });
+        return 1.5;
+      }
+    }
+    return 0;
+  },
+
+  // Mechanical failure check
+  checkMechanicalDNF(racer) {
+    if (this.sim.mode !== "RACE") return;
+    const failRate = (100 - racer.reliabilityScore) * 0.00008;
+    if (Math.random() < failRate) {
+      racer.dnf = true;
+      racer.dnfReason = "Mechanical";
+      racer.finished = true;
+      racer.totalTime = 999999;
+      this.addCommentary(`💔 ${racer.code} RETIRED! Masalah mekanis - DNF!`);
+      if (racer.isPlayer)
+        this.sim.teamEvents.push({
+          lap: racer.currentLap,
+          text: "📻 ENGINE FAILURE! Kita harus berhenti. DNF.",
+        });
+    }
+  },
+
+  // =============================================
+  // AI STRATEGY ENGINE (Point #7)
+  // =============================================
+  aiDecisions(racer, currentPoint, lap) {
+    if (racer.isPlayer || racer.eliminated || racer.dnf) return;
+
+    // Tyre compound switch in weather change
+    const weatherSwitch = Weather.shouldSwitchToWets(
+      this.weatherState,
+      racer.tyreCompound
+    );
+    if (weatherSwitch && !racer.pitRequested) {
+      racer.pitRequested = true;
+      racer.pitTargetCompound = weatherSwitch;
+      return;
+    }
+
+    // Pit for worn tyres
+    const compound = Utils.TYRE_COMPOUNDS[racer.tyreCompound];
+    const effectiveCliff = compound ? compound.cliff_point : 30;
+    const shouldPit = racer.tyreWear > effectiveCliff + Utils.rand(-5, 10);
+
+    // Don't pit on last few laps unless desperate
+    const lapsRemaining = this.sim.targetLaps - lap;
+    if (shouldPit && lapsRemaining > 3 && !racer.pitRequested) {
+      racer.pitRequested = true;
+      // Choose next compound
+      if (["soft"].includes(racer.tyreCompound))
+        racer.pitTargetCompound = "hard";
+      else if (["medium"].includes(racer.tyreCompound))
+        racer.pitTargetCompound = "hard";
+      else racer.pitTargetCompound = "medium";
+    }
+
+    // Free pit stop under SC
+    if (
+      this.scState === Utils.SC_STATES.SC &&
+      racer.tyreWear > 20 &&
+      !racer.pitRequested &&
+      lapsRemaining > 5
+    ) {
+      racer.pitRequested = true;
+      racer.pitTargetCompound =
+        racer.tyreCompound === "soft" ? "medium" : "hard";
+    }
+
+    // Driving style AI
+    const isStraight = currentPoint?.zone?.includes("Straight");
+    if (this.scState !== Utils.SC_STATES.NONE) {
+      racer.drivingStyle = "slow";
+    } else if (racer.tyreWear > effectiveCliff) {
+      racer.drivingStyle = "slow"; // Tyres past cliff, nurse them
+    } else if (isStraight && racer.tyreWear < effectiveCliff * 0.7) {
+      racer.drivingStyle = "fast";
+    } else {
+      racer.drivingStyle = "stable";
+    }
+
+    // ERS management for AI
+    if (isStraight && racer.ersCharge > 25) {
+      racer.ersMode = "deploy";
+    } else if (!isStraight) {
+      racer.ersMode = racer.ersCharge < 40 ? "harvest" : "balanced";
+    }
+  },
+
+  // =============================================
+  // SECTOR-WEIGHTED LAP TIME (Point #1)
+  // =============================================
+  calculateSectorBonus(racer, sectorType) {
+    const mapping = {
+      top_speed: racer.topSpeed,
+      traction: racer.traction,
+      braking: racer.braking,
+      high_speed_cornering: racer.highSpeedCornering,
+      medium_speed_cornering: racer.mediumSpeedCornering,
+      low_speed_cornering: racer.lowSpeedCornering,
+      aero_balance: racer.aeroEfficiency,
+      mechanical_grip: racer.traction,
+      front_end: racer.lowSpeedCornering,
+      driver_precision: racer.driverSkill,
+      confidence: (racer.driverSkill + racer.setupMatch * 100) / 2,
+    };
+    const statValue = mapping[sectorType] || racer.carPace;
+    return (statValue - 75) * Utils.SCALE.car_performance;
+  },
+
+  // =============================================
+  // MAIN GAME LOOP
+  // =============================================
   gameLoop() {
     if (!this.sim.isRunning) {
       this.sim.animationId = requestAnimationFrame(() => this.gameLoop());
@@ -789,248 +947,372 @@ const Engine = {
     }
 
     const totalPoints = this.sim.trackPoints.length;
-    const stepsPerFrame = this.sim.simSpeed;
+    const maxLaps = this.sim.targetLaps;
+    const trackChars = this.currentCircuit?.track_characteristics || {};
+    const sectorWeights = this.currentCircuit?.sector_weights || {};
 
-    // Clear canvas for this frame
-    this.sim.ctx.clearRect(0, 0, 900, 550); // Using fixed canvas size now
-    this.drawTrack(); // Redraw track background
+    this.sim.ctx.clearRect(0, 0, 900, 550);
+    this.drawTrack();
 
     let sessionFinished = false;
-    const maxLaps = this.sim.targetLaps;
+    let lapChanged = false;
 
-    for (let step = 0; step < stepsPerFrame; step++) {
-      this.currentGrid.forEach((racer) => {
-        if (racer.finished || racer.currentLap > maxLaps) return;
+    for (let step = 0; step < this.sim.simSpeed; step++) {
+      for (let i = 0; i < this.currentGrid.length; i++) {
+        let racer = this.currentGrid[i];
+        if (
+          racer.finished ||
+          racer.eliminated ||
+          racer.dnf ||
+          racer.currentLap > maxLaps
+        )
+          continue;
 
-        // Handle Pit Stop
+        // === PIT STOP ===
         if (racer.isPitting) {
           racer.pitStopProgress--;
           if (racer.pitStopProgress <= 0) {
             racer.isPitting = false;
             racer.pitRequested = false;
-            racer.tireWear = 100;
-            racer.fuel = 100;
+            racer.tyreCompound = racer.pitTargetCompound || "medium";
+            racer.tyreWear = 0;
+            racer.tyreTemp = 70;
+            racer.tyreGrip =
+              Utils.TYRE_COMPOUNDS[racer.tyreCompound]?.grip || 1.0;
+            racer.pitCount++;
+            this.addCommentary(
+              `🔧 ${racer.code} keluar pit dengan ban ${
+                Utils.TYRE_COMPOUNDS[racer.tyreCompound]?.name || "Medium"
+              }`
+            );
             if (racer.isPlayer) {
-              racer.drivingStyle = this.sim.playerDrivingStyle; // Revert to player's chosen style
+              this.sim.teamEvents.push({
+                lap: racer.currentLap,
+                text: `📻 Pit stop selesai! Ban baru diatur.`,
+              });
             }
-            UI.updatePlayerControlsHUD();
+            if (typeof UI !== "undefined" && UI.updatePlayerControlsHUD)
+              UI.updatePlayerControlsHUD();
           }
-          // Don't move car during pit stop
-          return;
+          continue;
         }
 
         let currentPoint = this.sim.trackPoints[racer.progress];
-        if (!currentPoint) return; // Should not happen if trackPoints are properly initialized
+        if (!currentPoint) continue;
 
-        if (racer.pitRequested && currentPoint.zone.includes("Main Straight") && currentPoint.x >= 350 && currentPoint.x <= 650) {
+        // === AI DECISIONS ===
+        this.aiDecisions(racer, currentPoint, racer.currentLap);
+
+        // === PIT ENTRY ===
+        if (
+          racer.pitRequested &&
+          currentPoint.zone?.includes("Main Straight") &&
+          currentPoint.x >= 350 &&
+          currentPoint.x <= 650
+        ) {
           racer.isPitting = true;
           racer.pitStopProgress = racer.pitStopDuration;
           racer.currentSpeed = 0;
-          racer.drivingStyle = "slow";
-          racer.totalTime += this.rand(19, 24);
-          this.addCommentary(`${racer.code} masuk pit lane. Stop berlangsung, ban dan fuel disegarkan.`);
-          UI.updatePlayerControlsHUD();
-          return;
+          const pitLoss = trackChars.pit_lane_loss_seconds || 22;
+          racer.totalTime += pitLoss + Utils.rand(-0.5, 1.5);
+          this.addCommentary(`🔧 ${racer.code} masuk pit lane!`);
+          if (typeof UI !== "undefined" && UI.updatePlayerControlsHUD)
+            UI.updatePlayerControlsHUD();
+          continue;
         }
 
-        const circuitStats = (this.currentCircuit && this.currentCircuit.game_stats) || {};
-        const setup = circuitStats.setup || {};
-        const chassis = (racer.car && racer.car.chassis) || {};
-        const chassisStats = chassis.stats || {};
-        const aero = chassisStats.aerodynamics || {};
-        const mechanical = chassisStats.mechanical || {};
-        const perf = chassisStats.performance || {};
-        const puStats = (racer.car && racer.car.pu && racer.car.pu.stats) || {};
-        const isCorner = currentPoint.speed < 190;
-        const carMatch = isCorner
-          ? this.avg([aero.low_speed_cornering, aero.medium_speed_cornering, mechanical.traction, mechanical.kerb_riding])
-          : this.avg([perf.top_speed, perf.acceleration, puStats.internal_combustion && puStats.internal_combustion.horsepower, aero.drs_efficiency]);
-        const trackNeed = isCorner
-          ? this.avg([setup.downforce, setup.traction, setup.kerb_riding])
-          : this.avg([setup.top_speed, circuitStats.engine_stress, 65]);
-        const driverSegment = isCorner
-          ? this.avg([racer.driverSkill, racer.raceCraft, racer.tyreManagement])
-          : this.avg([racer.driverSkill, racer.ersQuality, racer.carPace]);
-        const behavior = chassis.car_behavior || {};
-        const modeBias = this.sim.mode === "Q"
-          ? this.avg([behavior.qualifying_bias, racer.driverSkill])
-          : this.sim.mode === "RACE"
-            ? this.avg([behavior.race_pace_bias, racer.raceCraft, racer.tyreManagement])
-            : this.avg([racer.staffBoost, racer.reliabilityScore]);
-        const paceIndex =
-          racer.paceStat * 0.38 +
-          driverSegment * 0.22 +
-          carMatch * 0.22 +
-          modeBias * 0.1 +
-          (100 - Math.abs(trackNeed - carMatch)) * 0.08 +
-          (this.sim.mode === "Q" ? this.rand(-2.6, 2.4) : this.rand(-1.4, 1.4)) +
-          Math.sin((racer.totalTime + racer.progress) * 0.017) * this.rand(0.2, 1.1);
+        // === TYRE & ERS UPDATE ===
+        this.updateTyre(racer, trackChars);
+        this.updateERS(racer, currentPoint);
 
-        let baseSpeed = currentPoint.speed * this.sim.weatherGrip * this.sim.trackEvolution;
-        baseSpeed *= this.clamp(0.78 + paceIndex / 410, 0.86, 1.18);
+        // === SECTOR BONUS ===
+        const sectorKey = `sector_${currentPoint.sector}`;
+        const sectorType =
+          sectorWeights[sectorKey] ||
+          sectorWeights[`sector${currentPoint.sector}`] ||
+          "top_speed";
+        const sectorBonus = this.calculateSectorBonus(racer, sectorType);
 
-        let tireConsumptionRate = 0.0055 * (1 + ((circuitStats.tyre_wear || 70) - 60) / 95);
-        let fuelConsumptionRate = 0.0042 * (1 + ((circuitStats.fuel_consumption || 65) - 60) / 100);
-        tireConsumptionRate *= 1 - this.clamp((racer.tyreManagement - 72) / 240, -0.08, 0.12);
-        fuelConsumptionRate *= 1 - this.clamp((racer.fuelEfficiency - 72) / 260, -0.07, 0.12);
+        // === PACE CALCULATION (Simulation Pipeline) ===
+        // 1. Base speed from track point
+        let baseSpeed = currentPoint.speed;
 
-        if (this.sim.stage === "FP") {
-          baseSpeed *= this.clamp(0.93 + racer.staffBoost / 1800 + this.rand(-0.015, 0.015), 0.92, 1.01);
-          tireConsumptionRate *= 0.82;
-          fuelConsumptionRate *= 0.9;
-        } else if (this.sim.stage === "Q1" || this.sim.stage === "Q2") {
-          baseSpeed *= this.clamp(1.02 + racer.driverSkill / 2200 + this.rand(-0.018, 0.02), 1.01, 1.08);
-          tireConsumptionRate *= 1.25;
-          fuelConsumptionRate *= 0.72;
+        // 2. Weather & track evolution
+        baseSpeed *=
+          (this.weatherState?.gripModifier || 1.0) *
+          (this.weatherState?.trackEvolution || 1.0);
+
+        // 3. Car + Driver pace
+        const paceModifier = 0.78 + racer.paceStat / 410;
+        baseSpeed *= Utils.clamp(paceModifier, 0.85, 1.18);
+
+        // 4. Tyre grip
+        baseSpeed *= racer.tyreGrip;
+
+        // 5. Setup match bonus
+        baseSpeed *= 1 + (racer.setupMatch - 0.5) * 0.06;
+
+        // 6. ERS boost on straights
+        const ersMode =
+          Utils.ERS_MODES[racer.ersMode] || Utils.ERS_MODES.balanced;
+        const isStraight = currentPoint.zone?.includes("Straight");
+        if (isStraight && racer.ersCharge > 5) {
+          baseSpeed *= 1 + ersMode.speed_boost * (racer.ersQuality / 100);
         }
 
-        if (racer.drivingStyle === "fast") {
-          baseSpeed *= 1.055;
-          tireConsumptionRate *= 1.48;
-          fuelConsumptionRate *= 1.34;
-        } else if (racer.drivingStyle === "slow") {
-          baseSpeed *= 0.94;
-          tireConsumptionRate *= 0.68;
-          fuelConsumptionRate *= 0.75;
-        }
+        // 7. Sector bonus
+        baseSpeed += sectorBonus * 2;
 
-        // ERS impact (only for player and on straights)
-        if (
-          racer.isPlayer &&
-          racer.ersActive &&
-          currentPoint.zone.includes("Straight")
-        ) {
-          baseSpeed *= 1 + this.clamp(racer.ersQuality / 900, 0.08, 0.14);
-          tireConsumptionRate *= 1.22;
-          fuelConsumptionRate *= 1.18;
-          racer.ersCharge = Math.max(0, racer.ersCharge - this.clamp(0.22 - racer.ersQuality / 1200, 0.1, 0.18));
-          if (racer.ersCharge <= 0) racer.ersActive = false; // Turn off ERS if depleted
-        } else if (racer.isPlayer && !racer.ersActive) {
-          racer.ersCharge = Math.min(100, racer.ersCharge + this.clamp(racer.ersQuality / 2500, 0.025, 0.045));
-        }
-
-        // Tire wear impact on speed
-        if (racer.tireWear < 50) baseSpeed *= 1 - (50 - racer.tireWear) / 100; // Reduce speed by up to 50%
-        if (racer.tireWear < 10) baseSpeed *= 0.5; // Significantly slower on very low tires
-
-        // Fuel level impact on speed
-        if (racer.fuel < 20) baseSpeed *= 0.9; // 10% slower on low fuel
-        if (racer.fuel < 5) baseSpeed *= 0.7; // Significantly slower on very low fuel
-
-        if (this.weather !== "Cerah" && this.weather !== "Berawan") {
-          const wetSkill = this.avg([racer.raceCraft, racer.driverSkill, behavior.wet_weather_performance]);
-          baseSpeed *= this.clamp(0.9 + wetSkill / 850, 0.9, 1.02);
-          tireConsumptionRate *= this.weather === "Hujan Lebat" ? 0.78 : 0.9;
-        }
-
-        const reliabilityRisk = (100 - racer.reliabilityScore + (circuitStats.engine_stress || 60) * 0.28 + (circuitStats.brake_stress || 60) * 0.22) / 280000;
-        const mistakeRisk = (100 - this.avg([racer.driverSkill, racer.raceCraft, racer.staffBoost]) + (this.weather === "Hujan Lebat" ? 18 : 0)) / 160000;
-        if (Math.random() < reliabilityRisk) {
-          baseSpeed *= this.rand(0.72, 0.9);
-          racer.totalTime += this.rand(0.4, 1.6);
-        }
-        if (Math.random() < mistakeRisk) {
-          baseSpeed *= this.rand(0.58, 0.86);
-          racer.tireWear = Math.max(0, racer.tireWear - this.rand(0.3, 1.2));
-          racer.totalTime += this.rand(0.7, 2.4);
-        }
-
-        // Smooth acceleration/deceleration
-        racer.currentSpeed += (baseSpeed - racer.currentSpeed) * 0.05; // Smoother transition
-
-        // Update progress on track
-        const speedFactor = racer.currentSpeed / 100;
-        let stepMove = Math.max(1, Math.round(speedFactor * 1.35));
-        const nextProgress = racer.progress + stepMove;
-        racer.progress = nextProgress % totalPoints;
-
-        // Update total time based on actual speed
-        racer.totalTime += 0.03 / Math.max(0.45, racer.currentSpeed / 190);
-
-        // Consume tire and fuel
-        racer.tireWear = Math.max(0, racer.tireWear - tireConsumptionRate);
-        racer.fuel = Math.max(0, racer.fuel - fuelConsumptionRate);
-
-        // Check for lap completion (simplified: if progress resets)
-        if (nextProgress >= totalPoints && racer.currentLap < maxLaps) {
-          // Detect if a full loop was made
-          racer.currentLap++;
-          racer.lastLapTime = racer.totalTime; // Store last lap time if needed
-
-          // Update HUD for player's current lap
-          if (racer.isPlayer) {
-            document.getElementById("hud-lap").innerText = Math.min(
-              racer.currentLap + 1,
-              maxLaps
-            );
-            this.addCommentary(`${racer.code} menyelesaikan lap ${racer.currentLap}. Pace: ${this.formatRaceTime(racer.totalTime)}.`);
+        // 8. Dirty air / DRS / Slipstream (Point #9)
+        racer.drsOpen = false;
+        const prevRacer = i > 0 ? this.currentGrid[i - 1] : null;
+        if (prevRacer && !prevRacer.finished && !prevRacer.isPitting) {
+          const gap = racer.totalTime - prevRacer.totalTime;
+          if (gap < 2.0 && gap > 0) {
+            // Slipstream (up to 2s gap) boosts straight speed
+            if (isStraight) {
+              baseSpeed *= 1 + 0.02 * (1 - gap / 2.0);
+            }
+            // Dirty air penalty in corners
+            if (!isStraight) {
+              const dirtyAirPenalty =
+                ((trackChars.dirty_air_severity || 50) / 100) *
+                (1 - gap / 2.0) *
+                0.04;
+              baseSpeed *= 1 - dirtyAirPenalty;
+            }
+            // DRS boost on straights
+            if (
+              isStraight &&
+              gap < 1.0 &&
+              racer.currentLap >= 1 &&
+              this.sim.mode === "RACE" &&
+              this.scState === Utils.SC_STATES.NONE
+            ) {
+              const drsBoost =
+                ((((trackChars.drs_effectiveness || 70) / 100) *
+                  racer.drsEfficiency) /
+                  100) *
+                0.035;
+              baseSpeed *= 1 + drsBoost;
+              racer.drsOpen = true;
+            }
           }
         }
 
-        if (racer.currentLap >= maxLaps) {
-          // All laps completed and back to start line
+        // 9. Driving style
+        if (racer.drivingStyle === "fast") {
+          baseSpeed *= 1.04;
+        } else if (racer.drivingStyle === "slow") {
+          baseSpeed *= 0.94;
+        }
+
+        // 10. Safety Car
+        if (this.scState === Utils.SC_STATES.SC) {
+          baseSpeed = Math.min(baseSpeed, currentPoint.speed * 0.5);
+        } else if (this.scState === Utils.SC_STATES.VSC) {
+          baseSpeed *= 0.7;
+        } else if (this.scState === Utils.SC_STATES.RED_FLAG) {
+          baseSpeed = 0;
+        }
+
+        // 11. Wet skill bonus for drivers with rain_master trait
+        if (
+          this.weatherState?.condition !== "dry" &&
+          racer.traits.includes("rain_master")
+        ) {
+          baseSpeed *= 1.015;
+        }
+
+        // 12. Human error
+        const errorLoss = this.checkDriverError(racer);
+        if (racer.dnf) continue;
+        if (errorLoss > 0) {
+          racer.totalTime += errorLoss * 0.001; // Small penalty
+          // Spawn lockup smoke if large enough error
+          if (errorLoss > 0.1 && errorLoss < 2) {
+            if (racer.isPlayer && Math.random() > 0.5)
+              this.sim.teamEvents.push({
+                lap: racer.currentLap,
+                text: "📻 Ban mengunci! Hati-hati jaga suhu ban!",
+              });
+            for (let p = 0; p < 6; p++) {
+              this.sim.particles.push({
+                x: currentPoint.x + Utils.rand(-4, 4),
+                y: currentPoint.y + Utils.rand(-4, 4),
+                life: 1.0,
+                vx: Utils.rand(-0.8, 0.8),
+                vy: Utils.rand(-0.8, 0.8),
+              });
+            }
+          }
+        }
+
+        // Check Sector Crossing
+        if (currentPoint.sector !== racer.currentSector) {
+          const timeInSector = racer.totalTime - racer.sectorEntryTime;
+          const s = racer.currentSector;
+          racer.lastSectorTimes[s] = timeInSector;
+          if (timeInSector < racer.bestSectorTimes[s])
+            racer.bestSectorTimes[s] = timeInSector;
+          if (timeInSector < this.sim.fastestSectors[s])
+            this.sim.fastestSectors[s] = timeInSector;
+          racer.currentSector = currentPoint.sector || 1;
+          racer.sectorEntryTime = racer.totalTime;
+        }
+
+        // === FUEL CONSUMPTION ===
+        let fuelRate =
+          0.003 *
+          (1 + ((trackChars.fuel_consumption || 65) - 60) / 100) *
+          (1 - Utils.clamp((racer.fuelEfficiency - 72) / 260, -0.07, 0.12));
+        if (racer.drivingStyle === "fast") fuelRate *= 1.3;
+        else if (racer.drivingStyle === "slow") fuelRate *= 0.7;
+        if (this.scState !== Utils.SC_STATES.NONE) fuelRate *= 0.3;
+        racer.fuel = Math.max(0, racer.fuel - fuelRate);
+
+        // Low fuel penalty
+        if (racer.fuel < 10) baseSpeed *= 0.92;
+        if (racer.fuel <= 0) {
+          baseSpeed *= 0.6;
+        }
+
+        // === MOVEMENT ===
+        racer.currentSpeed += (baseSpeed - racer.currentSpeed) * 0.06;
+        const speedFactor = racer.currentSpeed / 100;
+        const stepMove = Math.max(1, Math.round(speedFactor * 1.35));
+        const nextProgress = racer.progress + stepMove;
+
+        racer.progress = nextProgress % totalPoints;
+        racer.totalTime += 0.03 / Math.max(0.45, racer.currentSpeed / 190);
+
+        // Randomness layer
+        racer.totalTime += Utils.rand(-0.0002, 0.0002);
+
+        // === LAP COMPLETION ===
+        if (nextProgress >= totalPoints && racer.currentLap < maxLaps) {
+          racer.currentLap++;
+          const lapTime = racer.totalTime - racer.lapStartTime;
+          racer.lastLapTime = lapTime;
+          racer.lapStartTime = racer.totalTime;
+
+          if (lapTime < racer.bestLapTime) racer.bestLapTime = lapTime;
+
+          // Track fastest lap
+          if (lapTime < this.sim.fastestLapTime && racer.currentLap > 1) {
+            this.sim.fastestLapTime = lapTime;
+            this.sim.fastestLapId = racer.id;
+            if (racer.isPlayer)
+              this.sim.teamEvents.push({
+                lap: racer.currentLap,
+                text: `📻 FASTEST LAP! Waktu: ${Utils.formatRaceTime(lapTime)}`,
+              });
+          }
+
+          lapChanged = true;
+
+          if (racer.isPlayer) {
+            if (this.sim.domCache.lapHud)
+              this.sim.domCache.lapHud.innerText = Math.min(
+                racer.currentLap + 1,
+                maxLaps
+              );
+          }
+
+          // Mechanical DNF check at lap completion
+          this.checkMechanicalDNF(racer);
+        }
+
+        if (
+          racer.currentLap >= maxLaps ||
+          (this.sim.leaderFinished && nextProgress >= totalPoints)
+        ) {
           racer.finished = true;
           racer.progress = 0;
+          this.sim.leaderFinished = true;
         }
+      }
+    }
+
+    // === WEATHER UPDATE per lap ===
+    const playerCar = this.currentGrid.find((r) => r.isPlayer && !r.finished);
+    if (playerCar && lapChanged) {
+      Weather.updateLap(this.weatherState, playerCar.currentLap);
+      this.checkIncidents(playerCar.currentLap);
+
+      if (this.sim.domCache.weatherHud) {
+        this.sim.domCache.weatherHud.innerText = `${Weather.getLabel(
+          this.weatherState
+        )} — ${this.currentCircuit?.name || "Track"}`;
+      }
+    }
+
+    // === UPDATE TELEMETRY ===
+    if (playerCar) {
+      const activePoint = this.sim.trackPoints[playerCar.progress];
+      const dom = this.sim.domCache;
+      if (dom.telemetryLap)
+        dom.telemetryLap.innerText = `${playerCar.currentLap} / ${maxLaps}`;
+      if (dom.telemetrySpeed)
+        dom.telemetrySpeed.innerText = `${Math.round(
+          playerCar.currentSpeed
+        )} km/h`;
+      if (dom.telemetrySector && activePoint)
+        dom.telemetrySector.innerText = `Sector ${activePoint.sector}`;
+      if (dom.telemetryZone && activePoint)
+        dom.telemetryZone.innerText = `${activePoint.zone}`;
+      if (dom.telemetryErs)
+        dom.telemetryErs.innerText = `${Math.round(playerCar.ersCharge)}%`;
+    }
+
+    // === SORT STANDINGS ===
+    this.currentGrid.sort((a, b) => {
+      if (a.dnf !== b.dnf) return a.dnf ? 1 : -1;
+      if (a.eliminated !== b.eliminated) return a.eliminated ? 1 : -1;
+      if (a.finished !== b.finished) return a.finished ? -1 : 1;
+      if (a.currentLap !== b.currentLap) return b.currentLap - a.currentLap;
+      if (!a.finished && !b.finished && a.progress !== b.progress)
+        return b.progress - a.progress;
+      return a.totalTime - b.totalTime;
+    });
+
+    // === UPDATE GAPS ===
+    // === UPDATE GAPS AND STANDINGS ===
+    const leader = this.currentGrid[0];
+    if (leader) {
+      this.currentGrid.forEach((racer, idx) => {
+        racer.prevPosition = racer.position || idx + 1;
+        racer.position = idx + 1;
+
+        if (
+          racer.isPlayer &&
+          racer.position < racer.prevPosition &&
+          racer.currentLap > 0
+        ) {
+          this.sim.teamEvents.push({
+            lap: racer.currentLap,
+            text: `📻 BAGUS! Kamu naik ke P${racer.position}`,
+          });
+        }
+
+        if (racer.dnf) racer.gapText = "DNF";
+        else if (racer.eliminated) racer.gapText = "OUT";
+        else if (idx === 0) racer.gapText = "LEADER";
+        else
+          racer.gapText = Utils.formatGap(racer.totalTime - leader.totalTime);
       });
     }
 
-    // Check if session finished (all cars finished or all player cars finished in race mode)
-    const allCarsFinished = this.currentGrid.every((r) => r.finished);
-    const playerCarsFinished = this.currentGrid
-      .filter((r) => r.isPlayer)
-      .every((r) => r.finished);
-
-    if (this.sim.mode === "RACE" ? playerCarsFinished : allCarsFinished) {
-      sessionFinished = true;
-    }
-
-    // Update Telemetry HUD for player's car
-    const playerCar = this.currentGrid.find((r) => r.isPlayer);
-    if (playerCar) {
-      const activePoint = this.sim.trackPoints[playerCar.progress];
-      const lapEl = document.getElementById("telemetry-lap");
-      if (lapEl) lapEl.innerText = `${playerCar.currentLap} / ${maxLaps}`;
-      
-      const speedEl = document.getElementById("telemetry-speed");
-      if (speedEl) speedEl.innerText = `${Math.round(playerCar.currentSpeed)} km/h`;
-      
-      const sectorEl = document.getElementById("telemetry-sector");
-      if (sectorEl) sectorEl.innerText = `Sector ${activePoint.sector}`;
-      
-      const zoneEl = document.getElementById("telemetry-zone");
-      if (zoneEl) zoneEl.innerText = `${activePoint.zone} | ${this.weather}`;
-      
-      const tireEl = document.getElementById("telemetry-tire");
-      const fuelEl = document.getElementById("telemetry-fuel");
-      if (tireEl) tireEl.innerText = `${Math.round(playerCar.tireWear)}%`;
-      if (fuelEl) fuelEl.innerText = `${Math.round(playerCar.fuel)}%`;
-
-      // Update player controls HUD for tire/fuel status
-      UI.updatePlayerControlsHUD();
-    }
-
-    // Sort and render live standings
-      this.currentGrid.sort((a, b) => {
-      if (a.eliminated && !b.eliminated) return 1;
-      if (!a.eliminated && b.eliminated) return -1;
-      // Prioritize finished cars
-      if (a.finished && !b.finished) return -1;
-      if (!a.finished && b.finished) return 1;
-
-      // Then by laps completed (more laps = higher position)
-      if (b.currentLap !== a.currentLap) return b.currentLap - a.currentLap;
-
-      if (!a.finished && !b.finished && b.progress !== a.progress) return b.progress - a.progress;
-
-      // Finally by total time (less time = higher position)
-      return a.totalTime - b.totalTime;
-    });
-    this.updateGaps();
-    UI.renderLiveStandings(this.currentGrid);
-
-    // Render cars on track
+    // === RENDER ===
+    if (typeof UI !== "undefined" && UI.renderLiveStandings)
+      UI.renderLiveStandings(this.currentGrid);
     this.drawCars();
+
+    // === CHECK SESSION END ===
+    const allDone = this.currentGrid.every(
+      (r) => r.finished || r.eliminated || r.dnf
+    );
+    sessionFinished = allDone;
 
     if (sessionFinished) {
       this.finishSession();
@@ -1040,120 +1322,247 @@ const Engine = {
     this.sim.animationId = requestAnimationFrame(() => this.gameLoop());
   },
 
-  updateGaps() {
-    const leader = this.currentGrid[0];
-    if (!leader) return;
-
-    this.currentGrid.forEach((racer, index) => {
-      if (racer.finished) {
-        racer.gapText = index === 0 ? "WINNER" : "+" + Math.max(0, racer.totalTime - leader.totalTime).toFixed(1) + "s";
-      } else if (index === 0) {
-        racer.gapText = "LEADER";
-      } else {
-        const lapGap = leader.currentLap - racer.currentLap;
-        racer.gapText = lapGap > 0 ? `+${lapGap} LAP` : "+" + Math.max(0, racer.totalTime - leader.totalTime).toFixed(1) + "s";
-      }
-    });
-  },
-
+  // =============================================
+  // SESSION FINISH & RESULTS
+  // =============================================
   finishSession() {
     this.sim.isRunning = false;
     if (this.sim.animationId) cancelAnimationFrame(this.sim.animationId);
 
-    this.updateGaps();
-    const activeResults = this.currentGrid.filter((racer) => !racer.eliminated);
-    let results = activeResults.map((racer, index) => ({
-      id: racer.id,
-      pos: index + 1,
-      name: racer.name,
-      code: racer.code,
-      isPlayer: racer.isPlayer,
-      time: this.sim.mode === "Q" || this.sim.mode === "FP"
-        ? this.formatRaceTime(racer.totalTime)
-        : (index === 0 ? this.formatRaceTime(racer.totalTime) : racer.gapText),
+    // Final sort
+    this.currentGrid.sort((a, b) => {
+      if (a.dnf !== b.dnf) return a.dnf ? 1 : -1;
+      if (a.eliminated !== b.eliminated) return a.eliminated ? 1 : -1;
+      return a.totalTime - b.totalTime;
+    });
+
+    const results = this.currentGrid.map((r, i) => ({
+      pos: i + 1,
+      id: r.id,
+      name: r.name,
+      code: r.code,
+      teamName: r.teamName,
+      time: r.dnf ? "DNF" : r.gapText,
+      isPlayer: r.isPlayer,
+      compound: r.tyreCompound,
+      pitCount: r.pitCount,
+      bestLap:
+        r.bestLapTime < Infinity ? Utils.formatRaceTime(r.bestLapTime) : "-",
+      fastestLap: r.id === this.sim.fastestLapId,
+      dnf: r.dnf,
+      dnfReason: r.dnfReason,
     }));
 
-    const weekend = this.getWeekendData(this.activeRound || State.currentRound);
-    const meta = {
-      weather: this.weather,
-      circuit: this.currentCircuit ? this.currentCircuit.name : "Track",
-      laps: this.sim.targetLaps,
-      completedAt: new Date().toISOString(),
-    };
+    const weekend = this.getWeekendData(State.currentRound);
 
     if (this.sim.stage === "FP") {
-      weekend.fp = { ...meta, results };
-      this.addCommentary("FP selesai: data setup dan tyre behaviour sudah dikumpulkan.");
-      UI.renderSessionResults(results, `FP RESULTS - ${meta.laps} LAPS`);
-      this.appendNextSessionButton("NEXT: Q1");
+      weekend.fp = { laps: this.sim.targetLaps, results };
     } else if (this.sim.stage === "Q1") {
-      weekend.q1 = { ...meta, results };
-      this.addCommentary("Q1 selesai: top 10 maju ke Q2, sisanya tereliminasi.");
-      UI.renderSessionResults(results, "Q1 RESULTS - TOP 10 ADVANCE TO Q2");
-      this.appendNextSessionButton("NEXT: Q2");
-    } else if (this.sim.stage === "Q2") {
-      const q1Eliminated = weekend.q1 ? weekend.q1.results.slice(10) : [];
-      results = results.concat(q1Eliminated).map((r, index) => ({ ...r, pos: index + 1 }));
-      weekend.q2 = { ...meta, results: results.slice(0, 10) };
+      weekend.q1 = { results };
       weekend.qualifyingGrid = results;
+      this.addCommentary("Q1 selesai! Bottom 5 tersingkir.");
+    } else if (this.sim.stage === "Q2") {
+      weekend.q2 = { results };
+      weekend.qualifyingGrid = [
+        ...results.filter((r) => !r.dnf).slice(0, 10),
+        ...weekend.q1.results.slice(10),
+      ];
+      this.addCommentary("Q2 selesai! Top 10 maju ke Q3!");
+    } else if (this.sim.stage === "Q3") {
+      weekend.q3 = { results };
+      const q3Top10 = results.filter((r) => !r.dnf).slice(0, 10);
+      weekend.qualifyingGrid = [
+        ...q3Top10,
+        ...(weekend.q2 ? weekend.q2.results.slice(10, 15) : []),
+        ...weekend.q1.results.slice(15),
+      ];
       weekend.qualifyingComplete = true;
-      State.qualificationResults = results;
-      this.addCommentary(`${results[0].code} mengambil pole position. Grid race sudah terkunci.`);
-      UI.renderSessionResults(results, "QUALIFYING FINAL RESULTS");
-      this.appendNextSessionButton("NEXT: RACE");
-    } else if (this.sim.stage === "RACE") {
-      const rewards = this.calculatePlayerRewards(results);
-      State.budget += rewards.money;
-      weekend.race = { ...meta, results, rewards };
-      this.addCommentary(`${results[0].code} menang. Tim kamu mendapat ${rewards.points} poin dan hadiah Rp ${rewards.money.toLocaleString("id-ID")}.`);
-      UI.renderSessionResults(results, `RACE RESULTS - POINTS ${rewards.points} - Rp ${rewards.money.toLocaleString("id-ID")}`);
-      const resultTable = document.getElementById("result-table");
-      if (resultTable) {
-        resultTable.innerHTML += `<div class="weekend-reward-box"><strong>Race Weekend Complete</strong><span>Poin didapatkan: ${rewards.points}</span><span>Hadiah: Rp ${rewards.money.toLocaleString("id-ID")}</span></div>`;
-      }
-      const nextContainer = document.getElementById("session-next-action-container");
-      if (nextContainer) {
-        nextContainer.innerHTML = `<div class="session-next-action"><button onclick="UI.initRaceWeekend()">NEXT SCHEDULE</button></div>`;
-      }
-      State.currentRound += 1;
-      UI.updateTopBar();
-      UI.setupHQ();
+      this.addCommentary("🏁 Qualifying selesai! Grid race sudah ditentukan!");
+    } else if (this.sim.mode === "RACE") {
+      // Award points!
+      const pointsAwarded = {};
+      results.forEach((r) => {
+        if (r.dnf) return;
+        const pts = Utils.POINTS_TABLE[r.pos - 1] || 0;
+        const flPt = r.fastestLap && r.pos <= 10 ? Utils.FASTEST_LAP_POINT : 0;
+        const totalPts = pts + flPt;
+        if (totalPts > 0) {
+          pointsAwarded[r.id] = totalPts;
+          if (!State.driverPoints) State.driverPoints = {};
+          State.driverPoints[r.id] = (State.driverPoints[r.id] || 0) + totalPts;
+        }
+      });
+
+      // Prize money
+      const prizeMoney = this.calculatePrizeMoney(results);
+      State.budget = (State.budget || 0) + prizeMoney;
+
+      weekend.race = {
+        results,
+        rewards: { points: pointsAwarded, money: prizeMoney },
+      };
+      this.addCommentary(`🏆 Race selesai! Poin diberikan!`);
+
+      // Advance season
+      State.currentRound++;
     }
 
     this.saveGame();
-    UI.setupRaceSessionButtons();
+    this.currentGrid = []; // Reset grid for next session
 
-    const playBtn = document.getElementById("btn-play");
-    if (playBtn) {
-      playBtn.innerText = "SESSION FINISHED";
-      playBtn.classList.remove("btn-active");
+    if (typeof UI !== "undefined") {
+      if (this.sim.mode === "RACE") {
+        UI.renderRaceDebrief(results, weekend.race.rewards);
+      } else {
+        UI.openSessionPanel(this.sim.mode === "Q" ? "Q" : this.sim.mode);
+      }
     }
   },
 
-  formatRaceTime(seconds) {
-    const mins = Math.floor(seconds / 60);
-    const secs = (seconds % 60).toFixed(3).padStart(6, "0");
-    return `${mins}:${secs}`;
+  calculatePrizeMoney(results) {
+    const playerResults = results.filter((r) => r.isPlayer && !r.dnf);
+    let total = 0;
+    playerResults.forEach((r) => {
+      if (r.pos <= 3) total += 15000000000;
+      else if (r.pos <= 6) total += 8000000000;
+      else if (r.pos <= 10) total += 4000000000;
+      else total += 1500000000;
+    });
+    return total;
   },
 
-  calculatePlayerRewards(results) {
-    const pointsTable = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1];
-    const playerResults = results.filter((result) => result.isPlayer);
-    if (!State.driverPoints) State.driverPoints = {};
-    const points = playerResults.reduce((sum, result) => {
-      const earned = pointsTable[result.pos - 1] || 0;
-      State.driverPoints[result.id] = (State.driverPoints[result.id] || 0) + earned;
-      return sum + earned;
-    }, 0);
-    const bestPos = Math.min(...playerResults.map((result) => result.pos));
-    const money = Math.max(5000000000, (22 - bestPos) * 2500000000 + points * 1000000000);
-    return { points, money };
+  // =============================================
+  // RENDERING
+  // =============================================
+  drawTrack() {
+    if (!this.sim.ctx || this.sim.trackPoints.length === 0) return;
+    const ctx = this.sim.ctx;
+    ctx.lineWidth = 12;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    // Track color changes with weather
+    if (this.weatherState?.condition === "storm") ctx.strokeStyle = "#3a3c49";
+    else if (this.weatherState?.condition === "wet")
+      ctx.strokeStyle = "#4a4c59";
+    else if (this.weatherState?.condition === "damp")
+      ctx.strokeStyle = "#3e4050";
+    else ctx.strokeStyle = "#333544";
+
+    ctx.beginPath();
+    ctx.moveTo(this.sim.trackPoints[0].x, this.sim.trackPoints[0].y);
+    for (let i = 1; i < this.sim.trackPoints.length; i++) {
+      ctx.lineTo(this.sim.trackPoints[i].x, this.sim.trackPoints[i].y);
+    }
+    ctx.closePath();
+    ctx.stroke();
+
+    // Finish line
+    const fl = this.sim.trackPoints[0];
+    ctx.fillStyle = "white";
+    ctx.fillRect(fl.x - 2, fl.y - 15, 4, 30);
+
+    // SC indicator
+    if (this.scState !== Utils.SC_STATES.NONE) {
+      ctx.fillStyle =
+        this.scState === Utils.SC_STATES.RED_FLAG ? "#ff0000" : "#ffcc00";
+      ctx.font = "bold 16px monospace";
+      ctx.fillText(
+        this.scState === Utils.SC_STATES.RED_FLAG
+          ? "🔴 RED FLAG"
+          : this.scState === Utils.SC_STATES.SC
+          ? "🟡 SAFETY CAR"
+          : "🟡 VSC",
+        350,
+        30
+      );
+    }
   },
 
-  appendNextSessionButton(label) {
-    const nextContainer = document.getElementById("session-next-action-container");
-    if (nextContainer) {
-      nextContainer.innerHTML = `<div class="session-next-action"><button onclick="UI.showRaceWeekendSummary()">${label}</button></div>`;
+  drawCars() {
+    if (!this.sim.ctx || this.sim.trackPoints.length === 0) return;
+    const ctx = this.sim.ctx;
+
+    // Update and draw particles
+    for (let i = this.sim.particles.length - 1; i >= 0; i--) {
+      let p = this.sim.particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= 0.03;
+      if (p.life <= 0) {
+        this.sim.particles.splice(i, 1);
+        continue;
+      }
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, Math.max(1, 4 * p.life), 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(180, 180, 180, ${p.life * 0.6})`;
+      ctx.fill();
+    }
+
+    const renderOrder = [...this.currentGrid].sort(
+      (a, b) => b.progress - a.progress
+    );
+    const progressCounts = {};
+    renderOrder.forEach((r) => {
+      progressCounts[r.progress] = (progressCounts[r.progress] || 0) + 1;
+      r.overlapIndex = progressCounts[r.progress] - 1;
+    });
+
+    for (let i = 0; i < renderOrder.length; i++) {
+      let racer = renderOrder[i];
+      if (racer.finished || racer.eliminated || racer.dnf) continue;
+
+      let point = this.sim.trackPoints[racer.progress];
+      if (!point) continue;
+
+      if (racer.isPitting) {
+        ctx.fillStyle = "#ff6600";
+        ctx.font = "bold 10px Arial";
+        ctx.fillText("PIT", point.x - 10, point.y + 20);
+        continue;
+      }
+
+      // Calculate overlap offset
+      const px = point.x + racer.overlapIndex * 4;
+      const py = point.y + racer.overlapIndex * 4;
+
+      // DRS indicator line (behind car)
+      if (racer.drsOpen) {
+        ctx.beginPath();
+        ctx.moveTo(px - 10, py);
+        ctx.lineTo(px, py);
+        ctx.strokeStyle = "#00ff87";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+
+      // Car dot
+      ctx.beginPath();
+      ctx.arc(px, py, 5, 0, Math.PI * 2);
+      ctx.fillStyle = racer.color || "#ffffff";
+      ctx.fill();
+
+      if (racer.isPlayer) {
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#00ff87";
+        ctx.stroke();
+      }
+
+      // Tyre compound indicator color ring
+      const compoundColor =
+        Utils.TYRE_COMPOUNDS[racer.tyreCompound]?.color || "#ffffff";
+      ctx.beginPath();
+      ctx.arc(px, py, 7, 0, Math.PI * 2);
+      ctx.strokeStyle = compoundColor;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Label
+      if (racer.isPlayer || racer.position <= 5) {
+        ctx.fillStyle = "white";
+        ctx.font = "bold 9px monospace";
+        ctx.fillText(racer.code, px + 9, py + 3);
+      }
     }
   },
 };

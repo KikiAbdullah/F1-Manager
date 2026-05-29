@@ -29,16 +29,24 @@ const Data = {
       );
       const results = await Promise.all(fetches);
 
-      this.seasons = results[0].data;
-      this.sponsors = results[1].data;
-      this.team_chiefs = results[2].data;
-      this.tech_chiefs = results[3].data;
-      this.teams = results[4].data;
-      this.chassis = results[5].data;
-      this.circuits = results[6].data;
-      this.drivers = results[7].data;
-      this.power_units = results[8].data;
-      this.schedules = results[9].data;
+      // FUNGSI NORMALISASI: Memastikan data yang disimpan SELALU berbentuk Array
+      const extractArray = (json) => {
+        if (Array.isArray(json)) return json;
+        if (json && Array.isArray(json.data)) return json.data;
+        return []; // Fallback aman agar game tidak crash jika JSON kosong
+      };
+
+      this.seasons = extractArray(results[0]);
+      this.sponsors = extractArray(results[1]);
+      this.team_chiefs = extractArray(results[2]);
+      this.tech_chiefs = extractArray(results[3]);
+      this.teams = extractArray(results[4]);
+      this.chassis = extractArray(results[5]);
+      this.circuits = extractArray(results[6]);
+      this.drivers = extractArray(results[7]);
+      this.power_units = extractArray(results[8]);
+      this.schedules = extractArray(results[9]);
+
       return true;
     } catch (error) {
       console.error("Gagal memuat JSON:", error);
