@@ -53,8 +53,16 @@ const Main = {
 
   loadWizardAssets() {
     UI.renderHorizontalCards("container-sponsor", Data.sponsors, "sponsorId");
-    UI.renderHorizontalCards("container-team-chief", Data.team_chiefs, "teamChiefId");
-    UI.renderHorizontalCards("container-tech-chief", Data.tech_chiefs, "techChiefId");
+    UI.renderHorizontalCards(
+      "container-team-chief",
+      Data.team_chiefs,
+      "teamChiefId"
+    );
+    UI.renderHorizontalCards(
+      "container-tech-chief",
+      Data.tech_chiefs,
+      "techChiefId"
+    );
     UI.renderHorizontalCards("container-pu", Data.power_units, "puId");
     UI.renderHorizontalCards("container-chassis", Data.chassis, "chassisId");
     UI.renderHorizontalCards("container-drivers", Data.drivers, "driverId");
@@ -67,20 +75,39 @@ const Main = {
     event.preventDefault();
     const inputName = document.getElementById("input-team-name").value.trim();
 
-    if (!inputName) { alert("Harap tentukan nama konstruktor!"); UI.moveWizard(-3); return; }
-    if (!WizardForm.sponsorId || !WizardForm.teamChiefId || !WizardForm.techChiefId ||
-        !WizardForm.puId || !WizardForm.chassisId || !WizardForm.driver1Id || !WizardForm.driver2Id) {
-      alert("Lengkapi semua pilihan sebelum meluncurkan tim!"); return;
+    if (!inputName) {
+      alert("Harap tentukan nama konstruktor!");
+      UI.moveWizard(-3);
+      return;
+    }
+    if (
+      !WizardForm.sponsorId ||
+      !WizardForm.teamChiefId ||
+      !WizardForm.techChiefId ||
+      !WizardForm.puId ||
+      !WizardForm.chassisId ||
+      !WizardForm.driver1Id ||
+      !WizardForm.driver2Id
+    ) {
+      alert("Lengkapi semua pilihan sebelum meluncurkan tim!");
+      return;
     }
     if (WizardForm.driver1Id === WizardForm.driver2Id) {
-      alert("Driver 1 dan 2 tidak boleh sama!"); return;
+      alert("Driver 1 dan 2 tidak boleh sama!");
+      return;
     }
 
     State.teamName = inputName;
     State.budget = Finance.currentWizardBudget;
-    State.sponsor = Data.sponsors.find((s) => (s.id || s.team_id) === WizardForm.sponsorId);
-    State.teamChief = Data.team_chiefs.find((s) => s.id === WizardForm.teamChiefId);
-    State.techChief = Data.tech_chiefs.find((s) => s.id === WizardForm.techChiefId);
+    State.sponsor = Data.sponsors.find(
+      (s) => (s.id || s.team_id) === WizardForm.sponsorId
+    );
+    State.teamChief = Data.team_chiefs.find(
+      (s) => s.id === WizardForm.teamChiefId
+    );
+    State.techChief = Data.tech_chiefs.find(
+      (s) => s.id === WizardForm.techChiefId
+    );
     State.pu = Data.power_units.find((p) => p.id === WizardForm.puId);
     State.chassis = Data.chassis.find((c) => c.id === WizardForm.chassisId);
     State.drivers = [
@@ -93,7 +120,8 @@ const Main = {
     State.raceStartCompound = "medium";
 
     if (!State.sponsor || !State.pu) {
-      alert("Terjadi kesalahan saat menyimpan. Silakan refresh."); return;
+      alert("Terjadi kesalahan saat menyimpan. Silakan refresh.");
+      return;
     }
 
     localStorage.setItem("f1_manager_save.json", JSON.stringify(State));

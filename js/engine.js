@@ -1434,10 +1434,23 @@ const Engine = {
   // =============================================
   // RENDERING
   // =============================================
+
+  getCanvasScale() {
+    if (!this.sim.domCache.canvas) return { x: 1, y: 1 };
+    const rect = this.sim.domCache.canvas.getBoundingClientRect();
+    // Resolusi asli track_layouts.js adalah 900x550
+    return {
+      x: rect.width / 900,
+      y: rect.height / 550,
+    };
+  },
+
   drawTrack() {
     if (!this.sim.ctx || this.sim.trackPoints.length === 0) return;
     const ctx = this.sim.ctx;
-    ctx.lineWidth = 12;
+    const scale = this.getCanvasScale();
+
+    ctx.lineWidth = 12 * Math.min(scale.x, scale.y); // Skalakan ketebalan lintasan
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
 
@@ -1450,9 +1463,15 @@ const Engine = {
     else ctx.strokeStyle = "#333544";
 
     ctx.beginPath();
-    ctx.moveTo(this.sim.trackPoints[0].x, this.sim.trackPoints[0].y);
+    ctx.moveTo(
+      this.sim.trackPoints[0].x * scale.x,
+      this.sim.trackPoints[0].y * scale.y
+    );
     for (let i = 1; i < this.sim.trackPoints.length; i++) {
-      ctx.lineTo(this.sim.trackPoints[i].x, this.sim.trackPoints[i].y);
+      ctx.lineTo(
+        this.sim.trackPoints[i].x * scale.x,
+        this.sim.trackPoints[i].y * scale.y
+      );
     }
     ctx.closePath();
     ctx.stroke();
@@ -1460,7 +1479,7 @@ const Engine = {
     // Finish line
     const fl = this.sim.trackPoints[0];
     ctx.fillStyle = "white";
-    ctx.fillRect(fl.x - 2, fl.y - 15, 4, 30);
+    ctx.fillRect(fl.x * scale.x - 2, fl.y * scale.y - 15, 4, 30);
 
     // SC indicator
     if (this.scState !== Utils.SC_STATES.NONE) {
@@ -1483,7 +1502,11 @@ const Engine = {
     if (!this.sim.ctx || this.sim.trackPoints.length === 0) return;
     const ctx = this.sim.ctx;
 
-    // Update and draw particles
+    // 1. Ambil rasio skala canvas
+    const scale = this.getCanvasScale();
+    const minScale = Math.min(scale.x, scale.y); // Untuk menjaga proporsi ukuran lingkaran/font
+
+    // Update and draw particles (Efek Asap Lockup)
     for (let i = this.sim.particles.length - 1; i >= 0; i--) {
       let p = this.sim.particles[i];
       p.x += p.vx;
@@ -1494,7 +1517,14 @@ const Engine = {
         continue;
       }
       ctx.beginPath();
-      ctx.arc(p.x, p.y, Math.max(1, 4 * p.life), 0, Math.PI * 2);
+      // Kalikan posisi dan ukuran asap dengan skala
+      ctx.arc(
+        p.x * scale.x,
+        p.y * scale.y,
+        Math.max(1, 4 * p.life) * minScale,
+        0,
+        Math.PI * 2
+      );
       ctx.fillStyle = `rgba(180, 180, 180, ${p.life * 0.6})`;
       ctx.fill();
     }
@@ -1517,33 +1547,41 @@ const Engine = {
 
       if (racer.isPitting) {
         ctx.fillStyle = "#ff6600";
-        ctx.font = "bold 10px Arial";
-        ctx.fillText("PIT", point.x - 10, point.y + 20);
+        // Skalakan ukuran font PIT
+        const fontSize = Math.max(8, 10 * minScale);
+        ctx.font = `bold ${fontSize}px Arial`;
+        ctx.fillText("PIT", (point.x - 10) * scale.x, (point.y + 20) * scale.y);
         continue;
       }
 
-      // Calculate overlap offset
-      const px = point.x + racer.overlapIndex * 4;
-      const py = point.y + racer.overlapIndex * 4;
+      // 2. Terapkan skala pada posisi titik aktual di canvas
+      const px = (point.x + racer.overlapIndex * 4) * scale.x;
+      const py = (point.y + racer.overlapIndex * 4) * scale.y;
+
+      // Ukuran dinamis untuk dot mobil dan cincin ban
+      const carSize = 5 * minScale;
+      const ringSize = 7 * minScale;
 
       // DRS indicator line (behind car)
       if (racer.drsOpen) {
         ctx.beginPath();
-        ctx.moveTo(px - 10, py);
+        // Skalakan panjang garis DRS
+        ctx.moveTo(px - 10 * scale.x, py);
         ctx.lineTo(px, py);
         ctx.strokeStyle = "#00ff87";
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 2 * minScale;
         ctx.stroke();
       }
 
       // Car dot
       ctx.beginPath();
-      ctx.arc(px, py, 5, 0, Math.PI * 2);
+      ctx.arc(px, py, carSize, 0, Math.PI * 2);
       ctx.fillStyle = racer.color || "#ffffff";
       ctx.fill();
 
+      // Lingkaran highlight player
       if (racer.isPlayer) {
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 2 * minScale;
         ctx.strokeStyle = "#00ff87";
         ctx.stroke();
       }
@@ -1552,17 +1590,29 @@ const Engine = {
       const compoundColor =
         Utils.TYRE_COMPOUNDS[racer.tyreCompound]?.color || "#ffffff";
       ctx.beginPath();
-      ctx.arc(px, py, 7, 0, Math.PI * 2);
+      ctx.arc(px, py, ringSize, 0, Math.PI * 2);
       ctx.strokeStyle = compoundColor;
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = 1.5 * minScale;
       ctx.stroke();
 
-      // Label
+      // Label Nama/Kode
       if (racer.isPlayer || racer.position <= 5) {
         ctx.fillStyle = "white";
-        ctx.font = "bold 9px monospace";
-        ctx.fillText(racer.code, px + 9, py + 3);
+        // Skalakan ukuran font label agar tidak kebesaran/kekecilan
+        const labelSize = Math.max(7, 9 * minScale);
+        ctx.font = `bold ${labelSize}px monospace`;
+        ctx.fillText(racer.code, px + 9 * scale.x, py + 3 * scale.y);
       }
     }
+  },
+
+  getCanvasScale() {
+    if (!this.sim.domCache.canvas) return { x: 1, y: 1 };
+    const rect = this.sim.domCache.canvas.getBoundingClientRect();
+    // Resolusi awal koordinat di track_layouts.js
+    return {
+      x: rect.width / 900,
+      y: rect.height / 550,
+    };
   },
 };
