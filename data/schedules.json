@@ -31,8 +31,46 @@
           "time_utc": "08:00:00"
         }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 5.412,
+      "laps": 57,
+      "avg_speed_kmh": 215,
+      "sector_weights": {
+        "sector_1": "traction",
+        "sector_2": "braking",
+        "sector_3": "top_speed"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 74,
+        "medium_speed_cornering": 70,
+        "high_speed_cornering": 42,
+        "top_speed_importance": 82,
+        "traction_importance": 90,
+        "braking_importance": 92,
+        "aero_efficiency_importance": 74,
+        "dirty_air_severity": 58,
+        "drs_effectiveness": 90,
+        "overtaking_difficulty": 30,
+        "track_evolution": 72,
+        "tyre_degradation": 92,
+        "rear_tyre_stress": 94,
+        "front_tyre_stress": 78,
+        "fuel_consumption": 82,
+        "engine_stress": 76,
+        "ers_importance": 88,
+        "cooling_demand": 86,
+        "safety_car_probability": 28,
+        "virtual_safety_car_probability": 32,
+        "red_flag_probability": 4,
+        "pit_lane_loss_seconds": 23.2,
+        "wet_weather_variability": 8,
+        "wind_sensitivity": 68,
+        "setup_sensitivity": 84,
+        "ride_height_sensitivity": 66,
+        "track_grip": 88,
+        "track_surface_roughness": 92,
+        "street_circuit": false,
+        "night_race": true
+      }
     },
     {
       "id": "2026_r01_australia",
@@ -46,18 +84,72 @@
       "is_sprint_weekend": false,
       "is_night_race": false,
       "sessions": [
-        { "session": "FP1", "date": "2026-03-13", "time_utc": "01:30:00" },
-        { "session": "FP2", "date": "2026-03-13", "time_utc": "05:00:00" },
-        { "session": "FP3", "date": "2026-03-14", "time_utc": "01:30:00" },
+        {
+          "session": "FP1",
+          "date": "2026-03-13",
+          "time_utc": "01:30:00"
+        },
+        {
+          "session": "FP2",
+          "date": "2026-03-13",
+          "time_utc": "05:00:00"
+        },
+        {
+          "session": "FP3",
+          "date": "2026-03-14",
+          "time_utc": "01:30:00"
+        },
         {
           "session": "Qualifying",
           "date": "2026-03-14",
           "time_utc": "05:00:00"
         },
-        { "session": "Race", "date": "2026-03-15", "time_utc": "04:00:00" }
+        {
+          "session": "Race",
+          "date": "2026-03-15",
+          "time_utc": "04:00:00"
+        }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 5.278,
+      "laps": 58,
+      "avg_speed_kmh": 235,
+      "sector_weights": {
+        "sector_1": "top_speed",
+        "sector_2": "traction",
+        "sector_3": "medium_speed_cornering"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 62,
+        "medium_speed_cornering": 78,
+        "high_speed_cornering": 58,
+        "top_speed_importance": 72,
+        "traction_importance": 74,
+        "braking_importance": 70,
+        "aero_efficiency_importance": 76,
+        "dirty_air_severity": 58,
+        "drs_effectiveness": 74,
+        "overtaking_difficulty": 42,
+        "track_evolution": 88,
+        "tyre_degradation": 48,
+        "rear_tyre_stress": 55,
+        "front_tyre_stress": 50,
+        "fuel_consumption": 58,
+        "engine_stress": 52,
+        "ers_importance": 70,
+        "cooling_demand": 40,
+        "safety_car_probability": 68,
+        "virtual_safety_car_probability": 72,
+        "red_flag_probability": 18,
+        "pit_lane_loss_seconds": 21.5,
+        "wet_weather_variability": 64,
+        "wind_sensitivity": 58,
+        "setup_sensitivity": 70,
+        "ride_height_sensitivity": 45,
+        "track_grip": 74,
+        "track_surface_roughness": 44,
+        "street_circuit": false,
+        "night_race": false
+      }
     },
     {
       "id": "2026_r02_china",
@@ -71,22 +163,72 @@
       "is_sprint_weekend": true,
       "is_night_race": false,
       "sessions": [
-        { "session": "FP1", "date": "2026-03-27", "time_utc": "03:30:00" },
+        {
+          "session": "FP1",
+          "date": "2026-03-27",
+          "time_utc": "03:30:00"
+        },
         {
           "session": "Sprint Qualifying",
           "date": "2026-03-27",
           "time_utc": "07:30:00"
         },
-        { "session": "Sprint", "date": "2026-03-28", "time_utc": "03:30:00" },
+        {
+          "session": "Sprint",
+          "date": "2026-03-28",
+          "time_utc": "03:30:00"
+        },
         {
           "session": "Qualifying",
           "date": "2026-03-28",
           "time_utc": "07:00:00"
         },
-        { "session": "Race", "date": "2026-03-29", "time_utc": "07:00:00" }
+        {
+          "session": "Race",
+          "date": "2026-03-29",
+          "time_utc": "07:00:00"
+        }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 5.451,
+      "laps": 56,
+      "avg_speed_kmh": 210,
+      "sector_weights": {
+        "sector_1": "front_end",
+        "sector_2": "traction",
+        "sector_3": "top_speed"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 72,
+        "medium_speed_cornering": 84,
+        "high_speed_cornering": 65,
+        "top_speed_importance": 84,
+        "traction_importance": 82,
+        "braking_importance": 80,
+        "aero_efficiency_importance": 88,
+        "dirty_air_severity": 70,
+        "drs_effectiveness": 92,
+        "overtaking_difficulty": 28,
+        "track_evolution": 62,
+        "tyre_degradation": 72,
+        "rear_tyre_stress": 80,
+        "front_tyre_stress": 78,
+        "fuel_consumption": 68,
+        "engine_stress": 66,
+        "ers_importance": 82,
+        "cooling_demand": 55,
+        "safety_car_probability": 42,
+        "virtual_safety_car_probability": 50,
+        "red_flag_probability": 10,
+        "pit_lane_loss_seconds": 22.8,
+        "wet_weather_variability": 70,
+        "wind_sensitivity": 75,
+        "setup_sensitivity": 82,
+        "ride_height_sensitivity": 62,
+        "track_grip": 68,
+        "track_surface_roughness": 60,
+        "street_circuit": false,
+        "night_race": false
+      }
     },
     {
       "id": "2026_r03_japan",
@@ -100,18 +242,72 @@
       "is_sprint_weekend": false,
       "is_night_race": false,
       "sessions": [
-        { "session": "FP1", "date": "2026-04-03", "time_utc": "02:30:00" },
-        { "session": "FP2", "date": "2026-04-03", "time_utc": "06:00:00" },
-        { "session": "FP3", "date": "2026-04-04", "time_utc": "02:30:00" },
+        {
+          "session": "FP1",
+          "date": "2026-04-03",
+          "time_utc": "02:30:00"
+        },
+        {
+          "session": "FP2",
+          "date": "2026-04-03",
+          "time_utc": "06:00:00"
+        },
+        {
+          "session": "FP3",
+          "date": "2026-04-04",
+          "time_utc": "02:30:00"
+        },
         {
           "session": "Qualifying",
           "date": "2026-04-04",
           "time_utc": "06:00:00"
         },
-        { "session": "Race", "date": "2026-04-05", "time_utc": "05:00:00" }
+        {
+          "session": "Race",
+          "date": "2026-04-05",
+          "time_utc": "05:00:00"
+        }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 5.807,
+      "laps": 53,
+      "avg_speed_kmh": 230,
+      "sector_weights": {
+        "sector_1": "high_speed_cornering",
+        "sector_2": "aero_balance",
+        "sector_3": "traction"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 48,
+        "medium_speed_cornering": 82,
+        "high_speed_cornering": 96,
+        "top_speed_importance": 58,
+        "traction_importance": 74,
+        "braking_importance": 60,
+        "aero_efficiency_importance": 96,
+        "dirty_air_severity": 82,
+        "drs_effectiveness": 55,
+        "overtaking_difficulty": 70,
+        "track_evolution": 58,
+        "tyre_degradation": 76,
+        "rear_tyre_stress": 88,
+        "front_tyre_stress": 92,
+        "fuel_consumption": 60,
+        "engine_stress": 58,
+        "ers_importance": 64,
+        "cooling_demand": 68,
+        "safety_car_probability": 38,
+        "virtual_safety_car_probability": 42,
+        "red_flag_probability": 8,
+        "pit_lane_loss_seconds": 20.5,
+        "wet_weather_variability": 88,
+        "wind_sensitivity": 84,
+        "setup_sensitivity": 95,
+        "ride_height_sensitivity": 78,
+        "track_grip": 82,
+        "track_surface_roughness": 62,
+        "street_circuit": false,
+        "night_race": false
+      }
     },
     {
       "id": "2026_r04_bahrain",
@@ -125,18 +321,72 @@
       "is_sprint_weekend": false,
       "is_night_race": true,
       "sessions": [
-        { "session": "FP1", "date": "2026-04-10", "time_utc": "11:30:00" },
-        { "session": "FP2", "date": "2026-04-10", "time_utc": "15:00:00" },
-        { "session": "FP3", "date": "2026-04-11", "time_utc": "12:30:00" },
+        {
+          "session": "FP1",
+          "date": "2026-04-10",
+          "time_utc": "11:30:00"
+        },
+        {
+          "session": "FP2",
+          "date": "2026-04-10",
+          "time_utc": "15:00:00"
+        },
+        {
+          "session": "FP3",
+          "date": "2026-04-11",
+          "time_utc": "12:30:00"
+        },
         {
           "session": "Qualifying",
           "date": "2026-04-11",
           "time_utc": "16:00:00"
         },
-        { "session": "Race", "date": "2026-04-12", "time_utc": "15:00:00" }
+        {
+          "session": "Race",
+          "date": "2026-04-12",
+          "time_utc": "15:00:00"
+        }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 5.412,
+      "laps": 57,
+      "avg_speed_kmh": 215,
+      "sector_weights": {
+        "sector_1": "traction",
+        "sector_2": "braking",
+        "sector_3": "top_speed"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 74,
+        "medium_speed_cornering": 70,
+        "high_speed_cornering": 42,
+        "top_speed_importance": 82,
+        "traction_importance": 90,
+        "braking_importance": 92,
+        "aero_efficiency_importance": 74,
+        "dirty_air_severity": 58,
+        "drs_effectiveness": 90,
+        "overtaking_difficulty": 30,
+        "track_evolution": 72,
+        "tyre_degradation": 92,
+        "rear_tyre_stress": 94,
+        "front_tyre_stress": 78,
+        "fuel_consumption": 82,
+        "engine_stress": 76,
+        "ers_importance": 88,
+        "cooling_demand": 86,
+        "safety_car_probability": 28,
+        "virtual_safety_car_probability": 32,
+        "red_flag_probability": 4,
+        "pit_lane_loss_seconds": 23.2,
+        "wet_weather_variability": 8,
+        "wind_sensitivity": 68,
+        "setup_sensitivity": 84,
+        "ride_height_sensitivity": 66,
+        "track_grip": 88,
+        "track_surface_roughness": 92,
+        "street_circuit": false,
+        "night_race": true
+      }
     },
     {
       "id": "2026_r05_saudi_arabia",
@@ -150,18 +400,72 @@
       "is_sprint_weekend": false,
       "is_night_race": true,
       "sessions": [
-        { "session": "FP1", "date": "2026-04-17", "time_utc": "13:30:00" },
-        { "session": "FP2", "date": "2026-04-17", "time_utc": "17:00:00" },
-        { "session": "FP3", "date": "2026-04-18", "time_utc": "13:30:00" },
+        {
+          "session": "FP1",
+          "date": "2026-04-17",
+          "time_utc": "13:30:00"
+        },
+        {
+          "session": "FP2",
+          "date": "2026-04-17",
+          "time_utc": "17:00:00"
+        },
+        {
+          "session": "FP3",
+          "date": "2026-04-18",
+          "time_utc": "13:30:00"
+        },
         {
           "session": "Qualifying",
           "date": "2026-04-18",
           "time_utc": "17:00:00"
         },
-        { "session": "Race", "date": "2026-04-19", "time_utc": "17:00:00" }
+        {
+          "session": "Race",
+          "date": "2026-04-19",
+          "time_utc": "17:00:00"
+        }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 6.174,
+      "laps": 50,
+      "avg_speed_kmh": 252,
+      "sector_weights": {
+        "sector_1": "high_speed_cornering",
+        "sector_2": "top_speed",
+        "sector_3": "confidence"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 28,
+        "medium_speed_cornering": 72,
+        "high_speed_cornering": 94,
+        "top_speed_importance": 90,
+        "traction_importance": 52,
+        "braking_importance": 58,
+        "aero_efficiency_importance": 92,
+        "dirty_air_severity": 76,
+        "drs_effectiveness": 80,
+        "overtaking_difficulty": 38,
+        "track_evolution": 64,
+        "tyre_degradation": 42,
+        "rear_tyre_stress": 50,
+        "front_tyre_stress": 58,
+        "fuel_consumption": 74,
+        "engine_stress": 78,
+        "ers_importance": 72,
+        "cooling_demand": 82,
+        "safety_car_probability": 84,
+        "virtual_safety_car_probability": 92,
+        "red_flag_probability": 26,
+        "pit_lane_loss_seconds": 19.8,
+        "wet_weather_variability": 4,
+        "wind_sensitivity": 52,
+        "setup_sensitivity": 90,
+        "ride_height_sensitivity": 80,
+        "track_grip": 76,
+        "track_surface_roughness": 28,
+        "street_circuit": true,
+        "night_race": true
+      }
     },
     {
       "id": "2026_r06_miami",
@@ -175,22 +479,73 @@
       "is_sprint_weekend": true,
       "is_night_race": false,
       "sessions": [
-        { "session": "FP1", "date": "2026-05-01", "time_utc": "16:30:00" },
+        {
+          "session": "FP1",
+          "date": "2026-05-01",
+          "time_utc": "16:30:00"
+        },
         {
           "session": "Sprint Qualifying",
           "date": "2026-05-01",
           "time_utc": "20:30:00"
         },
-        { "session": "Sprint", "date": "2026-05-02", "time_utc": "16:00:00" },
+        {
+          "session": "Sprint",
+          "date": "2026-05-02",
+          "time_utc": "16:00:00"
+        },
         {
           "session": "Qualifying",
           "date": "2026-05-02",
           "time_utc": "20:00:00"
         },
-        { "session": "Race", "date": "2026-05-03", "time_utc": "20:00:00" }
+        {
+          "session": "Race",
+          "date": "2026-05-03",
+          "time_utc": "20:00:00"
+        }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 5.412,
+      "laps": 57,
+      "race_distance_km": 308.326,
+      "avg_speed_kmh": 214,
+      "sector_weights": {
+        "sector_1": "top_speed",
+        "sector_2": "mechanical_grip",
+        "sector_3": "traction"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 68,
+        "medium_speed_cornering": 74,
+        "high_speed_cornering": 42,
+        "top_speed_importance": 88,
+        "traction_importance": 82,
+        "braking_importance": 79,
+        "aero_efficiency_importance": 76,
+        "dirty_air_severity": 71,
+        "drs_effectiveness": 84,
+        "overtaking_difficulty": 46,
+        "track_evolution": 73,
+        "tyre_degradation": 58,
+        "rear_tyre_stress": 72,
+        "front_tyre_stress": 54,
+        "fuel_consumption": 63,
+        "engine_stress": 69,
+        "ers_importance": 81,
+        "cooling_demand": 86,
+        "safety_car_probability": 74,
+        "virtual_safety_car_probability": 82,
+        "red_flag_probability": 28,
+        "pit_lane_loss_seconds": 20.5,
+        "wet_weather_variability": 61,
+        "wind_sensitivity": 57,
+        "setup_sensitivity": 77,
+        "ride_height_sensitivity": 71,
+        "track_grip": 67,
+        "track_surface_roughness": 39,
+        "street_circuit": true,
+        "night_race": false
+      }
     },
     {
       "id": "2026_r07_monaco",
@@ -204,18 +559,72 @@
       "is_sprint_weekend": false,
       "is_night_race": false,
       "sessions": [
-        { "session": "FP1", "date": "2026-05-21", "time_utc": "11:30:00" },
-        { "session": "FP2", "date": "2026-05-21", "time_utc": "15:00:00" },
-        { "session": "FP3", "date": "2026-05-22", "time_utc": "10:30:00" },
+        {
+          "session": "FP1",
+          "date": "2026-05-21",
+          "time_utc": "11:30:00"
+        },
+        {
+          "session": "FP2",
+          "date": "2026-05-21",
+          "time_utc": "15:00:00"
+        },
+        {
+          "session": "FP3",
+          "date": "2026-05-22",
+          "time_utc": "10:30:00"
+        },
         {
           "session": "Qualifying",
           "date": "2026-05-22",
           "time_utc": "14:00:00"
         },
-        { "session": "Race", "date": "2026-05-23", "time_utc": "13:00:00" }
+        {
+          "session": "Race",
+          "date": "2026-05-23",
+          "time_utc": "13:00:00"
+        }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 3.337,
+      "laps": 78,
+      "avg_speed_kmh": 158,
+      "sector_weights": {
+        "sector_1": "traction",
+        "sector_2": "mechanical_grip",
+        "sector_3": "driver_precision"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 98,
+        "medium_speed_cornering": 34,
+        "high_speed_cornering": 8,
+        "top_speed_importance": 5,
+        "traction_importance": 96,
+        "braking_importance": 76,
+        "aero_efficiency_importance": 38,
+        "dirty_air_severity": 98,
+        "drs_effectiveness": 8,
+        "overtaking_difficulty": 100,
+        "track_evolution": 98,
+        "tyre_degradation": 28,
+        "rear_tyre_stress": 40,
+        "front_tyre_stress": 44,
+        "fuel_consumption": 36,
+        "engine_stress": 28,
+        "ers_importance": 22,
+        "cooling_demand": 34,
+        "safety_car_probability": 92,
+        "virtual_safety_car_probability": 96,
+        "red_flag_probability": 34,
+        "pit_lane_loss_seconds": 19.2,
+        "wet_weather_variability": 58,
+        "wind_sensitivity": 22,
+        "setup_sensitivity": 94,
+        "ride_height_sensitivity": 40,
+        "track_grip": 70,
+        "track_surface_roughness": 24,
+        "street_circuit": true,
+        "night_race": false
+      }
     },
     {
       "id": "2026_r08_spain",
@@ -229,18 +638,72 @@
       "is_sprint_weekend": false,
       "is_night_race": false,
       "sessions": [
-        { "session": "FP1", "date": "2026-06-05", "time_utc": "11:30:00" },
-        { "session": "FP2", "date": "2026-06-05", "time_utc": "15:00:00" },
-        { "session": "FP3", "date": "2026-06-06", "time_utc": "10:30:00" },
+        {
+          "session": "FP1",
+          "date": "2026-06-05",
+          "time_utc": "11:30:00"
+        },
+        {
+          "session": "FP2",
+          "date": "2026-06-05",
+          "time_utc": "15:00:00"
+        },
+        {
+          "session": "FP3",
+          "date": "2026-06-06",
+          "time_utc": "10:30:00"
+        },
         {
           "session": "Qualifying",
           "date": "2026-06-06",
           "time_utc": "14:00:00"
         },
-        { "session": "Race", "date": "2026-06-07", "time_utc": "13:00:00" }
+        {
+          "session": "Race",
+          "date": "2026-06-07",
+          "time_utc": "13:00:00"
+        }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 5.47,
+      "laps": 57,
+      "avg_speed_kmh": 222,
+      "sector_weights": {
+        "sector_1": "traction",
+        "sector_2": "top_speed",
+        "sector_3": "aero_balance"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 72,
+        "medium_speed_cornering": 74,
+        "high_speed_cornering": 58,
+        "top_speed_importance": 74,
+        "traction_importance": 84,
+        "braking_importance": 82,
+        "aero_efficiency_importance": 78,
+        "dirty_air_severity": 66,
+        "drs_effectiveness": 76,
+        "overtaking_difficulty": 42,
+        "track_evolution": 86,
+        "tyre_degradation": 68,
+        "rear_tyre_stress": 72,
+        "front_tyre_stress": 64,
+        "fuel_consumption": 70,
+        "engine_stress": 62,
+        "ers_importance": 78,
+        "cooling_demand": 74,
+        "safety_car_probability": 58,
+        "virtual_safety_car_probability": 66,
+        "red_flag_probability": 14,
+        "pit_lane_loss_seconds": 22.7,
+        "wet_weather_variability": 38,
+        "wind_sensitivity": 52,
+        "setup_sensitivity": 82,
+        "ride_height_sensitivity": 62,
+        "track_grip": 80,
+        "track_surface_roughness": 54,
+        "street_circuit": true,
+        "night_race": false
+      }
     },
     {
       "id": "2026_r09_azerbaijan",
@@ -254,18 +717,72 @@
       "is_sprint_weekend": false,
       "is_night_race": false,
       "sessions": [
-        { "session": "FP1", "date": "2026-06-12", "time_utc": "09:30:00" },
-        { "session": "FP2", "date": "2026-06-12", "time_utc": "13:00:00" },
-        { "session": "FP3", "date": "2026-06-13", "time_utc": "08:30:00" },
+        {
+          "session": "FP1",
+          "date": "2026-06-12",
+          "time_utc": "09:30:00"
+        },
+        {
+          "session": "FP2",
+          "date": "2026-06-12",
+          "time_utc": "13:00:00"
+        },
+        {
+          "session": "FP3",
+          "date": "2026-06-13",
+          "time_utc": "08:30:00"
+        },
         {
           "session": "Qualifying",
           "date": "2026-06-13",
           "time_utc": "12:00:00"
         },
-        { "session": "Race", "date": "2026-06-14", "time_utc": "11:00:00" }
+        {
+          "session": "Race",
+          "date": "2026-06-14",
+          "time_utc": "11:00:00"
+        }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 6.003,
+      "laps": 51,
+      "avg_speed_kmh": 244,
+      "sector_weights": {
+        "sector_1": "top_speed",
+        "sector_2": "mechanical_grip",
+        "sector_3": "braking"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 88,
+        "medium_speed_cornering": 46,
+        "high_speed_cornering": 32,
+        "top_speed_importance": 96,
+        "traction_importance": 84,
+        "braking_importance": 94,
+        "aero_efficiency_importance": 68,
+        "dirty_air_severity": 58,
+        "drs_effectiveness": 98,
+        "overtaking_difficulty": 34,
+        "track_evolution": 74,
+        "tyre_degradation": 40,
+        "rear_tyre_stress": 46,
+        "front_tyre_stress": 54,
+        "fuel_consumption": 88,
+        "engine_stress": 92,
+        "ers_importance": 90,
+        "cooling_demand": 72,
+        "safety_car_probability": 90,
+        "virtual_safety_car_probability": 94,
+        "red_flag_probability": 28,
+        "pit_lane_loss_seconds": 19.5,
+        "wet_weather_variability": 18,
+        "wind_sensitivity": 66,
+        "setup_sensitivity": 86,
+        "ride_height_sensitivity": 58,
+        "track_grip": 74,
+        "track_surface_roughness": 32,
+        "street_circuit": true,
+        "night_race": false
+      }
     },
     {
       "id": "2026_r10_austria",
@@ -279,22 +796,72 @@
       "is_sprint_weekend": true,
       "is_night_race": false,
       "sessions": [
-        { "session": "FP1", "date": "2026-06-26", "time_utc": "10:30:00" },
+        {
+          "session": "FP1",
+          "date": "2026-06-26",
+          "time_utc": "10:30:00"
+        },
         {
           "session": "Sprint Qualifying",
           "date": "2026-06-26",
           "time_utc": "14:30:00"
         },
-        { "session": "Sprint", "date": "2026-06-27", "time_utc": "10:00:00" },
+        {
+          "session": "Sprint",
+          "date": "2026-06-27",
+          "time_utc": "10:00:00"
+        },
         {
           "session": "Qualifying",
           "date": "2026-06-27",
           "time_utc": "14:00:00"
         },
-        { "session": "Race", "date": "2026-06-28", "time_utc": "13:00:00" }
+        {
+          "session": "Race",
+          "date": "2026-06-28",
+          "time_utc": "13:00:00"
+        }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 4.318,
+      "laps": 71,
+      "avg_speed_kmh": 238,
+      "sector_weights": {
+        "sector_1": "top_speed",
+        "sector_2": "traction",
+        "sector_3": "high_speed_cornering"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 58,
+        "medium_speed_cornering": 62,
+        "high_speed_cornering": 74,
+        "top_speed_importance": 82,
+        "traction_importance": 76,
+        "braking_importance": 84,
+        "aero_efficiency_importance": 72,
+        "dirty_air_severity": 52,
+        "drs_effectiveness": 90,
+        "overtaking_difficulty": 30,
+        "track_evolution": 58,
+        "tyre_degradation": 56,
+        "rear_tyre_stress": 64,
+        "front_tyre_stress": 62,
+        "fuel_consumption": 72,
+        "engine_stress": 80,
+        "ers_importance": 84,
+        "cooling_demand": 60,
+        "safety_car_probability": 42,
+        "virtual_safety_car_probability": 48,
+        "red_flag_probability": 8,
+        "pit_lane_loss_seconds": 18.9,
+        "wet_weather_variability": 82,
+        "wind_sensitivity": 74,
+        "setup_sensitivity": 78,
+        "ride_height_sensitivity": 70,
+        "track_grip": 86,
+        "track_surface_roughness": 52,
+        "street_circuit": false,
+        "night_race": false
+      }
     },
     {
       "id": "2026_r11_great_britain",
@@ -308,18 +875,72 @@
       "is_sprint_weekend": false,
       "is_night_race": false,
       "sessions": [
-        { "session": "FP1", "date": "2026-07-03", "time_utc": "11:30:00" },
-        { "session": "FP2", "date": "2026-07-03", "time_utc": "15:00:00" },
-        { "session": "FP3", "date": "2026-07-04", "time_utc": "10:30:00" },
+        {
+          "session": "FP1",
+          "date": "2026-07-03",
+          "time_utc": "11:30:00"
+        },
+        {
+          "session": "FP2",
+          "date": "2026-07-03",
+          "time_utc": "15:00:00"
+        },
+        {
+          "session": "FP3",
+          "date": "2026-07-04",
+          "time_utc": "10:30:00"
+        },
         {
           "session": "Qualifying",
           "date": "2026-07-04",
           "time_utc": "14:00:00"
         },
-        { "session": "Race", "date": "2026-07-05", "time_utc": "14:00:00" }
+        {
+          "session": "Race",
+          "date": "2026-07-05",
+          "time_utc": "14:00:00"
+        }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 5.891,
+      "laps": 52,
+      "avg_speed_kmh": 242,
+      "sector_weights": {
+        "sector_1": "high_speed_cornering",
+        "sector_2": "aero_balance",
+        "sector_3": "top_speed"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 34,
+        "medium_speed_cornering": 74,
+        "high_speed_cornering": 100,
+        "top_speed_importance": 74,
+        "traction_importance": 58,
+        "braking_importance": 44,
+        "aero_efficiency_importance": 100,
+        "dirty_air_severity": 88,
+        "drs_effectiveness": 62,
+        "overtaking_difficulty": 44,
+        "track_evolution": 60,
+        "tyre_degradation": 86,
+        "rear_tyre_stress": 84,
+        "front_tyre_stress": 96,
+        "fuel_consumption": 70,
+        "engine_stress": 64,
+        "ers_importance": 66,
+        "cooling_demand": 74,
+        "safety_car_probability": 32,
+        "virtual_safety_car_probability": 38,
+        "red_flag_probability": 6,
+        "pit_lane_loss_seconds": 20.4,
+        "wet_weather_variability": 94,
+        "wind_sensitivity": 96,
+        "setup_sensitivity": 100,
+        "ride_height_sensitivity": 86,
+        "track_grip": 90,
+        "track_surface_roughness": 58,
+        "street_circuit": false,
+        "night_race": false
+      }
     },
     {
       "id": "2026_r12_belgium",
@@ -333,18 +954,72 @@
       "is_sprint_weekend": false,
       "is_night_race": false,
       "sessions": [
-        { "session": "FP1", "date": "2026-07-24", "time_utc": "11:30:00" },
-        { "session": "FP2", "date": "2026-07-24", "time_utc": "15:00:00" },
-        { "session": "FP3", "date": "2026-07-25", "time_utc": "10:30:00" },
+        {
+          "session": "FP1",
+          "date": "2026-07-24",
+          "time_utc": "11:30:00"
+        },
+        {
+          "session": "FP2",
+          "date": "2026-07-24",
+          "time_utc": "15:00:00"
+        },
+        {
+          "session": "FP3",
+          "date": "2026-07-25",
+          "time_utc": "10:30:00"
+        },
         {
           "session": "Qualifying",
           "date": "2026-07-25",
           "time_utc": "14:00:00"
         },
-        { "session": "Race", "date": "2026-07-26", "time_utc": "13:00:00" }
+        {
+          "session": "Race",
+          "date": "2026-07-26",
+          "time_utc": "13:00:00"
+        }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 7.004,
+      "laps": 44,
+      "avg_speed_kmh": 238,
+      "sector_weights": {
+        "sector_1": "top_speed",
+        "sector_2": "high_speed_cornering",
+        "sector_3": "traction"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 36,
+        "medium_speed_cornering": 82,
+        "high_speed_cornering": 96,
+        "top_speed_importance": 88,
+        "traction_importance": 62,
+        "braking_importance": 52,
+        "aero_efficiency_importance": 94,
+        "dirty_air_severity": 74,
+        "drs_effectiveness": 84,
+        "overtaking_difficulty": 38,
+        "track_evolution": 52,
+        "tyre_degradation": 68,
+        "rear_tyre_stress": 72,
+        "front_tyre_stress": 88,
+        "fuel_consumption": 78,
+        "engine_stress": 82,
+        "ers_importance": 76,
+        "cooling_demand": 72,
+        "safety_car_probability": 44,
+        "virtual_safety_car_probability": 50,
+        "red_flag_probability": 12,
+        "pit_lane_loss_seconds": 21.9,
+        "wet_weather_variability": 100,
+        "wind_sensitivity": 90,
+        "setup_sensitivity": 96,
+        "ride_height_sensitivity": 88,
+        "track_grip": 82,
+        "track_surface_roughness": 64,
+        "street_circuit": false,
+        "night_race": false
+      }
     },
     {
       "id": "2026_r13_hungary",
@@ -358,18 +1033,72 @@
       "is_sprint_weekend": false,
       "is_night_race": false,
       "sessions": [
-        { "session": "FP1", "date": "2026-08-28", "time_utc": "11:30:00" },
-        { "session": "FP2", "date": "2026-08-28", "time_utc": "15:00:00" },
-        { "session": "FP3", "date": "2026-08-29", "time_utc": "10:30:00" },
+        {
+          "session": "FP1",
+          "date": "2026-08-28",
+          "time_utc": "11:30:00"
+        },
+        {
+          "session": "FP2",
+          "date": "2026-08-28",
+          "time_utc": "15:00:00"
+        },
+        {
+          "session": "FP3",
+          "date": "2026-08-29",
+          "time_utc": "10:30:00"
+        },
         {
           "session": "Qualifying",
           "date": "2026-08-29",
           "time_utc": "14:00:00"
         },
-        { "session": "Race", "date": "2026-08-30", "time_utc": "13:00:00" }
+        {
+          "session": "Race",
+          "date": "2026-08-30",
+          "time_utc": "13:00:00"
+        }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 4.381,
+      "laps": 70,
+      "avg_speed_kmh": 198,
+      "sector_weights": {
+        "sector_1": "mechanical_grip",
+        "sector_2": "traction",
+        "sector_3": "downforce"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 92,
+        "medium_speed_cornering": 78,
+        "high_speed_cornering": 24,
+        "top_speed_importance": 18,
+        "traction_importance": 94,
+        "braking_importance": 72,
+        "aero_efficiency_importance": 84,
+        "dirty_air_severity": 96,
+        "drs_effectiveness": 18,
+        "overtaking_difficulty": 92,
+        "track_evolution": 90,
+        "tyre_degradation": 72,
+        "rear_tyre_stress": 76,
+        "front_tyre_stress": 82,
+        "fuel_consumption": 46,
+        "engine_stress": 40,
+        "ers_importance": 34,
+        "cooling_demand": 84,
+        "safety_car_probability": 34,
+        "virtual_safety_car_probability": 40,
+        "red_flag_probability": 4,
+        "pit_lane_loss_seconds": 20.8,
+        "wet_weather_variability": 44,
+        "wind_sensitivity": 38,
+        "setup_sensitivity": 92,
+        "ride_height_sensitivity": 44,
+        "track_grip": 92,
+        "track_surface_roughness": 48,
+        "street_circuit": false,
+        "night_race": false
+      }
     },
     {
       "id": "2026_r14_netherlands",
@@ -383,18 +1112,72 @@
       "is_sprint_weekend": false,
       "is_night_race": false,
       "sessions": [
-        { "session": "FP1", "date": "2026-09-04", "time_utc": "10:30:00" },
-        { "session": "FP2", "date": "2026-09-04", "time_utc": "14:00:00" },
-        { "session": "FP3", "date": "2026-09-05", "time_utc": "09:30:00" },
+        {
+          "session": "FP1",
+          "date": "2026-09-04",
+          "time_utc": "10:30:00"
+        },
+        {
+          "session": "FP2",
+          "date": "2026-09-04",
+          "time_utc": "14:00:00"
+        },
+        {
+          "session": "FP3",
+          "date": "2026-09-05",
+          "time_utc": "09:30:00"
+        },
         {
           "session": "Qualifying",
           "date": "2026-09-05",
           "time_utc": "13:00:00"
         },
-        { "session": "Race", "date": "2026-09-06", "time_utc": "13:00:00" }
+        {
+          "session": "Race",
+          "date": "2026-09-06",
+          "time_utc": "13:00:00"
+        }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 4.259,
+      "laps": 72,
+      "avg_speed_kmh": 214,
+      "sector_weights": {
+        "sector_1": "high_speed_cornering",
+        "sector_2": "driver_commitment",
+        "sector_3": "traction"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 48,
+        "medium_speed_cornering": 84,
+        "high_speed_cornering": 90,
+        "top_speed_importance": 44,
+        "traction_importance": 72,
+        "braking_importance": 52,
+        "aero_efficiency_importance": 94,
+        "dirty_air_severity": 94,
+        "drs_effectiveness": 20,
+        "overtaking_difficulty": 88,
+        "track_evolution": 76,
+        "tyre_degradation": 74,
+        "rear_tyre_stress": 78,
+        "front_tyre_stress": 90,
+        "fuel_consumption": 52,
+        "engine_stress": 50,
+        "ers_importance": 42,
+        "cooling_demand": 48,
+        "safety_car_probability": 36,
+        "virtual_safety_car_probability": 44,
+        "red_flag_probability": 6,
+        "pit_lane_loss_seconds": 20.1,
+        "wet_weather_variability": 88,
+        "wind_sensitivity": 96,
+        "setup_sensitivity": 96,
+        "ride_height_sensitivity": 84,
+        "track_grip": 88,
+        "track_surface_roughness": 42,
+        "street_circuit": false,
+        "night_race": false
+      }
     },
     {
       "id": "2026_r15_italy",
@@ -408,18 +1191,72 @@
       "is_sprint_weekend": false,
       "is_night_race": false,
       "sessions": [
-        { "session": "FP1", "date": "2026-09-11", "time_utc": "11:30:00" },
-        { "session": "FP2", "date": "2026-09-11", "time_utc": "15:00:00" },
-        { "session": "FP3", "date": "2026-09-12", "time_utc": "10:30:00" },
+        {
+          "session": "FP1",
+          "date": "2026-09-11",
+          "time_utc": "11:30:00"
+        },
+        {
+          "session": "FP2",
+          "date": "2026-09-11",
+          "time_utc": "15:00:00"
+        },
+        {
+          "session": "FP3",
+          "date": "2026-09-12",
+          "time_utc": "10:30:00"
+        },
         {
           "session": "Qualifying",
           "date": "2026-09-12",
           "time_utc": "14:00:00"
         },
-        { "session": "Race", "date": "2026-09-13", "time_utc": "13:00:00" }
+        {
+          "session": "Race",
+          "date": "2026-09-13",
+          "time_utc": "13:00:00"
+        }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 5.793,
+      "laps": 53,
+      "avg_speed_kmh": 255,
+      "sector_weights": {
+        "sector_1": "top_speed",
+        "sector_2": "braking",
+        "sector_3": "traction"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 42,
+        "medium_speed_cornering": 28,
+        "high_speed_cornering": 44,
+        "top_speed_importance": 100,
+        "traction_importance": 58,
+        "braking_importance": 94,
+        "aero_efficiency_importance": 62,
+        "dirty_air_severity": 42,
+        "drs_effectiveness": 96,
+        "overtaking_difficulty": 24,
+        "track_evolution": 54,
+        "tyre_degradation": 34,
+        "rear_tyre_stress": 42,
+        "front_tyre_stress": 58,
+        "fuel_consumption": 90,
+        "engine_stress": 96,
+        "ers_importance": 92,
+        "cooling_demand": 78,
+        "safety_car_probability": 30,
+        "virtual_safety_car_probability": 34,
+        "red_flag_probability": 4,
+        "pit_lane_loss_seconds": 23.5,
+        "wet_weather_variability": 62,
+        "wind_sensitivity": 68,
+        "setup_sensitivity": 92,
+        "ride_height_sensitivity": 72,
+        "track_grip": 76,
+        "track_surface_roughness": 34,
+        "street_circuit": false,
+        "night_race": false
+      }
     },
     {
       "id": "2026_r16_singapore",
@@ -433,18 +1270,72 @@
       "is_sprint_weekend": false,
       "is_night_race": true,
       "sessions": [
-        { "session": "FP1", "date": "2026-10-02", "time_utc": "09:30:00" },
-        { "session": "FP2", "date": "2026-10-02", "time_utc": "13:00:00" },
-        { "session": "FP3", "date": "2026-10-03", "time_utc": "09:30:00" },
+        {
+          "session": "FP1",
+          "date": "2026-10-02",
+          "time_utc": "09:30:00"
+        },
+        {
+          "session": "FP2",
+          "date": "2026-10-02",
+          "time_utc": "13:00:00"
+        },
+        {
+          "session": "FP3",
+          "date": "2026-10-03",
+          "time_utc": "09:30:00"
+        },
         {
           "session": "Qualifying",
           "date": "2026-10-03",
           "time_utc": "13:00:00"
         },
-        { "session": "Race", "date": "2026-10-04", "time_utc": "12:00:00" }
+        {
+          "session": "Race",
+          "date": "2026-10-04",
+          "time_utc": "12:00:00"
+        }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 4.94,
+      "laps": 62,
+      "avg_speed_kmh": 178,
+      "sector_weights": {
+        "sector_1": "traction",
+        "sector_2": "cooling",
+        "sector_3": "driver_focus"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 94,
+        "medium_speed_cornering": 54,
+        "high_speed_cornering": 12,
+        "top_speed_importance": 18,
+        "traction_importance": 98,
+        "braking_importance": 88,
+        "aero_efficiency_importance": 58,
+        "dirty_air_severity": 92,
+        "drs_effectiveness": 24,
+        "overtaking_difficulty": 82,
+        "track_evolution": 84,
+        "tyre_degradation": 58,
+        "rear_tyre_stress": 64,
+        "front_tyre_stress": 72,
+        "fuel_consumption": 68,
+        "engine_stress": 54,
+        "ers_importance": 48,
+        "cooling_demand": 100,
+        "safety_car_probability": 96,
+        "virtual_safety_car_probability": 100,
+        "red_flag_probability": 36,
+        "pit_lane_loss_seconds": 28.5,
+        "wet_weather_variability": 78,
+        "wind_sensitivity": 32,
+        "setup_sensitivity": 88,
+        "ride_height_sensitivity": 48,
+        "track_grip": 78,
+        "track_surface_roughness": 38,
+        "street_circuit": true,
+        "night_race": true
+      }
     },
     {
       "id": "2026_r17_united_states",
@@ -458,22 +1349,72 @@
       "is_sprint_weekend": true,
       "is_night_race": false,
       "sessions": [
-        { "session": "FP1", "date": "2026-10-16", "time_utc": "17:30:00" },
+        {
+          "session": "FP1",
+          "date": "2026-10-16",
+          "time_utc": "17:30:00"
+        },
         {
           "session": "Sprint Qualifying",
           "date": "2026-10-16",
           "time_utc": "21:30:00"
         },
-        { "session": "Sprint", "date": "2026-10-17", "time_utc": "18:00:00" },
+        {
+          "session": "Sprint",
+          "date": "2026-10-17",
+          "time_utc": "18:00:00"
+        },
         {
           "session": "Qualifying",
           "date": "2026-10-17",
           "time_utc": "22:00:00"
         },
-        { "session": "Race", "date": "2026-10-18", "time_utc": "19:00:00" }
+        {
+          "session": "Race",
+          "date": "2026-10-18",
+          "time_utc": "19:00:00"
+        }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 5.513,
+      "laps": 56,
+      "avg_speed_kmh": 223,
+      "sector_weights": {
+        "sector_1": "high_speed_cornering",
+        "sector_2": "traction",
+        "sector_3": "top_speed"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 74,
+        "medium_speed_cornering": 82,
+        "high_speed_cornering": 86,
+        "top_speed_importance": 70,
+        "traction_importance": 80,
+        "braking_importance": 76,
+        "aero_efficiency_importance": 90,
+        "dirty_air_severity": 78,
+        "drs_effectiveness": 72,
+        "overtaking_difficulty": 44,
+        "track_evolution": 70,
+        "tyre_degradation": 82,
+        "rear_tyre_stress": 86,
+        "front_tyre_stress": 92,
+        "fuel_consumption": 72,
+        "engine_stress": 66,
+        "ers_importance": 74,
+        "cooling_demand": 82,
+        "safety_car_probability": 40,
+        "virtual_safety_car_probability": 46,
+        "red_flag_probability": 6,
+        "pit_lane_loss_seconds": 20.9,
+        "wet_weather_variability": 58,
+        "wind_sensitivity": 88,
+        "setup_sensitivity": 94,
+        "ride_height_sensitivity": 92,
+        "track_grip": 84,
+        "track_surface_roughness": 88,
+        "street_circuit": false,
+        "night_race": false
+      }
     },
     {
       "id": "2026_r18_mexico",
@@ -487,18 +1428,72 @@
       "is_sprint_weekend": false,
       "is_night_race": false,
       "sessions": [
-        { "session": "FP1", "date": "2026-10-23", "time_utc": "18:30:00" },
-        { "session": "FP2", "date": "2026-10-23", "time_utc": "22:00:00" },
-        { "session": "FP3", "date": "2026-10-24", "time_utc": "17:30:00" },
+        {
+          "session": "FP1",
+          "date": "2026-10-23",
+          "time_utc": "18:30:00"
+        },
+        {
+          "session": "FP2",
+          "date": "2026-10-23",
+          "time_utc": "22:00:00"
+        },
+        {
+          "session": "FP3",
+          "date": "2026-10-24",
+          "time_utc": "17:30:00"
+        },
         {
           "session": "Qualifying",
           "date": "2026-10-24",
           "time_utc": "21:00:00"
         },
-        { "session": "Race", "date": "2026-10-25", "time_utc": "20:00:00" }
+        {
+          "session": "Race",
+          "date": "2026-10-25",
+          "time_utc": "20:00:00"
+        }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 4.304,
+      "laps": 71,
+      "avg_speed_kmh": 229,
+      "sector_weights": {
+        "sector_1": "top_speed",
+        "sector_2": "cooling",
+        "sector_3": "traction"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 68,
+        "medium_speed_cornering": 60,
+        "high_speed_cornering": 42,
+        "top_speed_importance": 94,
+        "traction_importance": 74,
+        "braking_importance": 72,
+        "aero_efficiency_importance": 58,
+        "dirty_air_severity": 54,
+        "drs_effectiveness": 92,
+        "overtaking_difficulty": 34,
+        "track_evolution": 72,
+        "tyre_degradation": 38,
+        "rear_tyre_stress": 42,
+        "front_tyre_stress": 48,
+        "fuel_consumption": 82,
+        "engine_stress": 94,
+        "ers_importance": 88,
+        "cooling_demand": 98,
+        "safety_car_probability": 44,
+        "virtual_safety_car_probability": 52,
+        "red_flag_probability": 8,
+        "pit_lane_loss_seconds": 19.7,
+        "wet_weather_variability": 26,
+        "wind_sensitivity": 72,
+        "setup_sensitivity": 86,
+        "ride_height_sensitivity": 64,
+        "track_grip": 68,
+        "track_surface_roughness": 30,
+        "street_circuit": false,
+        "night_race": false
+      }
     },
     {
       "id": "2026_r19_brazil",
@@ -512,22 +1507,72 @@
       "is_sprint_weekend": true,
       "is_night_race": false,
       "sessions": [
-        { "session": "FP1", "date": "2026-10-30", "time_utc": "14:30:00" },
+        {
+          "session": "FP1",
+          "date": "2026-10-30",
+          "time_utc": "14:30:00"
+        },
         {
           "session": "Sprint Qualifying",
           "date": "2026-10-30",
           "time_utc": "18:30:00"
         },
-        { "session": "Sprint", "date": "2026-10-31", "time_utc": "14:00:00" },
+        {
+          "session": "Sprint",
+          "date": "2026-10-31",
+          "time_utc": "14:00:00"
+        },
         {
           "session": "Qualifying",
           "date": "2026-10-31",
           "time_utc": "18:00:00"
         },
-        { "session": "Race", "date": "2026-11-01", "time_utc": "17:00:00" }
+        {
+          "session": "Race",
+          "date": "2026-11-01",
+          "time_utc": "17:00:00"
+        }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 4.309,
+      "laps": 71,
+      "avg_speed_kmh": 218,
+      "sector_weights": {
+        "sector_1": "top_speed",
+        "sector_2": "technical_balance",
+        "sector_3": "traction"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 74,
+        "medium_speed_cornering": 82,
+        "high_speed_cornering": 62,
+        "top_speed_importance": 78,
+        "traction_importance": 84,
+        "braking_importance": 76,
+        "aero_efficiency_importance": 80,
+        "dirty_air_severity": 66,
+        "drs_effectiveness": 78,
+        "overtaking_difficulty": 36,
+        "track_evolution": 82,
+        "tyre_degradation": 70,
+        "rear_tyre_stress": 72,
+        "front_tyre_stress": 76,
+        "fuel_consumption": 64,
+        "engine_stress": 70,
+        "ers_importance": 74,
+        "cooling_demand": 66,
+        "safety_car_probability": 72,
+        "virtual_safety_car_probability": 80,
+        "red_flag_probability": 18,
+        "pit_lane_loss_seconds": 19.9,
+        "wet_weather_variability": 96,
+        "wind_sensitivity": 78,
+        "setup_sensitivity": 88,
+        "ride_height_sensitivity": 70,
+        "track_grip": 86,
+        "track_surface_roughness": 64,
+        "street_circuit": false,
+        "night_race": false
+      }
     },
     {
       "id": "2026_r20_las_vegas",
@@ -541,18 +1586,72 @@
       "is_sprint_weekend": false,
       "is_night_race": true,
       "sessions": [
-        { "session": "FP1", "date": "2026-11-13", "time_utc": "02:30:00" },
-        { "session": "FP2", "date": "2026-11-13", "time_utc": "06:00:00" },
-        { "session": "FP3", "date": "2026-11-14", "time_utc": "02:30:00" },
+        {
+          "session": "FP1",
+          "date": "2026-11-13",
+          "time_utc": "02:30:00"
+        },
+        {
+          "session": "FP2",
+          "date": "2026-11-13",
+          "time_utc": "06:00:00"
+        },
+        {
+          "session": "FP3",
+          "date": "2026-11-14",
+          "time_utc": "02:30:00"
+        },
         {
           "session": "Qualifying",
           "date": "2026-11-14",
           "time_utc": "06:00:00"
         },
-        { "session": "Race", "date": "2026-11-15", "time_utc": "06:00:00" }
+        {
+          "session": "Race",
+          "date": "2026-11-15",
+          "time_utc": "06:00:00"
+        }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 6.201,
+      "laps": 50,
+      "avg_speed_kmh": 237,
+      "sector_weights": {
+        "sector_1": "top_speed",
+        "sector_2": "traction",
+        "sector_3": "braking"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 82,
+        "medium_speed_cornering": 42,
+        "high_speed_cornering": 20,
+        "top_speed_importance": 98,
+        "traction_importance": 86,
+        "braking_importance": 96,
+        "aero_efficiency_importance": 52,
+        "dirty_air_severity": 44,
+        "drs_effectiveness": 100,
+        "overtaking_difficulty": 20,
+        "track_evolution": 88,
+        "tyre_degradation": 24,
+        "rear_tyre_stress": 32,
+        "front_tyre_stress": 36,
+        "fuel_consumption": 92,
+        "engine_stress": 90,
+        "ers_importance": 96,
+        "cooling_demand": 42,
+        "safety_car_probability": 78,
+        "virtual_safety_car_probability": 84,
+        "red_flag_probability": 20,
+        "pit_lane_loss_seconds": 21.4,
+        "wet_weather_variability": 2,
+        "wind_sensitivity": 48,
+        "setup_sensitivity": 84,
+        "ride_height_sensitivity": 52,
+        "track_grip": 62,
+        "track_surface_roughness": 22,
+        "street_circuit": true,
+        "night_race": true
+      }
     },
     {
       "id": "2026_r21_qatar",
@@ -566,18 +1665,72 @@
       "is_sprint_weekend": false,
       "is_night_race": true,
       "sessions": [
-        { "session": "FP1", "date": "2026-11-27", "time_utc": "13:30:00" },
-        { "session": "FP2", "date": "2026-11-27", "time_utc": "17:00:00" },
-        { "session": "FP3", "date": "2026-11-28", "time_utc": "14:30:00" },
+        {
+          "session": "FP1",
+          "date": "2026-11-27",
+          "time_utc": "13:30:00"
+        },
+        {
+          "session": "FP2",
+          "date": "2026-11-27",
+          "time_utc": "17:00:00"
+        },
+        {
+          "session": "FP3",
+          "date": "2026-11-28",
+          "time_utc": "14:30:00"
+        },
         {
           "session": "Qualifying",
           "date": "2026-11-28",
           "time_utc": "18:00:00"
         },
-        { "session": "Race", "date": "2026-11-29", "time_utc": "17:00:00" }
+        {
+          "session": "Race",
+          "date": "2026-11-29",
+          "time_utc": "17:00:00"
+        }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 5.419,
+      "laps": 57,
+      "avg_speed_kmh": 228,
+      "sector_weights": {
+        "sector_1": "high_speed_cornering",
+        "sector_2": "aero_balance",
+        "sector_3": "traction"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 34,
+        "medium_speed_cornering": 76,
+        "high_speed_cornering": 92,
+        "top_speed_importance": 68,
+        "traction_importance": 72,
+        "braking_importance": 48,
+        "aero_efficiency_importance": 96,
+        "dirty_air_severity": 82,
+        "drs_effectiveness": 56,
+        "overtaking_difficulty": 54,
+        "track_evolution": 60,
+        "tyre_degradation": 90,
+        "rear_tyre_stress": 96,
+        "front_tyre_stress": 88,
+        "fuel_consumption": 70,
+        "engine_stress": 66,
+        "ers_importance": 60,
+        "cooling_demand": 96,
+        "safety_car_probability": 18,
+        "virtual_safety_car_probability": 24,
+        "red_flag_probability": 2,
+        "pit_lane_loss_seconds": 21.8,
+        "wet_weather_variability": 2,
+        "wind_sensitivity": 74,
+        "setup_sensitivity": 94,
+        "ride_height_sensitivity": 90,
+        "track_grip": 90,
+        "track_surface_roughness": 54,
+        "street_circuit": false,
+        "night_race": true
+      }
     },
     {
       "id": "2026_r22_abu_dhabi",
@@ -591,18 +1744,72 @@
       "is_sprint_weekend": false,
       "is_night_race": true,
       "sessions": [
-        { "session": "FP1", "date": "2026-12-04", "time_utc": "09:30:00" },
-        { "session": "FP2", "date": "2026-12-04", "time_utc": "13:00:00" },
-        { "session": "FP3", "date": "2026-12-05", "time_utc": "10:30:00" },
+        {
+          "session": "FP1",
+          "date": "2026-12-04",
+          "time_utc": "09:30:00"
+        },
+        {
+          "session": "FP2",
+          "date": "2026-12-04",
+          "time_utc": "13:00:00"
+        },
+        {
+          "session": "FP3",
+          "date": "2026-12-05",
+          "time_utc": "10:30:00"
+        },
         {
           "session": "Qualifying",
           "date": "2026-12-05",
           "time_utc": "14:00:00"
         },
-        { "session": "Race", "date": "2026-12-06", "time_utc": "13:00:00" }
+        {
+          "session": "Race",
+          "date": "2026-12-06",
+          "time_utc": "13:00:00"
+        }
       ],
-      "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "lap_distance_km": 5.281,
+      "laps": 58,
+      "avg_speed_kmh": 216,
+      "sector_weights": {
+        "sector_1": "traction",
+        "sector_2": "top_speed",
+        "sector_3": "technical_balance"
+      },
+      "track_characteristics": {
+        "low_speed_cornering": 78,
+        "medium_speed_cornering": 68,
+        "high_speed_cornering": 28,
+        "top_speed_importance": 76,
+        "traction_importance": 88,
+        "braking_importance": 84,
+        "aero_efficiency_importance": 74,
+        "dirty_air_severity": 64,
+        "drs_effectiveness": 82,
+        "overtaking_difficulty": 42,
+        "track_evolution": 68,
+        "tyre_degradation": 44,
+        "rear_tyre_stress": 52,
+        "front_tyre_stress": 58,
+        "fuel_consumption": 72,
+        "engine_stress": 70,
+        "ers_importance": 80,
+        "cooling_demand": 84,
+        "safety_car_probability": 26,
+        "virtual_safety_car_probability": 32,
+        "red_flag_probability": 4,
+        "pit_lane_loss_seconds": 21.2,
+        "wet_weather_variability": 2,
+        "wind_sensitivity": 46,
+        "setup_sensitivity": 80,
+        "ride_height_sensitivity": 60,
+        "track_grip": 82,
+        "track_surface_roughness": 36,
+        "street_circuit": false,
+        "night_race": true
+      }
     }
   ]
 }

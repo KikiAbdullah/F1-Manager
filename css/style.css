@@ -1329,9 +1329,17 @@ button#btn-ers.active {
   border: 1px solid var(--border-dark);
 }
 
+.modal-content.modal-xl {
+  max-width: 1000px;
+}
+
+.modal-content.modal-xl {
+  max-width: 1000px;
+}
+
 .modal-body-split {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 3fr 2fr;
   gap: 30px;
   margin-top: 20px;
 }
