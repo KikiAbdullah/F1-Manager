@@ -30,7 +30,13 @@
         "accuracy": 90
       },
       "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z",
+      "setup_preferences": {
+        "rear_wing": 70,
+        "suspension": 68,
+        "front_wing": 74,
+        "brake_bias": 56
+      }
     },
     {
       "id": "kimi_antonelli",
@@ -59,7 +65,13 @@
         "accuracy": 80
       },
       "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z",
+      "setup_preferences": {
+        "rear_wing": 67,
+        "suspension": 71,
+        "front_wing": 79,
+        "brake_bias": 55
+      }
     },
     {
       "id": "charles_leclerc",
@@ -88,7 +100,13 @@
         "accuracy": 93
       },
       "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z",
+      "setup_preferences": {
+        "rear_wing": 72,
+        "suspension": 78,
+        "front_wing": 88,
+        "brake_bias": 57
+      }
     },
     {
       "id": "lewis_hamilton",
@@ -117,7 +135,13 @@
         "accuracy": 94
       },
       "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z",
+      "setup_preferences": {
+        "rear_wing": 84,
+        "suspension": 58,
+        "front_wing": 68,
+        "brake_bias": 54
+      }
     },
     {
       "id": "lando_norris",
@@ -146,7 +170,13 @@
         "accuracy": 93
       },
       "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z",
+      "setup_preferences": {
+        "rear_wing": 73,
+        "suspension": 72,
+        "front_wing": 80,
+        "brake_bias": 56
+      }
     },
     {
       "id": "oscar_piastri",
@@ -175,7 +205,13 @@
         "accuracy": 91
       },
       "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z",
+      "setup_preferences": {
+        "rear_wing": 78,
+        "suspension": 66,
+        "front_wing": 72,
+        "brake_bias": 55
+      }
     },
     {
       "id": "max_verstappen",
@@ -204,7 +240,13 @@
         "accuracy": 98
       },
       "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z",
+      "setup_preferences": {
+        "rear_wing": 66,
+        "suspension": 82,
+        "front_wing": 95,
+        "brake_bias": 58
+      }
     },
     {
       "id": "isack_hadjar",
@@ -233,7 +275,13 @@
         "accuracy": 76
       },
       "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z",
+      "setup_preferences": {
+        "rear_wing": 68,
+        "suspension": 75,
+        "front_wing": 82,
+        "brake_bias": 56
+      }
     },
     {
       "id": "fernando_alonso",
@@ -262,7 +310,13 @@
         "accuracy": 91
       },
       "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z",
+      "setup_preferences": {
+        "rear_wing": 82,
+        "suspension": 63,
+        "front_wing": 76,
+        "brake_bias": 55
+      }
     },
     {
       "id": "lance_stroll",
@@ -291,7 +345,13 @@
         "accuracy": 79
       },
       "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z",
+      "setup_preferences": {
+        "rear_wing": 79,
+        "suspension": 57,
+        "front_wing": 64,
+        "brake_bias": 54
+      }
     },
     {
       "id": "pierre_gasly",
@@ -320,7 +380,13 @@
         "accuracy": 85
       },
       "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z",
+      "setup_preferences": {
+        "rear_wing": 70,
+        "suspension": 74,
+        "front_wing": 81,
+        "brake_bias": 56
+      }
     },
     {
       "id": "franco_colapinto",
@@ -349,7 +415,13 @@
         "accuracy": 82
       },
       "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z",
+      "setup_preferences": {
+        "rear_wing": 69,
+        "suspension": 72,
+        "front_wing": 78,
+        "brake_bias": 56
+      }
     },
     {
       "id": "esteban_ocon",
@@ -378,7 +450,13 @@
         "accuracy": 83
       },
       "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z",
+      "setup_preferences": {
+        "rear_wing": 76,
+        "suspension": 64,
+        "front_wing": 70,
+        "brake_bias": 55
+      }
     },
     {
       "id": "oliver_bearman",
@@ -407,7 +485,13 @@
         "accuracy": 80
       },
       "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z",
+      "setup_preferences": {
+        "rear_wing": 69,
+        "suspension": 74,
+        "front_wing": 80,
+        "brake_bias": 56
+      }
     },
     {
       "id": "liam_lawson",
@@ -436,7 +520,13 @@
         "accuracy": 82
       },
       "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z",
+      "setup_preferences": {
+        "rear_wing": 68,
+        "suspension": 76,
+        "front_wing": 83,
+        "brake_bias": 56
+      }
     },
     {
       "id": "arvid_lindblad",
@@ -465,7 +555,13 @@
         "accuracy": 76
       },
       "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z",
+      "setup_preferences": {
+        "rear_wing": 66,
+        "suspension": 77,
+        "front_wing": 84,
+        "brake_bias": 57
+      }
     },
     {
       "id": "carlos_sainz",
@@ -494,7 +590,13 @@
         "accuracy": 90
       },
       "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z",
+      "setup_preferences": {
+        "rear_wing": 80,
+        "suspension": 65,
+        "front_wing": 73,
+        "brake_bias": 55
+      }
     },
     {
       "id": "alexander_albon",
@@ -523,7 +625,13 @@
         "accuracy": 87
       },
       "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z",
+      "setup_preferences": {
+        "rear_wing": 72,
+        "suspension": 70,
+        "front_wing": 78,
+        "brake_bias": 56
+      }
     },
     {
       "id": "nico_hulkenberg",
@@ -552,7 +660,13 @@
         "accuracy": 86
       },
       "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z",
+      "setup_preferences": {
+        "rear_wing": 77,
+        "suspension": 63,
+        "front_wing": 71,
+        "brake_bias": 55
+      }
     },
     {
       "id": "gabriel_bortoleto",
@@ -581,7 +695,13 @@
         "accuracy": 79
       },
       "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z",
+      "setup_preferences": {
+        "rear_wing": 70,
+        "suspension": 73,
+        "front_wing": 79,
+        "brake_bias": 56
+      }
     },
     {
       "id": "sergio_perez",
@@ -610,7 +730,13 @@
         "accuracy": 82
       },
       "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z",
+      "setup_preferences": {
+        "rear_wing": 86,
+        "suspension": 54,
+        "front_wing": 62,
+        "brake_bias": 53
+      }
     },
     {
       "id": "valtteri_bottas",
@@ -639,7 +765,13 @@
         "accuracy": 86
       },
       "created_at": "2026-01-01T00:00:00Z",
-      "updated_at": "2026-01-01T00:00:00Z"
+      "updated_at": "2026-01-01T00:00:00Z",
+      "setup_preferences": {
+        "rear_wing": 79,
+        "suspension": 60,
+        "front_wing": 69,
+        "brake_bias": 54
+      }
     }
   ]
 }
